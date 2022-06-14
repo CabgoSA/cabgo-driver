@@ -3,7 +3,8 @@ import '../flutter_flow/flutter_flow_theme.dart';
 import '../flutter_flow/flutter_flow_util.dart';
 import 'package:easy_debounce/easy_debounce.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
+import 'package:provider/provider.dart';
+import '../states/app_state.dart';
 
 class RegisterPageWidget extends StatefulWidget {
   const RegisterPageWidget({Key key}) : super(key: key);
@@ -13,33 +14,22 @@ class RegisterPageWidget extends StatefulWidget {
 }
 
 class _RegisterPageWidgetState extends State<RegisterPageWidget> {
-  TextEditingController confirmPasswordController;
-  bool confirmPasswordVisibility;
-  TextEditingController emailController;
-  TextEditingController firstNameController;
-  TextEditingController lastNameController;
-  TextEditingController phoneController;
-  TextEditingController passwordController;
-  bool passwordVisibility;
-  bool termsAndConditionsValue;
+
   final formKey = GlobalKey<FormState>();
   final scaffoldKey = GlobalKey<ScaffoldState>();
+  bool confirmPasswordVisibility;
+  bool passwordVisibility;
 
   @override
   void initState() {
     super.initState();
-    confirmPasswordController = TextEditingController();
-    confirmPasswordVisibility = false;
-    emailController = TextEditingController();
-    firstNameController = TextEditingController();
-    lastNameController = TextEditingController();
-    phoneController = TextEditingController(text: '+27');
-    passwordController = TextEditingController();
     passwordVisibility = false;
+    confirmPasswordVisibility = false;
   }
 
   @override
   Widget build(BuildContext context) {
+    final appState = Provider.of<AppState>(context);
     return Scaffold(
       key: scaffoldKey,
       appBar: AppBar(
@@ -66,7 +56,7 @@ class _RegisterPageWidgetState extends State<RegisterPageWidget> {
       backgroundColor: FlutterFlowTheme.of(context).primaryBackground,
       floatingActionButton: FloatingActionButton(
         onPressed: () async {
-          context.pushNamed('VerifyPage');
+          appState.register();
         },
         backgroundColor: FlutterFlowTheme.of(context).primaryColor,
         elevation: 8,
@@ -110,7 +100,7 @@ class _RegisterPageWidgetState extends State<RegisterPageWidget> {
                         mainAxisSize: MainAxisSize.max,
                         children: [
                           TextFormField(
-                            controller: emailController,
+                            controller: appState.registerEmailController,
                             onChanged: (_) => EasyDebounce.debounce(
                               'emailController',
                               Duration(milliseconds: 2000),
@@ -152,7 +142,7 @@ class _RegisterPageWidgetState extends State<RegisterPageWidget> {
                             keyboardType: TextInputType.emailAddress,
                           ),
                           TextFormField(
-                            controller: firstNameController,
+                            controller: appState.registerFirstNameController,
                             onChanged: (_) => EasyDebounce.debounce(
                               'firstNameController',
                               Duration(milliseconds: 2000),
@@ -193,7 +183,7 @@ class _RegisterPageWidgetState extends State<RegisterPageWidget> {
                                     ),
                           ),
                           TextFormField(
-                            controller: lastNameController,
+                            controller: appState.registerLastNameController,
                             onChanged: (_) => EasyDebounce.debounce(
                               'lastNameController',
                               Duration(milliseconds: 2000),
@@ -234,7 +224,7 @@ class _RegisterPageWidgetState extends State<RegisterPageWidget> {
                                     ),
                           ),
                           TextFormField(
-                            controller: phoneController,
+                            controller: appState.registerPhoneController,
                             onChanged: (_) => EasyDebounce.debounce(
                               'phoneController',
                               Duration(milliseconds: 2000),
@@ -272,7 +262,7 @@ class _RegisterPageWidgetState extends State<RegisterPageWidget> {
                             keyboardType: TextInputType.number,
                           ),
                           TextFormField(
-                            controller: passwordController,
+                            controller: appState.registerPasswordController,
                             onChanged: (_) => EasyDebounce.debounce(
                               'passwordController',
                               Duration(milliseconds: 2000),
@@ -329,7 +319,7 @@ class _RegisterPageWidgetState extends State<RegisterPageWidget> {
                             keyboardType: TextInputType.visiblePassword,
                           ),
                           TextFormField(
-                            controller: confirmPasswordController,
+                            controller: appState.registerConfirmPasswordController,
                             onChanged: (_) => EasyDebounce.debounce(
                               'confirmPasswordController',
                               Duration(milliseconds: 2000),
@@ -411,9 +401,9 @@ class _RegisterPageWidgetState extends State<RegisterPageWidget> {
                                     unselectedWidgetColor: Color(0xFF95A1AC),
                                   ),
                                   child: CheckboxListTile(
-                                    value: termsAndConditionsValue ??= true,
+                                    value: appState.registerTermsAndConditionsValue ??= true,
                                     onChanged: (newValue) => setState(() =>
-                                        termsAndConditionsValue = newValue),
+                                    appState.registerTermsAndConditionsValue = newValue),
                                     title: Text(
                                       'I have read and agreed to the terms and conditions',
                                       style: FlutterFlowTheme.of(context)
