@@ -4,7 +4,6 @@ import '../flutter_flow/flutter_flow_util.dart';
 import '../custom_code/widgets/index.dart' as custom_widgets;
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:percent_indicator/percent_indicator.dart';
 
 class EarningsPageWidget extends StatefulWidget {
   const EarningsPageWidget({Key key}) : super(key: key);
@@ -83,26 +82,7 @@ class _EarningsPageWidgetState extends State<EarningsPageWidget> {
                                   ),
                             ),
                           ),
-                          CircularPercentIndicator(
-                            percent: 0.5,
-                            radius: 60,
-                            lineWidth: 24,
-                            animation: true,
-                            progressColor:
-                                FlutterFlowTheme.of(context).primaryColor,
-                            backgroundColor:
-                                FlutterFlowTheme.of(context).grayIcon,
-                            center: Text(
-                              '50%',
-                              style: FlutterFlowTheme.of(context)
-                                  .bodyText1
-                                  .override(
-                                    fontFamily: 'Red Hat Display',
-                                    color: FlutterFlowTheme.of(context)
-                                        .primaryColor,
-                                  ),
-                            ),
-                          ),
+
                           Text(
                             'Total  Earnings ',
                             style:

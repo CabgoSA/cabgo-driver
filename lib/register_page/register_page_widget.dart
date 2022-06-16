@@ -3,7 +3,8 @@ import '../flutter_flow/flutter_flow_theme.dart';
 import '../flutter_flow/flutter_flow_util.dart';
 import 'package:easy_debounce/easy_debounce.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
+import 'package:provider/provider.dart';
+import '../states/app_state.dart';
 
 class RegisterPageWidget extends StatefulWidget {
   const RegisterPageWidget({Key key}) : super(key: key);
@@ -13,33 +14,23 @@ class RegisterPageWidget extends StatefulWidget {
 }
 
 class _RegisterPageWidgetState extends State<RegisterPageWidget> {
-  TextEditingController confirmPasswordController;
-  bool confirmPasswordVisibility;
-  TextEditingController emailController;
-  TextEditingController firstNameController;
-  TextEditingController lastNameController;
-  TextEditingController phoneController;
-  TextEditingController passwordController;
-  bool passwordVisibility;
-  bool termsAndConditionsValue;
+
   final formKey = GlobalKey<FormState>();
   final scaffoldKey = GlobalKey<ScaffoldState>();
+  bool confirmPasswordVisibility;
+  bool passwordVisibility;
+  String password = "";
 
   @override
   void initState() {
     super.initState();
-    confirmPasswordController = TextEditingController();
-    confirmPasswordVisibility = false;
-    emailController = TextEditingController();
-    firstNameController = TextEditingController();
-    lastNameController = TextEditingController();
-    phoneController = TextEditingController(text: '+27');
-    passwordController = TextEditingController();
     passwordVisibility = false;
+    confirmPasswordVisibility = false;
   }
 
   @override
   Widget build(BuildContext context) {
+    final appState = Provider.of<AppState>(context);
     return Scaffold(
       key: scaffoldKey,
       appBar: AppBar(
@@ -66,7 +57,13 @@ class _RegisterPageWidgetState extends State<RegisterPageWidget> {
       backgroundColor: FlutterFlowTheme.of(context).primaryBackground,
       floatingActionButton: FloatingActionButton(
         onPressed: () async {
-          context.pushNamed('VerifyPage');
+     ;
+      if(formKey.currentState.validate()){
+
+        appState.register();
+        print('submitted to backend');
+      }
+
         },
         backgroundColor: FlutterFlowTheme.of(context).primaryColor,
         elevation: 8,
@@ -105,12 +102,12 @@ class _RegisterPageWidgetState extends State<RegisterPageWidget> {
                     ),
                     Form(
                       key: formKey,
-                      autovalidateMode: AutovalidateMode.always,
+
                       child: Column(
                         mainAxisSize: MainAxisSize.max,
                         children: [
                           TextFormField(
-                            controller: emailController,
+                            controller: appState.registerEmailController,
                             onChanged: (_) => EasyDebounce.debounce(
                               'emailController',
                               Duration(milliseconds: 2000),
@@ -150,9 +147,16 @@ class _RegisterPageWidgetState extends State<RegisterPageWidget> {
                                       fontWeight: FontWeight.w300,
                                     ),
                             keyboardType: TextInputType.emailAddress,
+                            validator: (value){
+                              if(value != null && value.length <7 || !RegExp(r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+").hasMatch(value) ){
+                                return "Enter valid email";
+                              }else{
+                                return null;
+                              }
+                            },
                           ),
                           TextFormField(
-                            controller: firstNameController,
+                            controller: appState.registerFirstNameController,
                             onChanged: (_) => EasyDebounce.debounce(
                               'firstNameController',
                               Duration(milliseconds: 2000),
@@ -191,9 +195,17 @@ class _RegisterPageWidgetState extends State<RegisterPageWidget> {
                                       fontFamily: 'Red Hat Display',
                                       fontWeight: FontWeight.w300,
                                     ),
+
+                            validator: (value){
+                              if(value != null && value.length <3 ){
+                                return "Name too short";
+                              }else{
+                                return null;
+                              }
+                            },
                           ),
                           TextFormField(
-                            controller: lastNameController,
+                            controller: appState.registerLastNameController,
                             onChanged: (_) => EasyDebounce.debounce(
                               'lastNameController',
                               Duration(milliseconds: 2000),
@@ -203,7 +215,7 @@ class _RegisterPageWidgetState extends State<RegisterPageWidget> {
                             obscureText: false,
                             decoration: InputDecoration(
                               labelText: 'Last Name',
-                              hintText: 'First name',
+                              hintText: 'Last name',
                               enabledBorder: UnderlineInputBorder(
                                 borderSide: BorderSide(
                                   color:
@@ -232,47 +244,98 @@ class _RegisterPageWidgetState extends State<RegisterPageWidget> {
                                       fontFamily: 'Red Hat Display',
                                       fontWeight: FontWeight.w300,
                                     ),
+                            validator: (value){
+                              if(value != null && value.length <2 ){
+                                return "Last Name too short";
+                              }else{
+                                return null;
+                              }
+                            },
                           ),
-                          TextFormField(
-                            controller: phoneController,
-                            onChanged: (_) => EasyDebounce.debounce(
-                              'phoneController',
-                              Duration(milliseconds: 2000),
-                              () => setState(() {}),
-                            ),
-                            autofocus: true,
-                            obscureText: false,
-                            decoration: InputDecoration(
-                              labelText: 'Phone',
-                              hintText: 'Phone Number',
-                              enabledBorder: UnderlineInputBorder(
-                                borderSide: BorderSide(
-                                  color:
-                                      FlutterFlowTheme.of(context).primaryText,
-                                  width: 1,
-                                ),
-                                borderRadius: const BorderRadius.only(
-                                  topLeft: Radius.circular(4.0),
-                                  topRight: Radius.circular(4.0),
+
+
+
+
+                          Row(
+                            mainAxisSize: MainAxisSize.max,
+                            children: [
+                              Stack(
+                                children: [
+                                  Padding(
+                                    padding: EdgeInsetsDirectional.fromSTEB(0, 15, 0, 0),
+                                    child: Text(
+                                      '+27',
+                                      style: FlutterFlowTheme.of(context).bodyText1,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              Expanded(
+                                child:
+                                TextFormField(
+                                  controller: appState.registerPhoneController,
+                                  onChanged: (_) => EasyDebounce.debounce(
+                                    'phoneController',
+                                    Duration(milliseconds: 2000),
+                                        () => setState(() {}),
+                                  ),
+                                  autofocus: true,
+                                  obscureText: false,
+                                  decoration: InputDecoration(
+                                    labelText: 'Phone',
+                                    hintText: 'Phone Number',
+                                    enabledBorder: UnderlineInputBorder(
+                                      borderSide: BorderSide(
+                                        color:
+                                        FlutterFlowTheme.of(context).primaryText,
+                                        width: 1,
+                                      ),
+                                      borderRadius: const BorderRadius.only(
+                                        topLeft: Radius.circular(4.0),
+                                        topRight: Radius.circular(4.0),
+                                      ),
+                                    ),
+                                    focusedBorder: UnderlineInputBorder(
+                                      borderSide: BorderSide(
+                                        color:
+                                        FlutterFlowTheme.of(context).primaryText,
+                                        width: 1,
+                                      ),
+                                      borderRadius: const BorderRadius.only(
+                                        topLeft: Radius.circular(4.0),
+                                        topRight: Radius.circular(4.0),
+                                      ),
+                                    ),
+                                  ),
+                                  style: FlutterFlowTheme.of(context).bodyText1,
+                                  keyboardType: TextInputType.number,
+
+
+                                  validator: (value){
+                                    if(value == null || value =="" || value.length <1 ){
+                                      return "This Field can't be empty";
+                                    }else if(value.length <9  ){
+                                      return "Too short - phone should be 9 digits e.g (786942318)";
+                                    }else if(value.length >9  ){
+                                    return "Too long - phone should be 9 digits e.g (786942318)";
+                                    }else if(value.length <9  ){
+                                    return "phone should be 9 digits e.g (786942318)";
+                                    }else if(value[0]  =="0" ){
+                                      return "Number should not start with a 0 e.g (786942318)";
+                                    }
+                                    else{
+                                      return null;
+                                    }
+                                  },
+
                                 ),
                               ),
-                              focusedBorder: UnderlineInputBorder(
-                                borderSide: BorderSide(
-                                  color:
-                                      FlutterFlowTheme.of(context).primaryText,
-                                  width: 1,
-                                ),
-                                borderRadius: const BorderRadius.only(
-                                  topLeft: Radius.circular(4.0),
-                                  topRight: Radius.circular(4.0),
-                                ),
-                              ),
-                            ),
-                            style: FlutterFlowTheme.of(context).bodyText1,
-                            keyboardType: TextInputType.number,
+                            ],
                           ),
+
+
                           TextFormField(
-                            controller: passwordController,
+                            controller: appState.registerPasswordController,
                             onChanged: (_) => EasyDebounce.debounce(
                               'passwordController',
                               Duration(milliseconds: 2000),
@@ -327,9 +390,19 @@ class _RegisterPageWidgetState extends State<RegisterPageWidget> {
                                       fontWeight: FontWeight.w300,
                                     ),
                             keyboardType: TextInputType.visiblePassword,
+
+                            validator: (value){
+                              if(value == null || value =="" || value.length <1 ){
+                                return "This Field can't be empty";
+                              }
+                              else{
+                                password =value;
+                                return null;
+                              }
+                            },
                           ),
                           TextFormField(
-                            controller: confirmPasswordController,
+                            controller: appState.registerConfirmPasswordController,
                             onChanged: (_) => EasyDebounce.debounce(
                               'confirmPasswordController',
                               Duration(milliseconds: 2000),
@@ -384,6 +457,15 @@ class _RegisterPageWidgetState extends State<RegisterPageWidget> {
                                       fontWeight: FontWeight.w300,
                                     ),
                             keyboardType: TextInputType.visiblePassword,
+
+                            validator: (value){
+                              if(value != password ){
+                                return "Password does not match";
+                              }
+                              else{
+                                return null;
+                              }
+                            },
                           ),
                           Row(
                             mainAxisSize: MainAxisSize.max,
@@ -411,9 +493,9 @@ class _RegisterPageWidgetState extends State<RegisterPageWidget> {
                                     unselectedWidgetColor: Color(0xFF95A1AC),
                                   ),
                                   child: CheckboxListTile(
-                                    value: termsAndConditionsValue ??= true,
+                                    value: appState.registerTermsAndConditionsValue ??= true,
                                     onChanged: (newValue) => setState(() =>
-                                        termsAndConditionsValue = newValue),
+                                    appState.registerTermsAndConditionsValue = newValue),
                                     title: Text(
                                       'I have read and agreed to the terms and conditions',
                                       style: FlutterFlowTheme.of(context)

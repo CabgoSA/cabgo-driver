@@ -1,8 +1,10 @@
+import '../dashboard_page/dashboard_page_widget.dart';
 import '../flutter_flow/flutter_flow_theme.dart';
 import '../flutter_flow/flutter_flow_util.dart';
 import '../flutter_flow/flutter_flow_widgets.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
+import '../states/app_state.dart';
+import 'package:provider/provider.dart';
 
 class LoginPageWidget extends StatefulWidget {
   const LoginPageWidget({Key key}) : super(key: key);
@@ -12,26 +14,27 @@ class LoginPageWidget extends StatefulWidget {
 }
 
 class _LoginPageWidgetState extends State<LoginPageWidget> {
-  TextEditingController emailAddressController;
-  TextEditingController passwordController;
+
   bool passwordVisibility;
   final scaffoldKey = GlobalKey<ScaffoldState>();
+  final formKey = GlobalKey<FormState>();
+  bool isLoading = false;
 
   @override
   void initState() {
     super.initState();
-    emailAddressController = TextEditingController();
-    passwordController = TextEditingController();
+
     passwordVisibility = false;
   }
 
   @override
   Widget build(BuildContext context) {
+    final appState = Provider.of<AppState>(context);
     return Scaffold(
       key: scaffoldKey,
       backgroundColor: Colors.white,
-      body: GestureDetector(
-        onTap: () => FocusScope.of(context).unfocus(),
+      body: Form(
+        key: formKey,
         child: Align(
           alignment: AlignmentDirectional(0, 1),
           child: Padding(
@@ -49,12 +52,13 @@ class _LoginPageWidgetState extends State<LoginPageWidget> {
                         Padding(
                           padding: EdgeInsetsDirectional.fromSTEB(0, 20, 0, 0),
                           child: Image.asset(
-                            'assets/images/Logo_Cabgo.png',
-                            width: 200,
-                            height: 200,
+                            'assets/images/BLACK_CABGO_LOGO.png',
+                            width: 120,
+                            height: 120,
                             fit: BoxFit.contain,
                           ),
-                        ),
+                        )
+                        ,
                         Padding(
                           padding:
                               EdgeInsetsDirectional.fromSTEB(20, 16, 20, 0),
@@ -79,8 +83,15 @@ class _LoginPageWidgetState extends State<LoginPageWidget> {
                             children: [
                               Expanded(
                                 child: TextFormField(
-                                  controller: emailAddressController,
+                                  controller: appState.emailAddressController,
                                   obscureText: false,
+                                  validator: (value){
+                                    if(value != null && value.length <7 || !RegExp(r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+").hasMatch(value) ){
+                                      return "Enter valid email";
+                                    }else{
+                                      return null;
+                                    }
+                                  },
                                   decoration: InputDecoration(
                                     labelText: 'Email Address',
                                     labelStyle: FlutterFlowTheme.of(context)
@@ -146,7 +157,7 @@ class _LoginPageWidgetState extends State<LoginPageWidget> {
                             children: [
                               Expanded(
                                 child: TextFormField(
-                                  controller: passwordController,
+                                  controller: appState.passwordController,
                                   obscureText: !passwordVisibility,
                                   decoration: InputDecoration(
                                     labelText: 'Password',
@@ -212,6 +223,13 @@ class _LoginPageWidgetState extends State<LoginPageWidget> {
                                         fontSize: 14,
                                         fontWeight: FontWeight.normal,
                                       ),
+                                  validator: (value){
+                                    if(value != null && value.length <4 ){
+                                      return "Enter valid pasword";
+                                    }else{
+                                      return null;
+                                    }
+                                  },
                                 ),
                               ),
                             ],
@@ -251,30 +269,41 @@ class _LoginPageWidgetState extends State<LoginPageWidget> {
                                   borderRadius: 12,
                                 ),
                               ),
-                              FFButtonWidget(
+
+                              ElevatedButton(
                                 onPressed: () async {
-                                  context.pushNamed('DashboardPage');
+                                  if(formKey.currentState.validate()){
+                                    isLoading = true;
+                                    await appState.login();
+                                    if(appState.isLoggedIn) {
+                                      await Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) =>
+                                              DashboardPageWidget(),
+                                        ),
+                                      );
+                                    }
+                                    isLoading = false;
+
+                                  }
+
+
                                 },
-                                text: 'Login',
-                                options: FFButtonOptions(
-                                  width: 130,
-                                  height: 50,
-                                  color:
-                                      FlutterFlowTheme.of(context).primaryColor,
-                                  textStyle: FlutterFlowTheme.of(context)
-                                      .subtitle2
-                                      .override(
-                                        fontFamily: 'Lexend Deca',
-                                        color: Colors.white,
-                                        fontSize: 18,
-                                        fontWeight: FontWeight.w300,
-                                      ),
-                                  borderSide: BorderSide(
-                                    color: Colors.transparent,
-                                    width: 1,
-                                  ),
-                                  borderRadius: 5,
-                                ),
+                                child: isLoading ?   CircularProgressIndicator(
+                                  color: Colors.white,
+                                )
+                                    : Text( 'Login'),
+                                //
+                                // style: ButtonStyle(
+                                //     backgroundColor: MaterialStateProperty.all(),
+                                //
+                                //     textStyle: MaterialStateProperty.all(TextStyle(fontSize: 14))),
+
+                                style: ElevatedButton.styleFrom(
+                                    fixedSize: const Size(130, 40),
+                                    primary: FlutterFlowTheme.of(context).primaryColor),
+
                               ),
                             ],
                           ),

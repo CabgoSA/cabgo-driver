@@ -1,18 +1,24 @@
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'flutter_flow/flutter_flow_theme.dart';
-import 'flutter_flow/flutter_flow_util.dart';
+import 'package:cabgo_driver/states/app_state.dart';
 import 'flutter_flow/internationalization.dart';
-import 'flutter_flow/nav/nav.dart';
+import 'package:provider/provider.dart';
+import 'package:go_router/go_router.dart';
 import 'index.dart';
 
-void main() async {
+
+Future<void> main() async {
+  await dotenv.load();
   WidgetsFlutterBinding.ensureInitialized();
 
   await FlutterFlowTheme.initialize();
 
-  runApp(MyApp());
+  runApp( MultiProvider(providers: [
+    ChangeNotifierProvider.value(value:AppState(),)
+  ],
+    child: MyApp(),));
 }
 
 class MyApp extends StatefulWidget {
@@ -28,20 +34,7 @@ class _MyAppState extends State<MyApp> {
   Locale _locale;
   ThemeMode _themeMode = FlutterFlowTheme.themeMode;
 
-  AppStateNotifier _appStateNotifier;
   GoRouter _router;
-
-  bool displaySplashImage = true;
-
-  @override
-  void initState() {
-    super.initState();
-    _appStateNotifier = AppStateNotifier();
-    _router = createRouter(_appStateNotifier);
-
-    Future.delayed(Duration(seconds: 1),
-        () => setState(() => _appStateNotifier.stopShowingSplashImage()));
-  }
 
   void setLocale(Locale value) => setState(() => _locale = value);
   void setThemeMode(ThemeMode mode) => setState(() {
@@ -51,21 +44,40 @@ class _MyAppState extends State<MyApp> {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp.router(
-      title: 'Driver',
-      localizationsDelegates: [
-        FFLocalizationsDelegate(),
-        GlobalMaterialLocalizations.delegate,
-        GlobalWidgetsLocalizations.delegate,
-        GlobalCupertinoLocalizations.delegate,
-      ],
-      locale: _locale,
-      supportedLocales: const [Locale('en', '')],
-      theme: ThemeData(brightness: Brightness.light),
-      darkTheme: ThemeData(brightness: Brightness.dark),
-      themeMode: _themeMode,
-      routeInformationParser: _router.routeInformationParser,
-      routerDelegate: _router.routerDelegate,
-    );
+    final appState = Provider.of<AppState>(context);
+    print(appState.accessToken);
+    if (appState.isLoggedIn) {
+      return MaterialApp(
+        title: 'Cabgo',
+        localizationsDelegates: [
+          FFLocalizationsDelegate(),
+          GlobalMaterialLocalizations.delegate,
+          GlobalWidgetsLocalizations.delegate,
+          GlobalCupertinoLocalizations.delegate,
+        ],
+        locale: _locale,
+        supportedLocales: const [Locale('en', '')],
+        theme: ThemeData(brightness: Brightness.light),
+        darkTheme: ThemeData(brightness: Brightness.dark),
+        themeMode: _themeMode,
+        home: HomePageWidget(),
+      );
+    }else{
+      return MaterialApp(
+        title: 'Cabgo',
+        localizationsDelegates: [
+          FFLocalizationsDelegate(),
+          GlobalMaterialLocalizations.delegate,
+          GlobalWidgetsLocalizations.delegate,
+          GlobalCupertinoLocalizations.delegate,
+        ],
+        locale: _locale,
+        supportedLocales: const [Locale('en', '')],
+        theme: ThemeData(brightness: Brightness.light),
+        darkTheme: ThemeData(brightness: Brightness.dark),
+        themeMode: _themeMode,
+        home: DashboardPageWidget(),
+      );
+    }
   }
 }

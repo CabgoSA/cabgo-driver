@@ -5,6 +5,8 @@ import '../flutter_flow/flutter_flow_widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
+import '../login_page/login_page_widget.dart';
+import '../register_page/register_page_widget.dart';
 
 class HomePageWidget extends StatefulWidget {
   const HomePageWidget({Key key}) : super(key: key);
@@ -264,7 +266,12 @@ class _HomePageWidgetState extends State<HomePageWidget>
                           children: [
                             FFButtonWidget(
                               onPressed: () async {
-                                context.pushNamed('LoginPage');
+                                await Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => LoginPageWidget(),
+                                  ),
+                                );
                               },
                               text: 'Sign In',
                               options: FFButtonOptions(
@@ -288,7 +295,12 @@ class _HomePageWidgetState extends State<HomePageWidget>
                             ),
                             FFButtonWidget(
                               onPressed: () async {
-                                context.pushNamed('RegisterPage');
+                                await Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => RegisterPageWidget(),
+                                  ),
+                                );
                               },
                               text: 'Sign Up',
                               options: FFButtonOptions(

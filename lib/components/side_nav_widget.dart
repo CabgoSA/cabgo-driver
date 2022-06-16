@@ -1,9 +1,14 @@
+import 'package:provider/provider.dart';
+
 import '../flutter_flow/flutter_flow_theme.dart';
 import '../flutter_flow/flutter_flow_util.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:share_plus/share_plus.dart';
+
+import '../home_page/home_page_widget.dart';
+import '../states/app_state.dart';
 
 class SideNavWidget extends StatefulWidget {
   const SideNavWidget({Key key}) : super(key: key);
@@ -15,6 +20,7 @@ class SideNavWidget extends StatefulWidget {
 class _SideNavWidgetState extends State<SideNavWidget> {
   @override
   Widget build(BuildContext context) {
+    final appState = Provider.of<AppState>(context);
     return Container(
       width: MediaQuery.of(context).size.width,
       height: 100,
@@ -221,7 +227,15 @@ class _SideNavWidgetState extends State<SideNavWidget> {
                   padding: EdgeInsetsDirectional.fromSTEB(5, 5, 5, 5),
                   child: InkWell(
                     onTap: () async {
-                      context.pushNamed('WalletPage');
+                      appState.logout();
+                      if(!appState.isLoggedIn) {
+                        await Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => HomePageWidget(),
+                          ),
+                        );
+                      }
                     },
                     child: Text(
                       'Logout',
