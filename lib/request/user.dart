@@ -17,7 +17,7 @@ class ApiClient {
           'password': password,
           'password_confirmation': confirmPassword,
           'device_token': 'e6AH-mhp_0I:APA91bFyRFlzohXy7wLP0TwvIKMg3RzZG1UhaAVkljUu3_J84bgllg1wQQqkklK1v1LxLjx0P0Krz0XeajW4-750p6tq3nm0vjknGjQ3rJOvY-ATeeVxU3BX_zzF5Ip9p66IzcB0BngL',
-          'mobile': phone,
+          'mobile': '+27'+phone,
           'dial_code': '0027',
           'device_type': 'android',
           'login_by': 'manual',
@@ -28,8 +28,13 @@ class ApiClient {
 
       return response.data;
 
+
     } on DioError catch (e) {
-      return e.response.data;
+      if(e.response.data['email']){
+        return e.response.data;
+
+      }
+
     }
   }
 

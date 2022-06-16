@@ -18,8 +18,7 @@ class AppState with ChangeNotifier {
     TextEditingController registerEmailController = TextEditingController();
     TextEditingController registerFirstNameController = TextEditingController();
     TextEditingController registerLastNameController = TextEditingController();
-    TextEditingController registerPhoneController = TextEditingController(
-        text: '+27');
+    TextEditingController registerPhoneController = TextEditingController();
     TextEditingController registerPasswordController = TextEditingController();
     TextEditingController registerConfirmPasswordController = TextEditingController();
     TextEditingController locationController = TextEditingController();
