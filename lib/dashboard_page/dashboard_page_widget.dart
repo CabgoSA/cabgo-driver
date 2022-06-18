@@ -21,7 +21,20 @@ class _DashboardPageWidgetState extends State<DashboardPageWidget> {
 
   @override
   Widget build(BuildContext context) {
+    final appState = Provider.of<AppState>(context);
     return Scaffold(
+      floatingActionButton: FloatingActionButton.extended(
+        onPressed: () async{
+          if(appState.isOnline){
+            await appState.goOnline('offline');
+          }else{
+            await appState.goOnline('active');
+          }
+        },
+        label:   appState.isOnline ? const Text('Go Offline') : const Text('Go Online '),
+        icon: const Icon(Icons.thumb_up),
+        backgroundColor: Colors.pink,
+      ),
       key: scaffoldKey,
       resizeToAvoidBottomInset: false,
       backgroundColor: FlutterFlowTheme.of(context).primaryBackground,
@@ -33,6 +46,7 @@ class _DashboardPageWidgetState extends State<DashboardPageWidget> {
         ),
       ),
       body: SafeArea(
+
         child: GestureDetector(
           onTap: () => FocusScope.of(context).unfocus(),
           child: Container(
@@ -155,6 +169,7 @@ class _MapState extends State<Map> {
             color: Color(0xFFEEEEEE),
           ),
         ),
+
       ],
     );
   }

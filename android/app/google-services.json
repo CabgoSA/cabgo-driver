@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "519792146288",
+    "project_id": "cabgo-pass",
+    "storage_bucket": "cabgo-pass.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:519792146288:android:7e861aaf59f8deed42c1b5",
+        "android_client_info": {
+          "package_name": "com.mycompany.driver"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "519792146288-a5ipq1917eip53vn5hunf80tq8prthua.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCg_6M-id0HTz7531AqF1qxvLNbRWD1avw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "519792146288-a5ipq1917eip53vn5hunf80tq8prthua.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

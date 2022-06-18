@@ -45,6 +45,9 @@ class AppState with ChangeNotifier {
         );
 
     bool _isLoggedIn = false;
+    bool _isOnline = false;
+
+    bool get isOnline => _isOnline;
 
     bool get isLoggedIn => _isLoggedIn;
 
@@ -63,6 +66,8 @@ class AppState with ChangeNotifier {
       _getTokens();
       isUserLogged();
       _loadingInitialPosition();
+
+
     }
 
 //  get user Location of Device
@@ -98,7 +103,7 @@ class AppState with ChangeNotifier {
     // ! SEND REQUEST
     Future<void> login() async {
       final response = await ApiClient().login(emailAddressController.text,passwordController.text );
-      print(response);
+      print(response['access_token']);
       _addNewItem('access_token', response['access_token']);
       _addNewItem('user_id', response['id']);
       if(response['access_token'] != null){
@@ -129,10 +134,21 @@ class AppState with ChangeNotifier {
       //await _storage.delete(key: 'access_token', aOptions: _getAndroidOptions());
       //await _storage.delete(key: 'user_id', aOptions: _getAndroidOptions());
       isUserLogged();
-      print(userId);
-      print('------------------loggged out------------------');
+      // print(userId);
+      // print('------------------loggged out------------------');
       notifyListeners();
     }
+
+  // ! SEND REQUEST
+  Future<void> goOnline(String status) async {
+      dynamic response = await await ApiClient().goOnline(status);
+      if(response['service']['status'] == 'active'){
+        _isOnline = true;
+      } else {
+        _isOnline = false;
+      }
+    notifyListeners();
+  }
 
     Future<dynamic> readSecureData(String key) async {
       var readData = await _storage.read(key: key, aOptions: _getAndroidOptions());
