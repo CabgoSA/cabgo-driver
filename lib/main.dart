@@ -48,44 +48,6 @@ class _MyAppState extends State<MyApp> {
 
   void setLocale(Locale value) => setState(() {
     _locale = value;
-
-    //  firebase
-    LocalNotificationService.initialize(context);
-
-    ///gives you the message on which user taps
-    ///and it opened the app from terminated state
-    FirebaseMessaging.instance.getInitialMessage().then((message) {
-      if(message != null){
-        final routeFromMessage = message.data["route"];
-
-        Navigator.of(context).pushNamed(routeFromMessage);
-      }
-    });
-
-    ///forground work
-    FirebaseMessaging.onMessage.listen((message) {
-      if(message.notification != null){
-        print(message.notification.body);
-        print(message.notification.title);
-      }
-
-      LocalNotificationService.display(message);
-    });
-
-    ///When the app is in background but opened and user taps
-    ///on the notification
-    FirebaseMessaging.onMessageOpenedApp.listen((message) {
-      if(message.notification != null){
-        print(message.notification.body);
-        print(message.notification.title);
-      }
-      LocalNotificationService.display(message);
-    });
-
-
-
-
-    //  end
   });
   void setThemeMode(ThemeMode mode) => setState(() {
         _themeMode = mode;

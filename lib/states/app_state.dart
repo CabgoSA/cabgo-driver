@@ -1,3 +1,5 @@
+import 'package:cabgo_driver/services/local_notification_service.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:geocoding/geocoding.dart';
@@ -5,6 +7,8 @@ import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:cabgo_driver/request/user.dart';
 import 'package:cabgo_driver/request/google_maps_request.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
+
 
 
 class AppState with ChangeNotifier {
@@ -46,6 +50,7 @@ class AppState with ChangeNotifier {
 
     bool _isLoggedIn = false;
     bool _isOnline = false;
+    bool incomeMessage = false;
 
     bool get isOnline => _isOnline;
 
@@ -58,7 +63,8 @@ class AppState with ChangeNotifier {
     GoogleMapsServices get googleMapsServices => _googleMapsServices;
     GoogleMapController get mapController => _mapController;
     //String get refreshToken => _refreshToken;
-
+     FirebaseMessaging _messaging;
+    PushNotifications notifications;
 
 
     AppState() {
@@ -66,13 +72,40 @@ class AppState with ChangeNotifier {
       _getTokens();
       isUserLogged();
       _loadingInitialPosition();
-
+      _registerNotification();
 
     }
 
+//    register notification
+  void _registerNotification() async {
+    await Firebase.initializeApp();
+
+    _messaging = FirebaseMessaging.instance;
+    NotificationSettings settings = await _messaging.requestPermission(
+      alert: true,
+      badge: true,
+      provisional: false,
+      sound: true,
+    );
+
+    if (settings.authorizationStatus == AuthorizationStatus.authorized) {
+      print('User granted permision ');
+
+    }
+
+
+    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+
+     notifications =  PushNotifications(message.data['message'], message.data['requestID']);
+     incomeMessage = true;
+      notifyListeners();
+    });
+  }
+
+
+
 //  get user Location of Device
   void _getUserLocation() async {
-      print('testetetet location');
     Position position = await Geolocator.getCurrentPosition( desiredAccuracy: LocationAccuracy.high);
     _initialPosition = LatLng(position.latitude, position.longitude);
     notifyListeners();
@@ -142,6 +175,7 @@ class AppState with ChangeNotifier {
   // ! SEND REQUEST
   Future<void> goOnline(String status) async {
       dynamic response = await await ApiClient().goOnline(status);
+     // print(response);
       if(response['service']['status'] == 'active'){
         _isOnline = true;
       } else {

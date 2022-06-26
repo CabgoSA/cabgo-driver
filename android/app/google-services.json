@@ -1,33 +1,87 @@
 {
   "project_info": {
-    "project_number": "519792146288",
-    "project_id": "cabgo-pass",
-    "storage_bucket": "cabgo-pass.appspot.com"
+    "project_number": "628757832787",
+    "firebase_url": "https://lungataxi.firebaseio.com",
+    "project_id": "lungataxi",
+    "storage_bucket": "lungataxi.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:519792146288:android:7e861aaf59f8deed42c1b5",
+        "mobilesdk_app_id": "1:628757832787:android:1b428e4168d00f8c9e52a6",
         "android_client_info": {
-          "package_name": "com.mycompany.driver"
+          "package_name": "com.cabsgo.partner"
         }
       },
       "oauth_client": [
         {
-          "client_id": "519792146288-a5ipq1917eip53vn5hunf80tq8prthua.apps.googleusercontent.com",
+          "client_id": "628757832787-c4odknjp2pqdspsr0nbrm208okvkllck.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.cabsgo.partner",
+            "certificate_hash": "5b0148fec0f507b879605089b38d7f3370fd029a"
+          }
+        },
+        {
+          "client_id": "628757832787-6mpgkidjhr423ggn37iv77gpb1ls53bs.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyCg_6M-id0HTz7531AqF1qxvLNbRWD1avw"
+          "current_key": "AIzaSyAnTCD8qcpW9FiZhz4EHdn1F54frjw3ggs"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "519792146288-a5ipq1917eip53vn5hunf80tq8prthua.apps.googleusercontent.com",
+              "client_id": "628757832787-6mpgkidjhr423ggn37iv77gpb1ls53bs.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:628757832787:android:7d42cec6d9b0481b9e52a6",
+        "android_client_info": {
+          "package_name": "com.cabsgo.user"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "628757832787-0ijnvpcj2itafiva53urmvoqtbg9igj8.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.cabsgo.user",
+            "certificate_hash": "5e7dd0202ccf5eb35036a855f534c28ef7329d14"
+          }
+        },
+        {
+          "client_id": "628757832787-84hqqioikica6lenfrqdb6a2cibfiu1m.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.cabsgo.user",
+            "certificate_hash": "5b0148fec0f507b879605089b38d7f3370fd029a"
+          }
+        },
+        {
+          "client_id": "628757832787-6mpgkidjhr423ggn37iv77gpb1ls53bs.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAnTCD8qcpW9FiZhz4EHdn1F54frjw3ggs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "628757832787-6mpgkidjhr423ggn37iv77gpb1ls53bs.apps.googleusercontent.com",
               "client_type": 3
             }
           ]
