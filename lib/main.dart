@@ -7,14 +7,24 @@ import 'flutter_flow/internationalization.dart';
 import 'package:provider/provider.dart';
 import 'package:go_router/go_router.dart';
 import 'index.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:cabgo_driver/services/local_notification_service.dart';
 
+///Receive message when app is in background solution for on message
+Future<void> backgroundHandler(RemoteMessage message) async{
+  print(message.data.toString());
+  print(message.notification.title);
+}
 
 Future<void> main() async {
   await dotenv.load();
   WidgetsFlutterBinding.ensureInitialized();
-
   await FlutterFlowTheme.initialize();
-
+  //firebase initialization
+  await Firebase.initializeApp();
+  FirebaseMessaging.onBackgroundMessage(backgroundHandler);
+  //end
   runApp( MultiProvider(providers: [
     ChangeNotifierProvider.value(value:AppState(),)
   ],
@@ -36,11 +46,15 @@ class _MyAppState extends State<MyApp> {
 
   GoRouter _router;
 
-  void setLocale(Locale value) => setState(() => _locale = value);
+  void setLocale(Locale value) => setState(() {
+    _locale = value;
+  });
   void setThemeMode(ThemeMode mode) => setState(() {
         _themeMode = mode;
         FlutterFlowTheme.saveThemeMode(mode);
       });
+
+
 
   @override
   Widget build(BuildContext context) {

@@ -77,6 +77,26 @@ class ApiClient {
     }
   }
 
+  Future<dynamic> goOnline(String status) async {
+    String accessToken = 'Bearer  eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOjI0OCwiaXNzIjoiaHR0cHM6Ly9jYWJnby5jby56YS9hcGkvcHJvdmlkZXIvb2F1dGgvdG9rZW4iLCJpYXQiOjE2NTYzMjAwODEsImV4cCI6MTY1NjY4MDA4MSwibmJmIjoxNjU2MzIwMDgxLCJqdGkiOiJ3MWFUMTdHd2VtS1lwWXZnIn0.ciU2BofTYr01cR3MBVaaFEpWu9q71dUwwx1zQsUEvUc';
+    _dio.options.headers["Authorization"] = accessToken;
+    try {
+      Response response = await _dio.post(
+        dotenv.get('BASE_URL') + 'api/provider/profile/available',
+        data: {
+          'service_status': status,
+        },
+        options: Options(headers: {'Accept': 'application/json'}),
+      );
+
+      print(response);
+      return response.data;
+    } on DioError catch (e) {
+      return e.response.data;
+    }
+  }
+
+
 
 
 

@@ -1,10 +1,14 @@
+import 'package:cabgo_driver/services/local_notification_service.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter/material.dart';
-import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:cabgo_driver/request/user.dart';
 import 'package:cabgo_driver/request/google_maps_request.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
+import '../request/ride.dart';
+
 
 
 class AppState with ChangeNotifier {
@@ -45,6 +49,10 @@ class AppState with ChangeNotifier {
         );
 
     bool _isLoggedIn = false;
+    bool _isOnline = false;
+    bool incomeMessage = false;
+
+    bool get isOnline => _isOnline;
 
     bool get isLoggedIn => _isLoggedIn;
 
@@ -54,8 +62,11 @@ class AppState with ChangeNotifier {
     LatLng get lastPosition => _lastPosition;
     GoogleMapsServices get googleMapsServices => _googleMapsServices;
     GoogleMapController get mapController => _mapController;
-    //String get refreshToken => _refreshToken;
+     FirebaseMessaging _messaging;
+    PushNotifications notifications;
 
+    RideRoute _info;
+    RideRoute get info => _info; //GETTERS
 
 
     AppState() {
@@ -63,11 +74,39 @@ class AppState with ChangeNotifier {
       _getTokens();
       isUserLogged();
       _loadingInitialPosition();
+      _registerNotification();
+
     }
+
+//    register notification
+  void _registerNotification() async {
+    await Firebase.initializeApp();
+
+    _messaging = FirebaseMessaging.instance;
+    NotificationSettings settings = await _messaging.requestPermission(
+      alert: true,
+      badge: true,
+      provisional: false,
+      sound: true,
+    );
+
+    if (settings.authorizationStatus == AuthorizationStatus.authorized) {
+      print('User granted permision ');
+
+    }
+
+
+    FirebaseMessaging.onMessage.listen((RemoteMessage message)  {
+     notifications =   PushNotifications(message.data['message'], message.data['requestID']);
+     incomeMessage = true;
+      notifyListeners();
+    });
+  }
+
+
 
 //  get user Location of Device
   void _getUserLocation() async {
-      print('testetetet location');
     Position position = await Geolocator.getCurrentPosition( desiredAccuracy: LocationAccuracy.high);
     _initialPosition = LatLng(position.latitude, position.longitude);
     notifyListeners();
@@ -98,7 +137,7 @@ class AppState with ChangeNotifier {
     // ! SEND REQUEST
     Future<void> login() async {
       final response = await ApiClient().login(emailAddressController.text,passwordController.text );
-      print(response);
+      print(response['access_token']);
       _addNewItem('access_token', response['access_token']);
       _addNewItem('user_id', response['id']);
       if(response['access_token'] != null){
@@ -125,14 +164,22 @@ class AppState with ChangeNotifier {
 
     // ! SEND REQUEST
     Future<void> logout() async {
-      int userId = await readSecureData('user_id');
-      //await _storage.delete(key: 'access_token', aOptions: _getAndroidOptions());
-      //await _storage.delete(key: 'user_id', aOptions: _getAndroidOptions());
+      await _storage.delete(key: 'access_token', aOptions: _getAndroidOptions());
       isUserLogged();
-      print(userId);
-      print('------------------loggged out------------------');
       notifyListeners();
     }
+
+  // ! SEND REQUEST
+  Future<void> goOnline(String status) async {
+      dynamic response =  await ApiClient().goOnline(status);
+     // print(response);
+      if(response['service']['status'] == 'active'){
+        _isOnline = true;
+      } else {
+        _isOnline = false;
+      }
+    notifyListeners();
+  }
 
     Future<dynamic> readSecureData(String key) async {
       var readData = await _storage.read(key: key, aOptions: _getAndroidOptions());
@@ -162,7 +209,37 @@ class AppState with ChangeNotifier {
         }
       });
 
+
     }
+
+  Future<void>acceptRequest(int requestID) async{
+
+      dynamic rideDetails = await Ride().acceptRide(requestID);
+
+     _info =  RideRoute(bookingID: rideDetails['booking_id'],
+                       paymentMethod: rideDetails['payment_mode'],
+                       serviceType:  rideDetails['service_type_id'],
+                      totalDistance: rideDetails['distance'],
+                      price : 3,
+                      otp : rideDetails['otp'],
+                      driverLocation: initialPosition,
+                      riderLocation: LatLng(double.parse(rideDetails['s_latitude']), double.parse(rideDetails['s_longitude'])),
+                      route:  rideDetails['route_key'],
+      );
+
+     notifyListeners();
+
+  }
+
+  Future<void> driveToPick(LatLng origin, LatLng destination) async{
+
+    dynamic details = await Ride().driveToPickUp( origin, destination);
+
+
+    print(details);
+
+
+  }
 
 
 }

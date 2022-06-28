@@ -1,12 +1,18 @@
+
+import 'package:cabgo_driver/services/local_notification_service.dart';
+import 'package:flutter_polyline_points/flutter_polyline_points.dart';
+import 'package:flutter_ringtone_player/flutter_ringtone_player.dart';
+import 'package:uuid/uuid.dart';
 import '../components/side_nav_widget.dart';
-import '../flutter_flow/flutter_flow_icon_button.dart';
-import '../flutter_flow/flutter_flow_theme.dart';
-import '../flutter_flow/flutter_flow_util.dart';
+ import '../flutter_flow/flutter_flow_icon_button.dart';
+ import '../flutter_flow/flutter_flow_theme.dart';
 import 'package:flutter/material.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:provider/provider.dart';
-import 'package:cabgo_driver/states/app_state.dart';
-import 'package:flutter_spinkit/flutter_spinkit.dart';
+ import 'package:google_maps_flutter/google_maps_flutter.dart';
+ import 'package:provider/provider.dart';
+ import 'package:cabgo_driver/states/app_state.dart';
+ import 'package:flutter_spinkit/flutter_spinkit.dart';
+
+import '../flutter_flow/place.dart';
 
 class DashboardPageWidget extends StatefulWidget {
   const DashboardPageWidget({Key key}) : super(key: key);
@@ -16,12 +22,38 @@ class DashboardPageWidget extends StatefulWidget {
 }
 
 class _DashboardPageWidgetState extends State<DashboardPageWidget> {
+
+
+
   var placePickerValue = FFPlace();
   final scaffoldKey = GlobalKey<ScaffoldState>();
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    final appState = Provider.of<AppState>(context);
+    if(appState.notifications != null ) {
+      FlutterRingtonePlayer.play(fromAsset: "assets/audios/request.mp3");
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        show(context,appState, appState.notifications);
+      });
+      Future.delayed(Duration(milliseconds: 1500), () {
+        FlutterRingtonePlayer.stop();
+        appState.notifications = null;
+      });
+    }
+    return  Scaffold(
+      floatingActionButton: FloatingActionButton.extended(
+        onPressed: () async{
+          if(appState.isOnline){
+            await appState.goOnline('offline');
+          }else{
+            await appState.goOnline('active');
+          }
+        },
+        label:   appState.isOnline ? const Text('Go Offline') : const Text('Go Online '),
+        icon: const Icon(Icons.thumb_up),
+        backgroundColor: Colors.green,
+      ),
       key: scaffoldKey,
       resizeToAvoidBottomInset: false,
       backgroundColor: FlutterFlowTheme.of(context).primaryBackground,
@@ -33,6 +65,7 @@ class _DashboardPageWidgetState extends State<DashboardPageWidget> {
         ),
       ),
       body: SafeArea(
+
         child: GestureDetector(
           onTap: () => FocusScope.of(context).unfocus(),
           child: Container(
@@ -61,6 +94,75 @@ class _DashboardPageWidgetState extends State<DashboardPageWidget> {
       ),
     );
   }
+
+
+  void show(BuildContext context, AppState appState, PushNotifications notifications) {
+    showModalBottomSheet<void>(
+      context: context,
+      builder: (BuildContext context) {
+        return Container(
+          height: 200,
+          color: Colors.amber,
+          child: Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                 Text(notifications.body.toString()),
+
+                Padding(
+                  padding: EdgeInsetsDirectional.fromSTEB(0, 10, 0, 0),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.max,
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: [
+                      TextButton(
+
+                        style: TextButton.styleFrom(
+                          backgroundColor: Color(0xFFC40000),
+                          textStyle: const TextStyle(fontSize: 20,
+                            fontFamily: 'Red Hat Display',
+                            color: Colors.white,
+                            fontWeight: FontWeight.w300,),
+                        ),
+                        onPressed: () {
+                          Navigator.pop(context);
+                        },
+                        child: const Text('Decline'),
+                      ),
+
+                      TextButton(
+
+                        style: TextButton.styleFrom(
+                          backgroundColor: Color(0xFFC40000),
+                          textStyle: const TextStyle(fontSize: 20,
+                            fontFamily: 'Red Hat Display',
+                            color: Colors.white,
+                            fontWeight: FontWeight.w300,),
+                        ),
+                        onPressed: () async{
+                          print(notifications.requestID);
+                           await appState.acceptRequest( int.parse(notifications.requestID));
+                            if(appState.info != null){
+                             appState.driveToPick(appState.initialPosition, appState.info.riderLocation);
+                             // Navigator.pop(context);
+                           }else{
+                              print('ooops');
+                           }
+                        },
+                        child: const Text('Accept'),
+                      ),
+                    ],
+                  ),
+                ),
+
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
 }
 
 class Map extends StatefulWidget {
@@ -69,6 +171,9 @@ class Map extends StatefulWidget {
 }
 
 class _MapState extends State<Map> {
+
+  var uuid = Uuid();
+
   @override
   void initState() {
     super.initState();
@@ -102,14 +207,17 @@ class _MapState extends State<Map> {
             Visibility(
               visible: appState.locationServiceActive == false,
               child: Text(
-                "Please enable location services!",
-                style: TextStyle(color: Colors.grey, fontSize: 18),
-              ),
-            )
+              "Please enable location services!",
+              style: TextStyle(color: Colors.grey, fontSize: 18),
+            ),
+
+            ),
+
           ],
         ))
         : Stack(
       children: <Widget>[
+        (appState.info == null) ?
         GoogleMap(
           initialCameraPosition:
           CameraPosition(target: appState.initialPosition, zoom: 18),
@@ -118,6 +226,38 @@ class _MapState extends State<Map> {
           mapType: MapType.normal,
           onCameraMove: appState.onCameraMove,
           compassEnabled: true,
+
+        ) :
+        GoogleMap(
+          initialCameraPosition:
+          CameraPosition(target: appState.initialPosition, zoom: 18),
+          onMapCreated: appState.onCreated,
+          myLocationEnabled: true,
+          mapType: MapType.normal,
+          onCameraMove: appState.onCameraMove,
+          compassEnabled: true,
+          markers: {
+            Marker(
+                markerId: MarkerId(uuid.v4()),
+                position: appState.initialPosition,
+                infoWindow: InfoWindow(title: 'My Location', snippet: "go here"),
+                icon: BitmapDescriptor.defaultMarker),
+            Marker(
+              markerId: MarkerId(uuid.v4()),
+              position: appState.info.riderLocation,
+              infoWindow: InfoWindow(title: 'Rider Location', snippet: "go here"),
+              icon: BitmapDescriptor.defaultMarker),
+              },
+          polylines: {
+            Polyline(
+              polylineId: const PolylineId('overview_polyline'),
+              color: Colors.red,
+              width: 5,
+              points: PolylinePoints().decodePolyline(appState.info.route)
+                  .map((e) => LatLng(e.latitude, e.longitude))
+                  .toList(),
+            ),
+          },
         ),
 
         Column(
@@ -155,385 +295,15 @@ class _MapState extends State<Map> {
             color: Color(0xFFEEEEEE),
           ),
         ),
+
       ],
     );
   }
 
-//bottomsheet start
-  void _bottomSheetMore(context) {
-    showModalBottomSheet(
-      context: context,
-      builder: (builder) {
-        return Container(
-          padding: EdgeInsets.only(
-            left: 5.0,
-            right: 5.0,
-            top: 5.0,
-            bottom: 0.0,
-          ),
-          decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.only(
-                  topLeft: const Radius.circular(10.0),
-                  topRight: const Radius.circular(10.0))),
-          child: Column(
-            children: <Widget>[
-              //  Divider(
-              //   height: 10.0,
-              // ),
-              SingleChildScrollView(
-                scrollDirection: Axis.horizontal,
-                child: Row(
-                  mainAxisSize: MainAxisSize.max,
-                  children: [
-                    Padding(
-                      padding: EdgeInsetsDirectional.fromSTEB(10, 10, 10, 10),
-                      child: Column(
-                        mainAxisSize: MainAxisSize.max,
-                        children: [
-                          Padding(
-                            padding: EdgeInsetsDirectional.fromSTEB(0, 0, 0, 5),
-                            child: Text(
-                              'R1 02 .00',
-                              style: FlutterFlowTheme.of(context)
-                                  .bodyText1
-                                  .override(
-                                fontFamily: 'Red Hat Display',
-                                fontSize: 16,
-                                fontWeight: FontWeight.w300,
-                              ),
-                            ),
-                          ),
-                          Image.asset(
-                            'assets/images/Lite.png',
-                            width: 100,
-                            height: 100,
-                            fit: BoxFit.cover,
-                          ),
-                          Padding(
-                            padding: EdgeInsetsDirectional.fromSTEB(0, 5, 0, 0),
-                            child: Text(
-                              '17km.6 kms',
-                              style: FlutterFlowTheme.of(context)
-                                  .bodyText1
-                                  .override(
-                                fontFamily: 'Red Hat Display',
-                                fontSize: 16,
-                                fontWeight: FontWeight.w300,
-                              ),
-                            ),
-                          ),
-                          Padding(
-                            padding: EdgeInsetsDirectional.fromSTEB(0, 5, 0, 0),
-                            child: Text(
-                              'CabgLite',
-                              style: FlutterFlowTheme.of(context)
-                                  .bodyText1
-                                  .override(
-                                fontFamily: 'Red Hat Display',
-                                fontSize: 16,
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    Padding(
-                      padding: EdgeInsetsDirectional.fromSTEB(10, 10, 10, 10),
-                      child: Column(
-                        mainAxisSize: MainAxisSize.max,
-                        children: [
-                          Padding(
-                            padding: EdgeInsetsDirectional.fromSTEB(0, 0, 0, 5),
-                            child: Text(
-                              'R1 02 .00',
-                              style: FlutterFlowTheme.of(context)
-                                  .bodyText1
-                                  .override(
-                                fontFamily: 'Red Hat Display',
-                                fontSize: 16,
-                                fontWeight: FontWeight.w300,
-                              ),
-                            ),
-                          ),
-                          Image.asset(
-                            'assets/images/Express.png',
-                            width: 100,
-                            height: 100,
-                            fit: BoxFit.cover,
-                          ),
-                          Padding(
-                            padding: EdgeInsetsDirectional.fromSTEB(0, 5, 0, 0),
-                            child: Text(
-                              '17km.6 kms',
-                              style: FlutterFlowTheme.of(context)
-                                  .bodyText1
-                                  .override(
-                                fontFamily: 'Red Hat Display',
-                                fontSize: 16,
-                                fontWeight: FontWeight.w300,
-                              ),
-                            ),
-                          ),
-                          Padding(
-                            padding: EdgeInsetsDirectional.fromSTEB(0, 5, 0, 0),
-                            child: Text(
-                              'CabgLite',
-                              style: FlutterFlowTheme.of(context)
-                                  .bodyText1
-                                  .override(
-                                fontFamily: 'Red Hat Display',
-                                fontSize: 16,
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    Padding(
-                      padding: EdgeInsetsDirectional.fromSTEB(10, 10, 10, 10),
-                      child: Column(
-                        mainAxisSize: MainAxisSize.max,
-                        children: [
-                          Padding(
-                            padding: EdgeInsetsDirectional.fromSTEB(0, 0, 0, 5),
-                            child: Text(
-                              'R1 02 .00',
-                              style: FlutterFlowTheme.of(context)
-                                  .bodyText1
-                                  .override(
-                                fontFamily: 'Red Hat Display',
-                                fontSize: 16,
-                                fontWeight: FontWeight.w300,
-                              ),
-                            ),
-                          ),
-                          Image.asset(
-                            'assets/images/Xpress.png',
-                            width: 100,
-                            height: 100,
-                            fit: BoxFit.cover,
-                          ),
-                          Padding(
-                            padding: EdgeInsetsDirectional.fromSTEB(0, 5, 0, 0),
-                            child: Text(
-                              '17km.6 kms',
-                              style: FlutterFlowTheme.of(context)
-                                  .bodyText1
-                                  .override(
-                                fontFamily: 'Red Hat Display',
-                                fontSize: 16,
-                                fontWeight: FontWeight.w300,
-                              ),
-                            ),
-                          ),
-                          Padding(
-                            padding: EdgeInsetsDirectional.fromSTEB(0, 5, 0, 0),
-                            child: Text(
-                              'CabgLite',
-                              style: FlutterFlowTheme.of(context)
-                                  .bodyText1
-                                  .override(
-                                fontFamily: 'Red Hat Display',
-                                fontSize: 16,
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    Padding(
-                      padding: EdgeInsetsDirectional.fromSTEB(10, 10, 10, 10),
-                      child: Column(
-                        mainAxisSize: MainAxisSize.max,
-                        children: [
-                          Padding(
-                            padding: EdgeInsetsDirectional.fromSTEB(0, 0, 0, 5),
-                            child: Text(
-                              'R1 02 .00',
-                              style: FlutterFlowTheme.of(context)
-                                  .bodyText1
-                                  .override(
-                                fontFamily: 'Red Hat Display',
-                                fontSize: 16,
-                                fontWeight: FontWeight.w300,
-                              ),
-                            ),
-                          ),
-                          Image.asset(
-                            'assets/images/Lite.png',
-                            width: 100,
-                            height: 100,
-                            fit: BoxFit.cover,
-                          ),
-                          Padding(
-                            padding: EdgeInsetsDirectional.fromSTEB(0, 5, 0, 0),
-                            child: Text(
-                              '17km.6 kms',
-                              style: FlutterFlowTheme.of(context)
-                                  .bodyText1
-                                  .override(
-                                fontFamily: 'Red Hat Display',
-                                fontSize: 16,
-                                fontWeight: FontWeight.w300,
-                              ),
-                            ),
-                          ),
-                          Padding(
-                            padding: EdgeInsetsDirectional.fromSTEB(0, 5, 0, 0),
-                            child: Text(
-                              'CabgLite',
-                              style: FlutterFlowTheme.of(context)
-                                  .bodyText1
-                                  .override(
-                                fontFamily: 'Red Hat Display',
-                                fontSize: 16,
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    Padding(
-                      padding: EdgeInsetsDirectional.fromSTEB(10, 10, 10, 10),
-                      child: Column(
-                        mainAxisSize: MainAxisSize.max,
-                        children: [
-                          Padding(
-                            padding: EdgeInsetsDirectional.fromSTEB(0, 0, 0, 5),
-                            child: Text(
-                              'R1 02 .00',
-                              style: FlutterFlowTheme.of(context)
-                                  .bodyText1
-                                  .override(
-                                fontFamily: 'Red Hat Display',
-                                fontSize: 16,
-                                fontWeight: FontWeight.w300,
-                              ),
-                            ),
-                          ),
-                          Image.asset(
-                            'assets/images/Lite.png',
-                            width: 100,
-                            height: 100,
-                            fit: BoxFit.cover,
-                          ),
-                          Padding(
-                            padding: EdgeInsetsDirectional.fromSTEB(0, 5, 0, 0),
-                            child: Text(
-                              '17km.6 kms',
-                              style: FlutterFlowTheme.of(context)
-                                  .bodyText1
-                                  .override(
-                                fontFamily: 'Red Hat Display',
-                                fontSize: 16,
-                                fontWeight: FontWeight.w300,
-                              ),
-                            ),
-                          ),
-                          Padding(
-                            padding: EdgeInsetsDirectional.fromSTEB(0, 5, 0, 0),
-                            child: Text(
-                              'CabgLite',
-                              style: FlutterFlowTheme.of(context)
-                                  .bodyText1
-                                  .override(
-                                fontFamily: 'Red Hat Display',
-                                fontSize: 16,
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    Padding(
-                      padding: EdgeInsetsDirectional.fromSTEB(10, 10, 10, 10),
-                      child: Column(
-                        mainAxisSize: MainAxisSize.max,
-                        children: [
-                          Padding(
-                            padding: EdgeInsetsDirectional.fromSTEB(0, 0, 0, 5),
-                            child: Text(
-                              'R1 02 .00',
-                              style: FlutterFlowTheme.of(context)
-                                  .bodyText1
-                                  .override(
-                                fontFamily: 'Red Hat Display',
-                                fontSize: 16,
-                                fontWeight: FontWeight.w300,
-                              ),
-                            ),
-                          ),
-                          Image.asset(
-                            'assets/images/Lite.png',
-                            width: 100,
-                            height: 100,
-                            fit: BoxFit.cover,
-                          ),
-                          Padding(
-                            padding: EdgeInsetsDirectional.fromSTEB(0, 5, 0, 0),
-                            child: Text(
-                              '17km.6 kms',
-                              style: FlutterFlowTheme.of(context)
-                                  .bodyText1
-                                  .override(
-                                fontFamily: 'Red Hat Display',
-                                fontSize: 16,
-                                fontWeight: FontWeight.w300,
-                              ),
-                            ),
-                          ),
-                          Padding(
-                            padding: EdgeInsetsDirectional.fromSTEB(0, 5, 0, 0),
-                            child: Text(
-                              'CabgLite',
-                              style: FlutterFlowTheme.of(context)
-                                  .bodyText1
-                                  .override(
-                                fontFamily: 'Red Hat Display',
-                                fontSize: 16,
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              Padding(
-                padding: EdgeInsetsDirectional.fromSTEB(5, 5, 5, 5),
-                child: Container(
-                  width: MediaQuery.of(context).size.width,
-                  height: 50,
-                  decoration: BoxDecoration(
-                    color: Color(0xFF169F49),
-                  ),
-                  alignment: AlignmentDirectional(-0.09999999999999998, 0),
-                  child: Text(
-                    'PROCEED',
-                    style: FlutterFlowTheme.of(context).bodyText1.override(
-                      fontFamily: 'Red Hat Display',
-                      color: Colors.white,
-                    ),
-                  ),
-                ),
-              ),
 
 
-            ],
-          ),
-        );
-      },
-    );
-  }
 
-//  bottomsheet end
+
+
 
 }
