@@ -1,15 +1,18 @@
 
 import 'package:cabgo_driver/services/local_notification_service.dart';
+import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 import 'package:flutter_ringtone_player/flutter_ringtone_player.dart';
+import 'package:uuid/uuid.dart';
 import '../components/side_nav_widget.dart';
-import '../flutter_flow/flutter_flow_icon_button.dart';
-import '../flutter_flow/flutter_flow_theme.dart';
-import '../flutter_flow/flutter_flow_util.dart';
+ import '../flutter_flow/flutter_flow_icon_button.dart';
+ import '../flutter_flow/flutter_flow_theme.dart';
 import 'package:flutter/material.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:provider/provider.dart';
-import 'package:cabgo_driver/states/app_state.dart';
-import 'package:flutter_spinkit/flutter_spinkit.dart';
+ import 'package:google_maps_flutter/google_maps_flutter.dart';
+ import 'package:provider/provider.dart';
+ import 'package:cabgo_driver/states/app_state.dart';
+ import 'package:flutter_spinkit/flutter_spinkit.dart';
+
+import '../flutter_flow/place.dart';
 
 class DashboardPageWidget extends StatefulWidget {
   const DashboardPageWidget({Key key}) : super(key: key);
@@ -105,7 +108,7 @@ class _DashboardPageWidgetState extends State<DashboardPageWidget> {
               mainAxisAlignment: MainAxisAlignment.center,
               mainAxisSize: MainAxisSize.min,
               children: <Widget>[
-                 Text(notifications.requestID.toString()),
+                 Text(notifications.body.toString()),
 
                 Padding(
                   padding: EdgeInsetsDirectional.fromSTEB(0, 10, 0, 0),
@@ -123,7 +126,7 @@ class _DashboardPageWidgetState extends State<DashboardPageWidget> {
                             fontWeight: FontWeight.w300,),
                         ),
                         onPressed: () {
-
+                          Navigator.pop(context);
                         },
                         child: const Text('Decline'),
                       ),
@@ -137,8 +140,15 @@ class _DashboardPageWidgetState extends State<DashboardPageWidget> {
                             color: Colors.white,
                             fontWeight: FontWeight.w300,),
                         ),
-                        onPressed: () {
-                          // appState.acceptRequest($requestID);
+                        onPressed: () async{
+                          print(notifications.requestID);
+                           await appState.acceptRequest( int.parse(notifications.requestID));
+                            if(appState.info != null){
+                             appState.driveToPick(appState.initialPosition, appState.info.riderLocation);
+                             // Navigator.pop(context);
+                           }else{
+                              print('ooops');
+                           }
                         },
                         child: const Text('Accept'),
                       ),
@@ -162,15 +172,12 @@ class Map extends StatefulWidget {
 
 class _MapState extends State<Map> {
 
+  var uuid = Uuid();
 
   @override
   void initState() {
     super.initState();
   }
-
-
-
-
 
   @override
   Widget build(BuildContext context) {
@@ -210,6 +217,7 @@ class _MapState extends State<Map> {
         ))
         : Stack(
       children: <Widget>[
+        (appState.info == null) ?
         GoogleMap(
           initialCameraPosition:
           CameraPosition(target: appState.initialPosition, zoom: 18),
@@ -218,6 +226,38 @@ class _MapState extends State<Map> {
           mapType: MapType.normal,
           onCameraMove: appState.onCameraMove,
           compassEnabled: true,
+
+        ) :
+        GoogleMap(
+          initialCameraPosition:
+          CameraPosition(target: appState.initialPosition, zoom: 18),
+          onMapCreated: appState.onCreated,
+          myLocationEnabled: true,
+          mapType: MapType.normal,
+          onCameraMove: appState.onCameraMove,
+          compassEnabled: true,
+          markers: {
+            Marker(
+                markerId: MarkerId(uuid.v4()),
+                position: appState.initialPosition,
+                infoWindow: InfoWindow(title: 'My Location', snippet: "go here"),
+                icon: BitmapDescriptor.defaultMarker),
+            Marker(
+              markerId: MarkerId(uuid.v4()),
+              position: appState.info.riderLocation,
+              infoWindow: InfoWindow(title: 'Rider Location', snippet: "go here"),
+              icon: BitmapDescriptor.defaultMarker),
+              },
+          polylines: {
+            Polyline(
+              polylineId: const PolylineId('overview_polyline'),
+              color: Colors.red,
+              width: 5,
+              points: PolylinePoints().decodePolyline(appState.info.route)
+                  .map((e) => LatLng(e.latitude, e.longitude))
+                  .toList(),
+            ),
+          },
         ),
 
         Column(

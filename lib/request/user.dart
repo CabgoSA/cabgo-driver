@@ -78,7 +78,7 @@ class ApiClient {
   }
 
   Future<dynamic> goOnline(String status) async {
-    String accessToken = 'Bearer  eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOjI0OCwiaXNzIjoiaHR0cHM6Ly9jYWJnby5jby56YS9hcGkvcHJvdmlkZXIvb2F1dGgvdG9rZW4iLCJpYXQiOjE2NTU5MDM0MDUsImV4cCI6MTY1NjI2MzQwNSwibmJmIjoxNjU1OTAzNDA1LCJqdGkiOiJUTGxXS2JGQWM1NEljbUZRIn0.1J1tq8KY-mptHGjR2NrJ-8Bis2_I0xB6eDyv3djwV2o';
+    String accessToken = 'Bearer  eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOjI0OCwiaXNzIjoiaHR0cHM6Ly9jYWJnby5jby56YS9hcGkvcHJvdmlkZXIvb2F1dGgvdG9rZW4iLCJpYXQiOjE2NTYzMjAwODEsImV4cCI6MTY1NjY4MDA4MSwibmJmIjoxNjU2MzIwMDgxLCJqdGkiOiJ3MWFUMTdHd2VtS1lwWXZnIn0.ciU2BofTYr01cR3MBVaaFEpWu9q71dUwwx1zQsUEvUc';
     _dio.options.headers["Authorization"] = accessToken;
     try {
       Response response = await _dio.post(
@@ -88,6 +88,8 @@ class ApiClient {
         },
         options: Options(headers: {'Accept': 'application/json'}),
       );
+
+      print(response);
       return response.data;
     } on DioError catch (e) {
       return e.response.data;

@@ -2,12 +2,12 @@ import 'package:cabgo_driver/services/local_notification_service.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter/material.dart';
-import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:cabgo_driver/request/user.dart';
 import 'package:cabgo_driver/request/google_maps_request.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import '../request/ride.dart';
 
 
 
@@ -62,9 +62,11 @@ class AppState with ChangeNotifier {
     LatLng get lastPosition => _lastPosition;
     GoogleMapsServices get googleMapsServices => _googleMapsServices;
     GoogleMapController get mapController => _mapController;
-    //String get refreshToken => _refreshToken;
      FirebaseMessaging _messaging;
     PushNotifications notifications;
+
+    RideRoute _info;
+    RideRoute get info => _info; //GETTERS
 
 
     AppState() {
@@ -94,9 +96,8 @@ class AppState with ChangeNotifier {
     }
 
 
-    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
-
-     notifications =  PushNotifications(message.data['message'], message.data['requestID']);
+    FirebaseMessaging.onMessage.listen((RemoteMessage message)  {
+     notifications =   PushNotifications(message.data['message'], message.data['requestID']);
      incomeMessage = true;
       notifyListeners();
     });
@@ -163,18 +164,14 @@ class AppState with ChangeNotifier {
 
     // ! SEND REQUEST
     Future<void> logout() async {
-      int userId = await readSecureData('user_id');
-      //await _storage.delete(key: 'access_token', aOptions: _getAndroidOptions());
-      //await _storage.delete(key: 'user_id', aOptions: _getAndroidOptions());
+      await _storage.delete(key: 'access_token', aOptions: _getAndroidOptions());
       isUserLogged();
-      // print(userId);
-      // print('------------------loggged out------------------');
       notifyListeners();
     }
 
   // ! SEND REQUEST
   Future<void> goOnline(String status) async {
-      dynamic response = await await ApiClient().goOnline(status);
+      dynamic response =  await ApiClient().goOnline(status);
      // print(response);
       if(response['service']['status'] == 'active'){
         _isOnline = true;
@@ -212,7 +209,37 @@ class AppState with ChangeNotifier {
         }
       });
 
+
     }
+
+  Future<void>acceptRequest(int requestID) async{
+
+      dynamic rideDetails = await Ride().acceptRide(requestID);
+
+     _info =  RideRoute(bookingID: rideDetails['booking_id'],
+                       paymentMethod: rideDetails['payment_mode'],
+                       serviceType:  rideDetails['service_type_id'],
+                      totalDistance: rideDetails['distance'],
+                      price : 3,
+                      otp : rideDetails['otp'],
+                      driverLocation: initialPosition,
+                      riderLocation: LatLng(double.parse(rideDetails['s_latitude']), double.parse(rideDetails['s_longitude'])),
+                      route:  rideDetails['route_key'],
+      );
+
+     notifyListeners();
+
+  }
+
+  Future<void> driveToPick(LatLng origin, LatLng destination) async{
+
+    dynamic details = await Ride().driveToPickUp( origin, destination);
+
+
+    print(details);
+
+
+  }
 
 
 }
