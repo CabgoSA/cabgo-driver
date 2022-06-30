@@ -57,7 +57,7 @@ class _RegisterPageWidgetState extends State<RegisterPageWidget> {
       backgroundColor: FlutterFlowTheme.of(context).primaryBackground,
       floatingActionButton: FloatingActionButton(
         onPressed: () async {
-     ;
+     
       if(formKey.currentState.validate()){
 
         appState.register();
