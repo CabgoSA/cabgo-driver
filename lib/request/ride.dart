@@ -40,6 +40,7 @@ class Ride {
     },
     );
 
+    print(response);
     // Check if response is successful
     if (response.statusCode == 200) {
     return Directions.fromMap(response.data);

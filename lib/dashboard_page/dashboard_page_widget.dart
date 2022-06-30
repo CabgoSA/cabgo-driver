@@ -13,6 +13,9 @@ import 'package:flutter/material.dart';
  import 'package:flutter_spinkit/flutter_spinkit.dart';
 
 import '../flutter_flow/place.dart';
+import 'package:page_transition/page_transition.dart';
+import 'package:cabgo_driver/cancel_page/cancelled.dart';
+import 'package:swipeable_button_view/swipeable_button_view.dart';
 
 class DashboardPageWidget extends StatefulWidget {
   const DashboardPageWidget({Key key}) : super(key: key);
@@ -22,7 +25,7 @@ class DashboardPageWidget extends StatefulWidget {
 }
 
 class _DashboardPageWidgetState extends State<DashboardPageWidget> {
-
+  bool isFinished = false;
 
 
   var placePickerValue = FFPlace();
@@ -99,16 +102,108 @@ class _DashboardPageWidgetState extends State<DashboardPageWidget> {
   void show(BuildContext context, AppState appState, PushNotifications notifications) {
     showModalBottomSheet<void>(
       context: context,
+      enableDrag: false,
+      shape: RoundedRectangleBorder(
+        borderRadius: const BorderRadius.only(
+          topLeft: Radius.circular(20),
+          topRight: Radius.circular(20),
+        ),
+      ),
       builder: (BuildContext context) {
         return Container(
+
           height: 200,
-          color: Colors.amber,
-          child: Center(
+
+
+          child: SingleChildScrollView(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               mainAxisSize: MainAxisSize.min,
               children: <Widget>[
-                 Text(notifications.body.toString()),
+            Padding(
+            padding: EdgeInsetsDirectional.fromSTEB(0, 12, 30, 0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: <Widget>[
+                  Text(
+                    notifications.body.toString(),
+                    style: FlutterFlowTheme.of(context).title3.override(
+                      fontFamily: 'Red Hat Display',
+                    ),
+                  ),
+          Padding(
+              padding: EdgeInsetsDirectional.fromSTEB(24, 0, 0, 0),
+            child:  Text(
+
+              'R 400',
+              style: FlutterFlowTheme.of(context).subtitle2.override(
+                fontFamily: 'Red Hat Display',
+              ),
+            ),
+          ),
+
+                ]
+              ),
+            ),
+
+                Column(
+                  mainAxisSize: MainAxisSize.max,
+                  children: [
+                    Padding(
+                      padding: EdgeInsetsDirectional.fromSTEB(24, 0, 24, 12),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.max,
+                        children: [
+                          Container(
+                            width: 50,
+                            height: 50,
+                            clipBehavior: Clip.antiAlias,
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                            ),
+                            child: Image.asset(
+                              'assets/images/UI_avatar@2x.png',
+                            ),
+                          ),
+                          Padding(
+                            padding: EdgeInsetsDirectional.fromSTEB(18, 0, 0, 0),
+                            child: Column(
+                              mainAxisSize: MainAxisSize.max,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Padding(
+                                  padding: EdgeInsetsDirectional.fromSTEB(0, 5, 0, 5.0),
+                                  child:     Text(
+                                    'Nkanyiso'
+                                  ),
+                                ),
+
+                                Row(
+                                    mainAxisSize: MainAxisSize.max,
+                                    children: [
+                                      Icon(Icons.star_border_outlined),
+                                      Icon(Icons.star_border_outlined),
+                                      Icon(Icons.star_border_outlined),
+                                      Icon(Icons.star_border_outlined),
+                                      Padding(
+                                        padding: EdgeInsetsDirectional.fromSTEB(12, 0, 0, 0),
+                                        child: Text(
+                                          '4/5 Reviews',
+                                          style: FlutterFlowTheme.of(context).bodyText2,
+                                        ),
+                                      )
+                                    ]
+                                ),
+                              ],
+                            ),
+                          ),
+
+                        ],
+                      ),
+                    ),
+
+                  ],
+                ),
 
                 Padding(
                   padding: EdgeInsetsDirectional.fromSTEB(0, 10, 0, 0),
@@ -119,8 +214,10 @@ class _DashboardPageWidgetState extends State<DashboardPageWidget> {
                       TextButton(
 
                         style: TextButton.styleFrom(
-                          backgroundColor: Color(0xFFC40000),
-                          textStyle: const TextStyle(fontSize: 20,
+                          backgroundColor: Colors.red[600],
+                          primary: Colors.white,
+                          padding: const EdgeInsets.only(left: 30.0, right: 30.0),
+                          textStyle: const TextStyle(fontSize: 14.0,
                             fontFamily: 'Red Hat Display',
                             color: Colors.white,
                             fontWeight: FontWeight.w300,),
@@ -134,18 +231,23 @@ class _DashboardPageWidgetState extends State<DashboardPageWidget> {
                       TextButton(
 
                         style: TextButton.styleFrom(
-                          backgroundColor: Color(0xFFC40000),
-                          textStyle: const TextStyle(fontSize: 20,
+                          backgroundColor: Color(0xFF090f13),
+                          primary: Colors.white,
+                          padding: const EdgeInsets.only(left: 30.0, right: 30.0),
+                          textStyle: const TextStyle(fontSize: 14.0,
                             fontFamily: 'Red Hat Display',
                             color: Colors.white,
-                            fontWeight: FontWeight.w300,),
+                            fontWeight: FontWeight.w300,
+                          ),
                         ),
                         onPressed: () async{
-                          print(notifications.requestID);
-                           await appState.acceptRequest( int.parse(notifications.requestID));
+                           await appState.acceptRequest(359);
+                           //await appState.acceptRequest( int.parse(notifications.requestID));
                             if(appState.info != null){
                              appState.driveToPick(appState.initialPosition, appState.info.riderLocation);
-                             // Navigator.pop(context);
+
+                             Navigator.pop(context);
+                             pick_up(context, appState);
                            }else{
                               print('ooops');
                            }
@@ -161,9 +263,174 @@ class _DashboardPageWidgetState extends State<DashboardPageWidget> {
           ),
         );
       },
+      isDismissible: false,
+      isScrollControlled: true,
     );
   }
+
+
+
+  void pick_up( BuildContext context, AppState appState,){
+  showModalBottomSheet<void>(
+  context: context,
+    enableDrag: false,
+    shape: RoundedRectangleBorder(
+      borderRadius: const BorderRadius.only(
+        topLeft: Radius.circular(20),
+        topRight: Radius.circular(20),
+      ),
+    ),
+  builder: (BuildContext context) {
+  return Container(
+  height: 200,
+
+  child: SingleChildScrollView(
+  child: Column(
+  mainAxisAlignment: MainAxisAlignment.center,
+    mainAxisSize: MainAxisSize.min,
+    children: <Widget>[
+
+
+      Column(
+        mainAxisSize: MainAxisSize.max,
+        children: [
+          Padding(
+            padding: EdgeInsetsDirectional.fromSTEB(24, 0, 24, 12),
+            child: Row(
+              mainAxisSize: MainAxisSize.max,
+              children: [
+                Container(
+                  width: 50,
+                  height: 50,
+                  clipBehavior: Clip.antiAlias,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                  ),
+                  child: Image.asset(
+                    'assets/images/UI_avatar@2x.png',
+                  ),
+                ),
+                Padding(
+                  padding: EdgeInsetsDirectional.fromSTEB(18, 0, 0, 0),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.max,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Padding(
+                        padding: EdgeInsetsDirectional.fromSTEB(0, 5, 0, 5.0),
+                        child:     Text(
+                            'User Name'
+                        ),
+                      ),
+
+                      Row(
+                          mainAxisSize: MainAxisSize.max,
+                          children: [
+                            Icon(Icons.star_border_outlined),
+                            Icon(Icons.star_border_outlined),
+                            Icon(Icons.star_border_outlined),
+                            Icon(Icons.star_border_outlined),
+                            Padding(
+                              padding: EdgeInsetsDirectional.fromSTEB(12, 0, 0, 0),
+                              child: TextButton(
+
+                                style: TextButton.styleFrom(
+                                  backgroundColor: Colors.red[600],
+                                  primary: Colors.white,
+
+                                  textStyle: const TextStyle(fontSize: 14.0,
+                                    fontFamily: 'Red Hat Display',
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.w300,),
+                                ),
+                                onPressed: () {
+                                  Navigator.pop(context);
+                                },
+                                child: const Text('Cancel Ride'),
+                              ),
+                            )
+                          ]
+                      ),
+                    ],
+                  ),
+                ),
+
+              ],
+            ),
+          ),
+
+        ],
+      ),
+
+
+            // TextButton(
+            //
+            //   style: TextButton.styleFrom(
+            //     backgroundColor: Colors.red[600],
+            //     primary: Colors.white,
+            //     padding: const EdgeInsets.only(left: 30.0, right: 30.0),
+            //     textStyle: const TextStyle(fontSize: 14.0,
+            //       fontFamily: 'Red Hat Display',
+            //       color: Colors.white,
+            //       fontWeight: FontWeight.w300,),
+            //   ),
+            //   onPressed: () {
+            //     Navigator.pop(context);
+            //   },
+            //   child: const Text('Decline'),
+            // ),
+
+            Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 25),
+                child: SwipeableButtonView(
+
+                    buttonWidget: Container(
+                      child: Icon(
+                        Icons.arrow_forward_ios_rounded,
+                        color: Color(0xff090f13),
+                      ),
+                    ),
+                    buttonText: "SLIDE TO PICK UP",
+                    activeColor: Color(0xff090f13),
+                    isFinished: isFinished,
+                    onWaitingProcess: () {
+                      Future.delayed(Duration(seconds: 2), () {
+                        setState(() {
+                          isFinished = true;
+                        });
+                      });
+                    },
+                    onFinish: () async {
+                      print('hello');
+                      // await Navigator.push(
+                      //     context,
+                      //     PageTransition(
+                      //         type: PageTransitionType.fade,
+                      //         child: const CancelScreenScreen()));
+                      //
+                      // setState(() {
+                      //   isFinished = false;
+                      // });
+                    }
+                    )
+            )
+
+
+
+
+    ],
+  ),
+    ),
+  );
+  },
+
+
+    isDismissible: false,
+    isScrollControlled: true,
+  );
+  }
 }
+
 
 class Map extends StatefulWidget {
   @override
