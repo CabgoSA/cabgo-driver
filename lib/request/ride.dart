@@ -12,10 +12,10 @@ class Ride {
   final Dio _dio = Dio();
   static const String _baseUrl =
       'https://maps.googleapis.com/maps/api/directions/json?';
+  String accessToken = 'Bearer  eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOjI0OCwiaXNzIjoiaHR0cHM6Ly9jYWJnby5jby56YS9hcGkvcHJvdmlkZXIvb2F1dGgvdG9rZW4iLCJpYXQiOjE2NTY2ODA5ODksImV4cCI6MTY1NzA0MDk4OSwibmJmIjoxNjU2NjgwOTg5LCJqdGkiOiJVallRVXQ4WHBoRWdMS3o4In0.1hS_WjRP2OipmrrQb8n6Y0yenHEz3pdBYmyBI8NwVy4';
 
 
   Future<dynamic> acceptRide(int requestID) async {
-    String accessToken = 'Bearer  eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOjI0OCwiaXNzIjoiaHR0cHM6Ly9jYWJnby5jby56YS9hcGkvcHJvdmlkZXIvb2F1dGgvdG9rZW4iLCJpYXQiOjE2NTYzMjAwODEsImV4cCI6MTY1NjY4MDA4MSwibmJmIjoxNjU2MzIwMDgxLCJqdGkiOiJ3MWFUMTdHd2VtS1lwWXZnIn0.ciU2BofTYr01cR3MBVaaFEpWu9q71dUwwx1zQsUEvUc';
     _dio.options.headers["Authorization"] = accessToken;
     try {
       Response response = await _dio.post(
@@ -40,7 +40,6 @@ class Ride {
     },
     );
 
-    print(response);
     // Check if response is successful
     if (response.statusCode == 200) {
     return Directions.fromMap(response.data);
@@ -63,6 +62,7 @@ class RideRoute{
   final LatLng driverLocation;
   final LatLng riderLocation;
   final String route;
+  final dynamic user;
 
 
   const RideRoute({
@@ -75,9 +75,29 @@ class RideRoute{
     @required this.driverLocation,
     @required this.riderLocation,
     @required this.route,
+    @required this.user,
   });
 
 
 
 
+}
+
+//Rider details
+
+class RiderDetails{
+  final String  fullName;
+  final String  picture;
+  final String  rating;
+  final String price;
+  final LatLng riderLocation;
+
+
+  const RiderDetails({
+       @required this.fullName,
+       @required this.picture,
+       @required  this.rating,
+      @required this.price,
+      @required this.riderLocation,
+        });
 }

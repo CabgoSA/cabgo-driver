@@ -1,5 +1,9 @@
+import 'dart:convert';
+
 import 'package:cabgo_driver/services/local_notification_service.dart';
+import 'package:dio/dio.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
@@ -7,6 +11,7 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:cabgo_driver/request/user.dart';
 import 'package:cabgo_driver/request/google_maps_request.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import '../request/directions_model.dart';
 import '../request/ride.dart';
 
 
@@ -68,8 +73,14 @@ class AppState with ChangeNotifier {
     RideRoute _info;
     RideRoute get info => _info; //GETTERS
 
+    RiderDetails _riderDetails;
+    RiderDetails get riderDetails => _riderDetails;
 
-    AppState() {
+    List<PointLatLng> _pickRider;
+
+    List<PointLatLng> get pickRider => _pickRider;
+
+  AppState() {
       _getUserLocation();
       _getTokens();
       isUserLogged();
@@ -96,8 +107,22 @@ class AppState with ChangeNotifier {
     }
 
 
-    FirebaseMessaging.onMessage.listen((RemoteMessage message)  {
+    FirebaseMessaging.onMessage.listen((RemoteMessage message) async {
+      //get ride details
+      Response data =  await ApiClient().fetchRideDetails(message.data['requestID']);
+      Map<String, dynamic> rideData = jsonDecode(data.toString());
+
+      //create notification
      notifications =   PushNotifications(message.data['message'], message.data['requestID']);
+     _riderDetails  = RiderDetails(fullName:  rideData['user']['first_name']+ ' '+ rideData['user']['last_name'],
+                                    picture: rideData['user']['picture'],
+                                    rating : rideData['user']['rating'],
+                                    price: 'R340',
+                                    riderLocation: LatLng(double.parse(rideData['s_latitude']),double.parse(rideData['s_longitude'])),
+                                 );
+
+
+
      incomeMessage = true;
       notifyListeners();
     });
@@ -226,18 +251,41 @@ class AppState with ChangeNotifier {
                       riderLocation: LatLng(double.parse(rideDetails['s_latitude']), double.parse(rideDetails['s_longitude'])),
                       route:  rideDetails['route_key'],
       );
+     
+
 
      notifyListeners();
 
   }
 
-  Future<void> driveToPick(LatLng origin, LatLng destination) async{
+  Future<void>request(int requestID) async{
 
-    dynamic details = await Ride().driveToPickUp( origin, destination);
+    dynamic rideDetails = await Ride().acceptRide(requestID);
+
+    _info =  RideRoute(bookingID: rideDetails['booking_id'],
+      paymentMethod: rideDetails['payment_mode'],
+      serviceType:  rideDetails['service_type_id'],
+      totalDistance: rideDetails['distance'],
+      price : 3,
+      otp : rideDetails['otp'],
+      driverLocation: initialPosition,
+      riderLocation: LatLng(double.parse(rideDetails['s_latitude']), double.parse(rideDetails['s_longitude'])),
+      route:  rideDetails['route_key'],
+    );
 
 
-    print(details);
 
+    notifyListeners();
+
+  }
+
+  Future<void> driveToPick(LatLng destination) async{
+
+    Directions details = await Ride().driveToPickUp( initialPosition , destination);
+
+    _pickRider =  details.polylinePoints;
+
+    notifyListeners();
 
   }
 

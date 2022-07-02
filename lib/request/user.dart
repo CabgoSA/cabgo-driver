@@ -1,3 +1,5 @@
+import 'package:cabgo_driver/flutter_flow/flutter_flow_util.dart';
+import 'package:cabgo_driver/request/ride.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
@@ -6,6 +8,7 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class ApiClient {
   final Dio _dio = Dio();
+  String accessToken = 'Bearer  eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOjI0OCwiaXNzIjoiaHR0cHM6Ly9jYWJnby5jby56YS9hcGkvcHJvdmlkZXIvb2F1dGgvdG9rZW4iLCJpYXQiOjE2NTY2ODA5ODksImV4cCI6MTY1NzA0MDk4OSwibmJmIjoxNjU2NjgwOTg5LCJqdGkiOiJVallRVXQ4WHBoRWdMS3o4In0.1hS_WjRP2OipmrrQb8n6Y0yenHEz3pdBYmyBI8NwVy4';
   Future<dynamic> registerUser(String email, String firstName,  String lastName,  String phone,  String password,  String confirmPassword ) async {
     try {
       Response response = await _dio.post(
@@ -78,7 +81,6 @@ class ApiClient {
   }
 
   Future<dynamic> goOnline(String status) async {
-    String accessToken = 'Bearer  eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOjI0OCwiaXNzIjoiaHR0cHM6Ly9jYWJnby5jby56YS9hcGkvcHJvdmlkZXIvb2F1dGgvdG9rZW4iLCJpYXQiOjE2NTYzMjAwODEsImV4cCI6MTY1NjY4MDA4MSwibmJmIjoxNjU2MzIwMDgxLCJqdGkiOiJ3MWFUMTdHd2VtS1lwWXZnIn0.ciU2BofTYr01cR3MBVaaFEpWu9q71dUwwx1zQsUEvUc';
     _dio.options.headers["Authorization"] = accessToken;
     try {
       Response response = await _dio.post(
@@ -96,7 +98,44 @@ class ApiClient {
     }
   }
 
+  Future<Response> fetchRideDetails(String requestID) async {
 
+    int id = int.parse(requestID);
+
+    _dio.options.headers["Authorization"] = accessToken;
+    try {
+      var response = await _dio.get(
+          dotenv.get('BASE_URL') + 'api/provider/trip/details/$id'
+      );
+
+      return response;
+    } on DioError catch (e) {
+      return e.response;
+    }
+  }
+
+   bool youHaveArrived(LatLng currentLocation, LatLng destinationLocation){
+
+    if(currentLocation.latitude == destinationLocation.latitude && currentLocation.longitude == destinationLocation.longitude ){
+      return true;
+    }
+
+    return false;
+  }
+
+
+  void callRider(RiderDetails phone){
+
+  }
+
+  void chatRider(RiderDetails riderID, String message){
+
+  }
+
+  double tripInvoice(double distance, int   serviceTypePrice){
+
+    return distance * serviceTypePrice;
+  }
 
 
 

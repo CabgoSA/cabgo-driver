@@ -17,6 +17,8 @@ import 'package:page_transition/page_transition.dart';
 import 'package:cabgo_driver/cancel_page/cancelled.dart';
 import 'package:swipeable_button_view/swipeable_button_view.dart';
 
+import '../request/ride.dart';
+
 class DashboardPageWidget extends StatefulWidget {
   const DashboardPageWidget({Key key}) : super(key: key);
 
@@ -37,7 +39,7 @@ class _DashboardPageWidgetState extends State<DashboardPageWidget> {
     if(appState.notifications != null ) {
       FlutterRingtonePlayer.play(fromAsset: "assets/audios/request.mp3");
       WidgetsBinding.instance.addPostFrameCallback((_) {
-        show(context,appState, appState.notifications);
+        show(context,appState, appState.notifications,);
       });
       Future.delayed(Duration(milliseconds: 1500), () {
         FlutterRingtonePlayer.stop();
@@ -99,7 +101,7 @@ class _DashboardPageWidgetState extends State<DashboardPageWidget> {
   }
 
 
-  void show(BuildContext context, AppState appState, PushNotifications notifications) {
+  void show(BuildContext context, AppState appState, PushNotifications notifications,) {
     showModalBottomSheet<void>(
       context: context,
       enableDrag: false,
@@ -135,7 +137,7 @@ class _DashboardPageWidgetState extends State<DashboardPageWidget> {
               padding: EdgeInsetsDirectional.fromSTEB(24, 0, 0, 0),
             child:  Text(
 
-              'R 400',
+              appState.riderDetails.price,
               style: FlutterFlowTheme.of(context).subtitle2.override(
                 fontFamily: 'Red Hat Display',
               ),
@@ -173,22 +175,20 @@ class _DashboardPageWidgetState extends State<DashboardPageWidget> {
                               children: [
                                 Padding(
                                   padding: EdgeInsetsDirectional.fromSTEB(0, 5, 0, 5.0),
-                                  child:     Text(
-                                    'Nkanyiso'
+                                  child: Text(
+                                    appState.riderDetails.fullName
                                   ),
                                 ),
 
                                 Row(
                                     mainAxisSize: MainAxisSize.max,
                                     children: [
-                                      Icon(Icons.star_border_outlined),
-                                      Icon(Icons.star_border_outlined),
-                                      Icon(Icons.star_border_outlined),
+                                      for (var i = 0; i < 5; i++)
                                       Icon(Icons.star_border_outlined),
                                       Padding(
                                         padding: EdgeInsetsDirectional.fromSTEB(12, 0, 0, 0),
                                         child: Text(
-                                          '4/5 Reviews',
+                                          '5/5 Reviews',
                                           style: FlutterFlowTheme.of(context).bodyText2,
                                         ),
                                       )
@@ -244,8 +244,6 @@ class _DashboardPageWidgetState extends State<DashboardPageWidget> {
                            await appState.acceptRequest(359);
                            //await appState.acceptRequest( int.parse(notifications.requestID));
                             if(appState.info != null){
-                             appState.driveToPick(appState.initialPosition, appState.info.riderLocation);
-
                              Navigator.pop(context);
                              pick_up(context, appState);
                            }else{
@@ -319,17 +317,15 @@ class _DashboardPageWidgetState extends State<DashboardPageWidget> {
                       Padding(
                         padding: EdgeInsetsDirectional.fromSTEB(0, 5, 0, 5.0),
                         child:     Text(
-                            'User Name'
+                            appState.riderDetails.fullName
                         ),
                       ),
 
                       Row(
                           mainAxisSize: MainAxisSize.max,
                           children: [
-                            Icon(Icons.star_border_outlined),
-                            Icon(Icons.star_border_outlined),
-                            Icon(Icons.star_border_outlined),
-                            Icon(Icons.star_border_outlined),
+                            for (var i = 0; i < 5; i++)
+                              Icon(Icons.star_border_outlined),
                             Padding(
                               padding: EdgeInsetsDirectional.fromSTEB(12, 0, 0, 0),
                               child: TextButton(
@@ -363,23 +359,6 @@ class _DashboardPageWidgetState extends State<DashboardPageWidget> {
       ),
 
 
-            // TextButton(
-            //
-            //   style: TextButton.styleFrom(
-            //     backgroundColor: Colors.red[600],
-            //     primary: Colors.white,
-            //     padding: const EdgeInsets.only(left: 30.0, right: 30.0),
-            //     textStyle: const TextStyle(fontSize: 14.0,
-            //       fontFamily: 'Red Hat Display',
-            //       color: Colors.white,
-            //       fontWeight: FontWeight.w300,),
-            //   ),
-            //   onPressed: () {
-            //     Navigator.pop(context);
-            //   },
-            //   child: const Text('Decline'),
-            // ),
-
             Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 25),
                 child: SwipeableButtonView(
@@ -393,24 +372,17 @@ class _DashboardPageWidgetState extends State<DashboardPageWidget> {
                     buttonText: "SLIDE TO PICK UP",
                     activeColor: Color(0xff090f13),
                     isFinished: isFinished,
-                    onWaitingProcess: () {
+                    onWaitingProcess: () async{
+                      await appState.driveToPick(appState.riderDetails.riderLocation);
                       Future.delayed(Duration(seconds: 2), () {
                         setState(() {
                           isFinished = true;
                         });
                       });
+                      Navigator.pop(context);
                     },
                     onFinish: () async {
-                      print('hello');
-                      // await Navigator.push(
-                      //     context,
-                      //     PageTransition(
-                      //         type: PageTransitionType.fade,
-                      //         child: const CancelScreenScreen()));
-                      //
-                      // setState(() {
-                      //   isFinished = false;
-                      // });
+
                     }
                     )
             )
@@ -484,7 +456,7 @@ class _MapState extends State<Map> {
         ))
         : Stack(
       children: <Widget>[
-        (appState.info == null) ?
+        (appState.pickRider == null) ?
         GoogleMap(
           initialCameraPosition:
           CameraPosition(target: appState.initialPosition, zoom: 18),
@@ -497,7 +469,7 @@ class _MapState extends State<Map> {
         ) :
         GoogleMap(
           initialCameraPosition:
-          CameraPosition(target: appState.initialPosition, zoom: 18),
+          CameraPosition(target: appState.initialPosition, zoom: 14),
           onMapCreated: appState.onCreated,
           myLocationEnabled: true,
           mapType: MapType.normal,
@@ -520,7 +492,7 @@ class _MapState extends State<Map> {
               polylineId: const PolylineId('overview_polyline'),
               color: Colors.red,
               width: 5,
-              points: PolylinePoints().decodePolyline(appState.info.route)
+              points: appState.pickRider
                   .map((e) => LatLng(e.latitude, e.longitude))
                   .toList(),
             ),
