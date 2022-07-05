@@ -1,75 +1,60 @@
 import 'package:flutter/material.dart';
+import 'package:slider_button/slider_button.dart';
 
 void main() => runApp(MyApp());
 
-/// This is the main application widget.
 class MyApp extends StatelessWidget {
-  static const String _title = 'Flutter Code Sample';
-
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: _title,
-      home: Scaffold(
-        appBar: AppBar(title: const Text(_title)),
-        body: MyStatelessWidget(),
-      ),
-    );
+    return MaterialApp(home: MainApp());
   }
 }
 
-/// This is the stateless widget that the main application instantiates.
-class MyStatelessWidget extends StatefulWidget {
-
-
-  @override
-  _MyStatelessWidgetState createState() => _MyStatelessWidgetState();
-}
-
-class _MyStatelessWidgetState extends State<MyStatelessWidget> {
-  @override
-  void initState() {
-    super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      show(context);
-    });
-  }
-
+class MainApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: ElevatedButton(
-        child: const Text('showModalBottomSheet'),
-        onPressed: () {
-          show(context);
-        },
-      ),
-    );
-  }
 
-  void show(BuildContext context) {
-    showModalBottomSheet<void>(
-      context: context,
-      builder: (BuildContext context) {
-        return Container(
-          height: 200,
-          color: Colors.amber,
-          child: Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              mainAxisSize: MainAxisSize.min,
-              children: <Widget>[
-                const Text('Modal BottomSheet'),
-                ElevatedButton(
-                  child: const Text('Close BottomSheet'),
-                  onPressed: () => Navigator.pop(context),
-                )
-              ],
-            ),
-          ),
-        );
-      },
-    );
+    return Scaffold(
+        body: Center(
+            child: SliderButton(
+              action: () {
+                ///Do something here OnSlide
+                print("working");
+              },
+              ///Put label over here
+              label: Text(
+                "Slide to cancel !",
+                style: TextStyle(
+                    color: Color(0xff4a4a4a),
+                    fontWeight: FontWeight.w500,
+                    fontSize: 17),
+              ),
+              icon: Center(
+                  child: Icon(
+                    Icons.power_settings_new,
+                    color: Colors.white,
+                    size: 40.0,
+                    semanticLabel: 'Text to announce in accessibility modes',
+                  )),
+
+              //Put BoxShadow here
+              boxShadow: BoxShadow(
+                color: Colors.black,
+                blurRadius: 4,
+              ),
+
+              //Adjust effects such as shimmer and flag vibration here
+              shimmer: true,
+              vibrationFlag: true,
+
+              ///Change All the color and size from here.
+              width: 230,
+              radius: 10,
+              buttonColor: Color(0xffd60000),
+              backgroundColor: Color(0xff534bae),
+              highlightedColor: Colors.white,
+              baseColor: Colors.red,
+            )
+        ));
   }
 }
-

@@ -58,8 +58,23 @@ class AppState with ChangeNotifier {
     bool incomeMessage = false;
 
     bool get isOnline => _isOnline;
+    Icon slideIcon;
+
+    Icon forwardIcon = Icon(
+      Icons.arrow_forward_ios_rounded,
+      color: Colors.white,
+      size: 30,
+    );
+    Icon backIcon = Icon(
+      Icons.arrow_forward_ios_rounded,
+      color: Colors.white,
+      size: 30,
+    );
+
+
 
     bool get isLoggedIn => _isLoggedIn;
+
 
     //String _refreshToken;
     String get accessToken => _accessToken;
@@ -79,6 +94,10 @@ class AppState with ChangeNotifier {
     List<PointLatLng> _pickRider;
 
     List<PointLatLng> get pickRider => _pickRider;
+
+    RouteDriver _routeDriver;
+
+    RouteDriver get routeDriver => _routeDriver;
 
   AppState() {
       _getUserLocation();
@@ -196,12 +215,16 @@ class AppState with ChangeNotifier {
 
   // ! SEND REQUEST
   Future<void> goOnline(String status) async {
+    print('test==========================online');
       dynamic response =  await ApiClient().goOnline(status);
-     // print(response);
+
+      print(response);
       if(response['service']['status'] == 'active'){
         _isOnline = true;
+        slideIcon = backIcon;
       } else {
         _isOnline = false;
+         slideIcon = forwardIcon;
       }
     notifyListeners();
   }
@@ -249,43 +272,61 @@ class AppState with ChangeNotifier {
                       otp : rideDetails['otp'],
                       driverLocation: initialPosition,
                       riderLocation: LatLng(double.parse(rideDetails['s_latitude']), double.parse(rideDetails['s_longitude'])),
+                      riderDestination: LatLng(double.parse(rideDetails['d_latitude']), double.parse(rideDetails['d_longitude'])),
                       route:  rideDetails['route_key'],
       );
-     
 
+      await driveToPick();
 
      notifyListeners();
 
   }
 
-  Future<void>request(int requestID) async{
+  // Future<void>request(int requestID) async{
+  //
+  //   dynamic rideDetails = await Ride().acceptRide(requestID);
+  //
+  //   _info =  RideRoute(bookingID: rideDetails['booking_id'],
+  //     paymentMethod: rideDetails['payment_mode'],
+  //     serviceType:  rideDetails['service_type_id'],
+  //     totalDistance: rideDetails['distance'],
+  //     price : 3,
+  //     otp : rideDetails['otp'],
+  //     driverLocation: initialPosition,
+  //     riderLocation: LatLng(double.parse(rideDetails['s_latitude']), double.parse(rideDetails['s_longitude'])),
+  //     riderDestination: LatLng(double.parse(rideDetails['d_latitude']), double.parse(rideDetails['d_longitude'])),
+  //     route:  rideDetails['route_key'],
+  //   );
+  //
+  //
+  //
+  //   notifyListeners();
+  //
+  // }
 
-    dynamic rideDetails = await Ride().acceptRide(requestID);
+  Future<void> driveToPick() async{
 
-    _info =  RideRoute(bookingID: rideDetails['booking_id'],
-      paymentMethod: rideDetails['payment_mode'],
-      serviceType:  rideDetails['service_type_id'],
-      totalDistance: rideDetails['distance'],
-      price : 3,
-      otp : rideDetails['otp'],
-      driverLocation: initialPosition,
-      riderLocation: LatLng(double.parse(rideDetails['s_latitude']), double.parse(rideDetails['s_longitude'])),
-      route:  rideDetails['route_key'],
-    );
+    Directions details = await Ride().driveToPickUp( initialPosition , _info.riderLocation);
 
+    _routeDriver = RouteDriver(markerSource: initialPosition , markerDestination:  _info.riderLocation, polypoints: details.polylinePoints);
 
 
     notifyListeners();
 
   }
 
-  Future<void> driveToPick(LatLng destination) async{
 
-    Directions details = await Ride().driveToPickUp( initialPosition , destination);
+  Future<void> driveToRiderDestination()async {
 
-    _pickRider =  details.polylinePoints;
-
+    List<PointLatLng> polylinePoints =  PolylinePoints().decodePolyline(info.route);
+    _routeDriver =  RouteDriver(markerSource: info.riderLocation , markerDestination:  info.riderLocation, polypoints: polylinePoints);
     notifyListeners();
+  }
+
+
+  Future<void> updateRide() async{
+
+
 
   }
 
