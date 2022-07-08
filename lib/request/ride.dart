@@ -1,3 +1,4 @@
+import 'package:cabgo_driver/request/secure_storage.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter/foundation.dart';
@@ -10,23 +11,26 @@ import 'directions_model.dart';
 
 
 class Ride {
+  String _accessToken;
+  Ride(){
+    GetTokenLocalStorage().readStorage('access_token').then((value){
+       _accessToken =  'Bearer $value';
+    });
+  }
   final Dio _dio = Dio();
   static const String _baseUrl =
       'https://maps.googleapis.com/maps/api/directions/json?';
-  String accessToken = 'Bearer  eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOjI0OCwiaXNzIjoiaHR0cHM6Ly9jYWJnby5jby56YS9hcGkvcHJvdmlkZXIvb2F1dGgvdG9rZW4iLCJpYXQiOjE2NTY3NjMxMTYsImV4cCI6MTY1NzEyMzExNiwibmJmIjoxNjU2NzYzMTE2LCJqdGkiOiI5Mm9jZFpkRUExdFl6NzNXIn0.cJTl1DZzS20vom7JRK1qyYs6F00kpj6_bG60mt6cFVU';
-
 
   Future<dynamic> acceptRide(int requestID) async {
-    _dio.options.headers["Authorization"] = accessToken;
+    _dio.options.headers["Authorization"] = _accessToken;
     try {
       Response response = await _dio.post(
-        dotenv.get('BASE_URL') + 'api/provider/trip/update/$requestID' ,
-
+        dotenv.get('BASE_URL') + 'api/provider/trip/$requestID' ,
         options: Options(headers: {'Accept': 'application/json'}),
       );
       return response.data;
     } on DioError catch (e) {
-      return e.response.data;
+      throw e.response.data;
     }
   }
 
@@ -66,12 +70,14 @@ class Ride {
     return null;
   }
 
-  Future<dynamic> updateRide(int requestID) async{
-    _dio.options.headers["Authorization"] = accessToken;
+  Future<dynamic> updateRide(int requestID,String status) async{
+    _dio.options.headers["Authorization"] = _accessToken;
     try {
-      Response response = await _dio.put(
-        dotenv.get('BASE_URL') + 'api/provider/trip/$requestID' ,
-
+      Response response = await _dio.post(
+        dotenv.get('BASE_URL') + 'api/provider/trip/update/$requestID' ,
+          data: {
+            'status': status,
+          },
         options: Options(headers: {'Accept': 'application/json'}),
       );
       return response.data;

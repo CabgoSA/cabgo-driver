@@ -9,7 +9,6 @@ import 'package:go_router/go_router.dart';
 import 'index.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
-import 'package:cabgo_driver/services/local_notification_service.dart';
 
 ///Receive message when app is in background solution for on message
 Future<void> backgroundHandler(RemoteMessage message) async{
@@ -59,7 +58,6 @@ class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     final appState = Provider.of<AppState>(context);
-    print(appState.accessToken);
     if (appState.isLoggedIn) {
       return MaterialApp(
         title: 'Cabgo',
@@ -74,7 +72,7 @@ class _MyAppState extends State<MyApp> {
         theme: ThemeData(brightness: Brightness.light),
         darkTheme: ThemeData(brightness: Brightness.dark),
         themeMode: _themeMode,
-        home: HomePageWidget(),
+        home: DashboardPageWidget(),
       );
     }else{
       return MaterialApp(
@@ -90,7 +88,7 @@ class _MyAppState extends State<MyApp> {
         theme: ThemeData(brightness: Brightness.light),
         darkTheme: ThemeData(brightness: Brightness.dark),
         themeMode: _themeMode,
-        home: DashboardPageWidget(),
+        home: HomePageWidget(),
       );
     }
   }

@@ -1,24 +1,27 @@
+import 'dart:async';
 import 'dart:convert';
-
 import 'package:cabgo_driver/services/local_notification_service.dart';
 import 'package:dio/dio.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_polyline_points/flutter_polyline_points.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:cabgo_driver/request/user.dart';
 import 'package:cabgo_driver/request/google_maps_request.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import '../exceptions/locationErrors.dart';
+import '../request/device_info.dart';
 import '../request/directions_model.dart';
 import '../request/ride.dart';
+import '../request/secure_storage.dart';
 
 
 
 class AppState with ChangeNotifier {
 
 
+  //AUTH
   //LOGIN CONTOLLER
     TextEditingController emailAddressController = TextEditingController();
     TextEditingController passwordController = TextEditingController();
@@ -31,33 +34,51 @@ class AppState with ChangeNotifier {
     TextEditingController registerPasswordController = TextEditingController();
     TextEditingController registerConfirmPasswordController = TextEditingController();
     TextEditingController locationController = TextEditingController();
-    static LatLng _initialPosition;
     bool registerTermsAndConditionsValue = false;
-    LatLng _lastPosition = _initialPosition;
-    bool locationServiceActive = true;
+
+    //TOKENS
     String _accessToken;
-    final LocationSettings locationSettings = LocationSettings(
-      accuracy: LocationAccuracy.high,
-      distanceFilter: 100,
-    );
-    GoogleMapsServices  _googleMapsServices = GoogleMapsServices();
-    GoogleMapController _mapController;
 
-    final scaffoldKey = GlobalKey<ScaffoldState>();
 
-    //local storage
-    final _storage = const FlutterSecureStorage();
-
-    AndroidOptions _getAndroidOptions() =>
-        const AndroidOptions(
-          encryptedSharedPreferences: true,
-        );
+    //String accessToken;
+    String get accessToken => _accessToken;
 
     bool _isLoggedIn = false;
     bool _isOnline = false;
     bool incomeMessage = false;
 
     bool get isOnline => _isOnline;
+    bool get isLoggedIn => _isLoggedIn;
+    //END AUTH
+
+    //LOCATION SERVICE
+    static LatLng _initialPosition;
+    LatLng _lastPosition = _initialPosition;
+    bool locationServiceActive = true;
+
+    //LOCATION SETTINGS
+    final LocationSettings locationSettings = LocationSettings(
+      accuracy: LocationAccuracy.high,
+      distanceFilter: 100,
+    );
+
+    //GOOGLE MAPS
+    GoogleMapsServices  _googleMapsServices = GoogleMapsServices();
+    GoogleMapController _mapController;
+
+
+    //Visibility variables
+
+    bool onlineVisibility = true;
+    bool pickupVisibility = false;
+    bool dropoffVisibility = false;
+    bool ratingsVisibility = false;
+    bool invoiceVisibility = false;
+    double dragableSize = 0.2;
+
+    final scaffoldKey = GlobalKey<ScaffoldState>();
+
+    //GO ONLINE ICONS
     Icon slideIcon;
 
     Icon forwardIcon = Icon(
@@ -71,47 +92,40 @@ class AppState with ChangeNotifier {
       size: 30,
     );
 
+    //errors
+    Exception error;
 
 
-    bool get isLoggedIn => _isLoggedIn;
 
-
-    //String _refreshToken;
-    String get accessToken => _accessToken;
     LatLng get initialPosition => _initialPosition;
     LatLng get lastPosition => _lastPosition;
     GoogleMapsServices get googleMapsServices => _googleMapsServices;
     GoogleMapController get mapController => _mapController;
-     FirebaseMessaging _messaging;
+
+     //push notifications
+    FirebaseMessaging _messaging;
     PushNotifications notifications;
 
+    //route users
     RideRoute _info;
     RideRoute get info => _info; //GETTERS
-
     RiderDetails _riderDetails;
     RiderDetails get riderDetails => _riderDetails;
-
-    List<PointLatLng> _pickRider;
-
-    List<PointLatLng> get pickRider => _pickRider;
-
     RouteDriver _routeDriver;
-
     RouteDriver get routeDriver => _routeDriver;
 
-  AppState() {
+  AppState(){
       _getUserLocation();
-      _getTokens();
-      isUserLogged();
+      _isUserLogged();
       _loadingInitialPosition();
       _registerNotification();
-
+      _getDeviceData();
+       ApiClient();
     }
 
 //    register notification
   void _registerNotification() async {
     await Firebase.initializeApp();
-
     _messaging = FirebaseMessaging.instance;
     NotificationSettings settings = await _messaging.requestPermission(
       alert: true,
@@ -122,6 +136,8 @@ class AppState with ChangeNotifier {
 
     if (settings.authorizationStatus == AuthorizationStatus.authorized) {
       print('User granted permision ');
+      final fcmToken = await FirebaseMessaging.instance.getToken();
+      GetTokenLocalStorage().addStorage('fcm_token', fcmToken);
 
     }
 
@@ -150,9 +166,40 @@ class AppState with ChangeNotifier {
 
 
 //  get user Location of Device
-  void _getUserLocation() async {
-    Position position = await Geolocator.getCurrentPosition( desiredAccuracy: LocationAccuracy.high);
-    _initialPosition = LatLng(position.latitude, position.longitude);
+  Future<void> _getUserLocation() async {
+    //start
+      bool serviceEnabled;
+      LocationPermission permission;
+
+      // Test if location services are enabled.
+      serviceEnabled = await Geolocator.isLocationServiceEnabled();
+      try {
+        if (!serviceEnabled) {
+         throw LocationServiceDisabled();
+        }
+
+        permission = await Geolocator.checkPermission();
+        if (permission == LocationPermission.denied) {
+          permission = await Geolocator.requestPermission();
+          if (permission == LocationPermission.denied) {
+            throw LocationServiceDenied();
+          }
+        }
+
+        if (permission == LocationPermission.deniedForever) {
+          // Permissions are denied forever, handle appropriately.
+          throw LocationDeniedForever();
+        }
+        // When we reach here, permissions are granted and we can
+        // continue accessing the position of the device.
+        Geolocator.getPositionStream(locationSettings: locationSettings).listen(
+                (Position position) {
+              _initialPosition = LatLng(position.latitude, position.longitude);
+            });
+      }catch(e){
+        throw GeneralError();
+      }
+
     notifyListeners();
   }
     //map details
@@ -166,28 +213,57 @@ class AppState with ChangeNotifier {
       notifyListeners();
     }
 
-    //user Auth
-    //get user token
-    void _getTokens() async {
-      _accessToken = await readSecureData('access_token');
+  //map details
+  Future<void> _getDeviceData() async{
+
+    try {
+     await DeviceInfo.getDeviceDetails().then((value) {
+         GetTokenLocalStorage().addStorage('device_id', value[0]);
+        GetTokenLocalStorage().addStorage('device_type', value[1]);
+
+      });
+
+    }catch(e){
+      print(e);
     }
 
+  }
+
+    //user Auth
+
     //check is user loggedin
-    bool isUserLogged() {
-      _isLoggedIn = (accessToken != null ) ? true : false;
-      return _isLoggedIn;
+    Future<bool> _isUserLogged() async{
+    try {
+      await GetTokenLocalStorage().readStorage('access_token').then((value){
+        _accessToken = 'Bearer $value';
+        print(_accessToken);
+        //_isLoggedIn = (accessToken != null) ? true : false;
+        return _isLoggedIn;
+      });
+    }catch(e){
+      throw GettingTokenError();
+    }
+
     }
 
     // ! SEND REQUEST
     Future<void> login() async {
       final response = await ApiClient().login(emailAddressController.text,passwordController.text );
-      print(response['access_token']);
-      _addNewItem('access_token', response['access_token']);
-      _addNewItem('user_id', response['id']);
+      print(response);
+
+    try{
+
       if(response['access_token'] != null){
+        GetTokenLocalStorage().addStorage('access_token', response['access_token']);
+        GetTokenLocalStorage().addStorage('provider_id', response['id']);
         _isLoggedIn = true;
       }
+
       notifyListeners();
+    }catch(e){
+      print(e);
+    }
+
 
     }
 
@@ -208,17 +284,18 @@ class AppState with ChangeNotifier {
 
     // ! SEND REQUEST
     Future<void> logout() async {
-      await _storage.delete(key: 'access_token', aOptions: _getAndroidOptions());
-      isUserLogged();
+
+       bool logout =  await GetTokenLocalStorage().deleteStorage('access_token');
+       if(logout){
+         _isUserLogged();
+       }
       notifyListeners();
     }
 
   // ! SEND REQUEST
   Future<void> goOnline(String status) async {
-    print('test==========================online');
-      dynamic response =  await ApiClient().goOnline(status);
 
-      print(response);
+      dynamic response =  await ApiClient().goOnline(status);
       if(response['service']['status'] == 'active'){
         _isOnline = true;
         slideIcon = backIcon;
@@ -229,21 +306,7 @@ class AppState with ChangeNotifier {
     notifyListeners();
   }
 
-    Future<dynamic> readSecureData(String key) async {
-      var readData = await _storage.read(key: key, aOptions: _getAndroidOptions());
-      return readData;
-    }
 
-
-
-
-    void _addNewItem(String key, dynamic value) async {
-      await _storage.write(
-        key: key,
-        value: value,
-        aOptions: _getAndroidOptions(),
-      );
-    }
 
 
 
@@ -282,27 +345,7 @@ class AppState with ChangeNotifier {
 
   }
 
-  // Future<void>request(int requestID) async{
-  //
-  //   dynamic rideDetails = await Ride().acceptRide(requestID);
-  //
-  //   _info =  RideRoute(bookingID: rideDetails['booking_id'],
-  //     paymentMethod: rideDetails['payment_mode'],
-  //     serviceType:  rideDetails['service_type_id'],
-  //     totalDistance: rideDetails['distance'],
-  //     price : 3,
-  //     otp : rideDetails['otp'],
-  //     driverLocation: initialPosition,
-  //     riderLocation: LatLng(double.parse(rideDetails['s_latitude']), double.parse(rideDetails['s_longitude'])),
-  //     riderDestination: LatLng(double.parse(rideDetails['d_latitude']), double.parse(rideDetails['d_longitude'])),
-  //     route:  rideDetails['route_key'],
-  //   );
-  //
-  //
-  //
-  //   notifyListeners();
-  //
-  // }
+
 
   Future<void> driveToPick() async{
 
@@ -320,13 +363,25 @@ class AppState with ChangeNotifier {
 
     List<PointLatLng> polylinePoints =  PolylinePoints().decodePolyline(info.route);
     _routeDriver =  RouteDriver(markerSource: info.riderLocation , markerDestination:  info.riderLocation, polypoints: polylinePoints);
+    //update database
+    updateRide(int.parse(_info.bookingID), 'PICKEDUP');
     notifyListeners();
   }
 
+  Future<void> dropRider()async {
+    //update database
+    updateRide(int.parse(_info.bookingID), 'DROPPED');
 
-  Future<void> updateRide() async{
+  }
 
 
+
+
+  Future<void> updateRide(int requestID, String tripStatus) async{
+
+    Response status = await Ride().updateRide(requestID, tripStatus);
+    print(status);
+    notifyListeners();
 
   }
 

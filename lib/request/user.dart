@@ -2,13 +2,45 @@ import 'package:cabgo_driver/flutter_flow/flutter_flow_util.dart';
 import 'package:cabgo_driver/request/ride.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import '../exceptions/locationErrors.dart';
+import '../request/secure_storage.dart';
 
 
 
 
 class ApiClient {
   final Dio _dio = Dio();
-  String accessToken = 'Bearer  eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOjI0OCwiaXNzIjoiaHR0cHM6Ly9jYWJnby5jby56YS9hcGkvcHJvdmlkZXIvb2F1dGgvdG9rZW4iLCJpYXQiOjE2NTY2ODA5ODksImV4cCI6MTY1NzA0MDk4OSwibmJmIjoxNjU2NjgwOTg5LCJqdGkiOiJVallRVXQ4WHBoRWdMS3o4In0.1hS_WjRP2OipmrrQb8n6Y0yenHEz3pdBYmyBI8NwVy4';
+  String _accessToken;
+  String _providerID;
+  String _fcmToken;
+  String _deviceType;
+  String _deviceID;
+
+  ApiClient(){
+    getLocalData();
+  }
+  void getLocalData()  async{
+     GetTokenLocalStorage()
+        .readStorage('access_token')
+        .then((value) {
+
+      _accessToken = 'Bearer $value';
+    });
+     GetTokenLocalStorage().readStorage('provider_id').then((value) {
+      _providerID = value;
+    });
+     GetTokenLocalStorage().readStorage('fcm_token').then((value) {
+      _fcmToken = value;
+    });
+     GetTokenLocalStorage().readStorage('device_type').then((value) {
+      _deviceType = value;
+    });
+
+     GetTokenLocalStorage().readStorage('device_id').then((value) {
+      _deviceID = value;
+    });
+  }
   Future<dynamic> registerUser(String email, String firstName,  String lastName,  String phone,  String password,  String confirmPassword ) async {
     try {
       Response response = await _dio.post(
@@ -19,12 +51,12 @@ class ApiClient {
           'email': email,
           'password': password,
           'password_confirmation': confirmPassword,
-          'device_token': 'e6AH-mhp_0I:APA91bFyRFlzohXy7wLP0TwvIKMg3RzZG1UhaAVkljUu3_J84bgllg1wQQqkklK1v1LxLjx0P0Krz0XeajW4-750p6tq3nm0vjknGjQ3rJOvY-ATeeVxU3BX_zzF5Ip9p66IzcB0BngL',
+          'device_token': _fcmToken,
           'mobile': '+27'+phone,
           'dial_code': '0027',
-          'device_type': 'android',
+          'device_type': _deviceType,
           'login_by': 'manual',
-          'device_id': 'bbf811a3d948e70a'
+          'device_id': _deviceID
         },
         options: Options(headers: {'Accept': 'application/json'}),
       );
@@ -59,6 +91,7 @@ class ApiClient {
 
 
   Future<dynamic> login(String email, String password) async {
+
     try {
       Response response = await _dio.post(
         dotenv.get('BASE_URL') + 'api/provider/oauth/token',
@@ -66,22 +99,57 @@ class ApiClient {
           'email': email,
           'password': password,
           'grant_type': 'password',
-          'client_secret': 'bSB7ha4gWUFG6IZCNdxBHVwoAh1W87ZUtBVSKBjd',
-          'client_id': '2',
-          'device_type': 'android',
-          'device_token': 'e6AH-mhp_0I:APA91bFyRFlzohXy7wLP0TwvIKMg3RzZG1UhaAVkljUu3_J84bgllg1wQQqkklK1v1LxLjx0P0Krz0XeajW4-750p6tq3nm0vjknGjQ3rJOvY-ATeeVxU3BX_zzF5Ip9p66IzcB0BngL',
-          'device_id': 'bbf811a3d948e70a'
+          'device_type': _deviceType,
+          'device_token': _fcmToken,
+          'device_id': _deviceID
         },
         options: Options(headers: {'Accept': 'application/json'}),
       );
-      return response.data;
+
+      print(response);
+
+      if(response == null) {
+        if (response.data != null) {
+          return response.data;
+        } else {
+          throw InvalidCridetials();
+        }
+      }else{
+        throw GeneralError();
+      }
     } on DioError catch (e) {
-      return e.response.data;
+      print(e.response);
+    } catch(e){
+      throw GeneralError();
+    }
+  }
+
+  Future<void> logOut() async {
+
+    try {
+
+       await _dio.post(
+        dotenv.get('BASE_URL') + 'api/provider/logout',
+        data: {
+          'id': _providerID,
+        },
+        options: Options(headers: {'Accept': 'application/json'}),
+      );
+
+    } on  LogoutError{
+
+      print('Error Loging out');
+
+    } on DioError  {
+
+      print('Error with network out');
+    } catch(e){
+      print(e);
     }
   }
 
   Future<dynamic> goOnline(String status) async {
-    _dio.options.headers["Authorization"] = accessToken;
+    _dio.options.headers["Authorization"] = _accessToken;
     try {
       Response response = await _dio.post(
         dotenv.get('BASE_URL') + 'api/provider/profile/available',
@@ -91,7 +159,6 @@ class ApiClient {
         options: Options(headers: {'Accept': 'application/json'}),
       );
 
-      print(response);
       return response.data;
     } on DioError catch (e) {
       return e.response.data;
@@ -102,7 +169,7 @@ class ApiClient {
 
     int id = int.parse(requestID);
 
-    _dio.options.headers["Authorization"] = accessToken;
+    _dio.options.headers["Authorization"] = _accessToken;
     try {
       var response = await _dio.get(
           dotenv.get('BASE_URL') + 'api/provider/trip/details/$id'

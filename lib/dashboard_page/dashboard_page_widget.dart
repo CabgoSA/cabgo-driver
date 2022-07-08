@@ -13,6 +13,7 @@ import '../flutter_flow/place.dart';
 import 'package:swipeable_button_view/swipeable_button_view.dart';
 import 'package:slider_button/slider_button.dart';
 import 'package:fswitch_nullsafety/fswitch_nullsafety.dart';
+import 'package:rating_dialog/rating_dialog.dart';
 
 class DashboardPageWidget extends StatefulWidget {
   const DashboardPageWidget({Key key}) : super(key: key);
@@ -23,6 +24,7 @@ class DashboardPageWidget extends StatefulWidget {
 
 class _DashboardPageWidgetState extends State<DashboardPageWidget> {
   bool isFinished = false;
+  bool isVisible= false;
 
   var placePickerValue = FFPlace();
   final scaffoldKey = GlobalKey<ScaffoldState>();
@@ -163,7 +165,7 @@ class _DashboardPageWidgetState extends State<DashboardPageWidget> {
                                 ),
                                 Row(mainAxisSize: MainAxisSize.max, children: [
                                   for (var i = 0; i < 5; i++)
-                                    Icon(Icons.star_border_outlined),
+                                    Icon(Icons.star,),
                                   Padding(
                                     padding: EdgeInsetsDirectional.fromSTEB(
                                         12, 0, 0, 0),
@@ -223,8 +225,10 @@ class _DashboardPageWidgetState extends State<DashboardPageWidget> {
                           await appState.acceptRequest(359);
                           //await appState.acceptRequest( int.parse(notifications.requestID));
                           if (appState.info != null) {
+                            appState.onlineVisibility = !appState.onlineVisibility;
+                            appState.pickupVisibility = !appState.pickupVisibility;
+                            appState.dragableSize = 0.35;
                             Navigator.pop(context);
-                            pickUp(context, appState);
                           } else {
                             print('ooops');
                           }
@@ -244,123 +248,50 @@ class _DashboardPageWidgetState extends State<DashboardPageWidget> {
     );
   }
 
-  void pickUp(
-    BuildContext context,
-    AppState appState,
-  ) {
-    showModalBottomSheet<void>(
-      context: context,
-      enableDrag: false,
-      shape: RoundedRectangleBorder(
-        borderRadius: const BorderRadius.only(
-          topLeft: Radius.circular(20),
-          topRight: Radius.circular(20),
-        ),
-      ),
-      builder: (BuildContext context) {
-        return Container(
-          height: 200,
-          child: SingleChildScrollView(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              mainAxisSize: MainAxisSize.min,
-              children: <Widget>[
-                Column(
-                  mainAxisSize: MainAxisSize.max,
-                  children: [
-                    Padding(
-                      padding: EdgeInsetsDirectional.fromSTEB(24, 0, 24, 12),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.max,
-                        children: [
-                          Container(
-                            width: 50,
-                            height: 50,
-                            clipBehavior: Clip.antiAlias,
-                            decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                            ),
-                            child: Image.asset(
-                              'assets/images/UI_avatar@2x.png',
-                            ),
-                          ),
-                          Padding(
-                            padding:
-                                EdgeInsetsDirectional.fromSTEB(18, 0, 0, 0),
-                            child: Column(
-                              mainAxisSize: MainAxisSize.max,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Padding(
-                                  padding: EdgeInsetsDirectional.fromSTEB(
-                                      0, 5, 0, 5.0),
-                                  child: Text(appState.riderDetails.fullName),
-                                ),
-                                Row(mainAxisSize: MainAxisSize.max, children: [
-                                  for (var i = 0; i < 5; i++)
-                                    Icon(Icons.star_border_outlined),
-                                  Padding(
-                                    padding: EdgeInsetsDirectional.fromSTEB(
-                                        12, 0, 0, 0),
-                                    child: TextButton(
-                                      style: TextButton.styleFrom(
-                                        backgroundColor: Colors.red[600],
-                                        primary: Colors.white,
-                                        textStyle: const TextStyle(
-                                          fontSize: 14.0,
-                                          fontFamily: 'Red Hat Display',
-                                          color: Colors.white,
-                                          fontWeight: FontWeight.w300,
-                                        ),
-                                      ),
-                                      onPressed: () {
-                                        Navigator.pop(context);
-                                      },
-                                      child: const Text('Cancel Ride'),
-                                    ),
-                                  )
-                                ]),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-                Padding(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 40, vertical: 25),
-                    child: SwipeableButtonView(
-                        buttonWidget: Container(
-                          child: Icon(
-                            Icons.arrow_forward_ios_rounded,
-                            color: Color(0xff090f13),
-                          ),
-                        ),
-                        buttonText: "SLIDE TO PICK UP",
-                        activeColor: Color(0xff090f13),
-                        isFinished: isFinished,
-                        onWaitingProcess: () async {
-                          await appState.driveToRiderDestination();
-                          Future.delayed(Duration(seconds: 2), () {
-                            setState(() {
-                              isFinished = true;
-                            });
-                          });
-                          Navigator.pop(context);
-                        },
-                        onFinish: () async {})),
-              ],
-            ),
-          ),
-        );
-      },
-      isDismissible: false,
-      isScrollControlled: true,
-    );
-  }
+
 }
+
+
+// Drop off page
+
+final _dialog = RatingDialog(
+  initialRating: 1.0,
+
+  // your app's name?
+  title: Text(
+    'TRIP HAS ENDED!!',
+    textAlign: TextAlign.center,
+    style: const TextStyle(
+      fontSize: 25,
+      fontWeight: FontWeight.bold,
+    ),
+  ),
+  // encourage your user to leave a high rating?
+  message: Text(
+    'Tap a star to set your rating. Add more description here if you want.',
+    textAlign: TextAlign.center,
+    style: const TextStyle(fontSize: 15,fontFamily: 'Red Hat Display', ),
+  ),
+  // your app's logo?
+ starSize: 25.0,
+  submitButtonText: 'Submit' ,
+  commentHint: ' your  comment ',
+  onCancelled: () => print('cancelled'),
+  onSubmitted: (response) {
+    print('rating: ${response.rating}, comment: ${response.comment}');
+
+    // TODO: add your own logic
+    if (response.rating < 3.0) {
+      // send their comments to your email or anywhere you wish
+      // ask the user to contact you instead of leaving a bad review
+    } else {
+      // _rateAndReviewApp();
+    }
+  },
+);
+
+
+// drop off page
 
 class Map extends StatefulWidget {
   @override
@@ -413,7 +344,7 @@ class _MapState extends State<Map> {
                 visible: appState.locationServiceActive == false,
                 child: Text(
                   "Please enable location services!",
-                  style: TextStyle(color: Colors.grey, fontSize: 18),
+                  style: TextStyle(color: Colors.grey, fontSize: 18, fontFamily: 'Red Hat Display'),
                 ),
               ),
             ],
@@ -471,70 +402,256 @@ class _MapState extends State<Map> {
                         ),
                 );
               }),
+
+
               DraggableScrollableSheet(
-                  initialChildSize: 0.2,
+                  initialChildSize: appState.dragableSize,
                   minChildSize: 0.2,
                   maxChildSize: 1,
                   snapSizes: [0.5, 1],
                   snap: true,
                   builder: (BuildContext context, scrollSheetController) {
                     return Container(
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.only(
-                            topLeft: Radius.circular(15.0),
-                            topRight: Radius.circular(15.0)),
-                        border: Border(
-                          top: BorderSide(width: 1.0, color: Colors.grey[300]),
-                          left: BorderSide(width: 1.0, color: Colors.grey[300]),
-                          right:
-                              BorderSide(width: 1.0, color: Colors.grey[300]),
-                          bottom:
-                              BorderSide(width: 1.0, color: Colors.grey[300]),
-                        ),
-                      ),
-                      child: Container(
-                        //      scrollable start
-                        child: SingleChildScrollView(
-                          child: Column(
-                            children: [
-                              Icon(
-                                Icons.horizontal_rule_rounded,
-                                color: Colors.black,
-                                size: 30,
-                              ),
-                              FSwitch(
-                                width: 300,
-                                height: 68,
-                                openColor: Color(0xff090f13),
-                                sliderColor: Color(0xff090f13),
-                                onChanged: (v) async {
-                                  print("test ===========");
-                                  if (appState.isOnline) {
-                                    await appState.goOnline('offline');
-                                  } else {
-                                    await appState.goOnline('active');
-                                  }
-                                },
-                                closeChild: Text(
-                                  "GO ONLINE",
-                                  style: TextStyle(
-                                      color: Colors.white, fontSize: 18),
-                                ),
-                                openChild: Text(
-                                  "GO OFFLINE",
-                                  style: TextStyle(
-                                      color: Colors.white, fontSize: 18),
-                                ),
-                                sliderChild: appState.slideIcon,
-                              ),
-                            ],
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.only(
+                              topLeft: Radius.circular(15.0),
+                              topRight: Radius.circular(15.0)),
+                          border: Border(
+                            top: BorderSide(width: 1.0, color: Colors.grey[300]),
+                            left: BorderSide(width: 1.0, color: Colors.grey[300]),
+                            right:
+                            BorderSide(width: 1.0, color: Colors.grey[300]),
+                            bottom:
+                            BorderSide(width: 1.0, color: Colors.grey[300]),
                           ),
                         ),
-                        //      scrollable end
-                      ),
-                    );
+                        child: ListView.builder(
+                          padding: EdgeInsets.zero,
+                          physics: ClampingScrollPhysics(),
+                          controller: scrollSheetController,
+                          itemCount: 1,
+                          itemBuilder: (BuildContext context, int index) {
+
+
+                            return Padding(
+                                padding: EdgeInsets.only(left: 8.0, top: 1.0,right: 8.0,bottom: 8.0),
+                                child: Column(
+                                  children: [
+                                    Padding(
+                                      padding: const EdgeInsets.only(bottom: 10.0),
+                                      child: SizedBox(
+                                        width: 50,
+                                        child: Divider(
+                                          thickness: 2,
+                                        ),
+                                      ),
+                                    ),
+
+
+                                    // GO ONLINE BUTTON
+                                    Visibility(
+                                      visible: appState.onlineVisibility,
+                                      child: FSwitch(
+                                        width: 300,
+                                        height: 68,
+                                        openColor: Color(0xff090f13),
+                                        sliderColor: Color(0xff090f13),
+
+                                        onChanged: (v) async {
+                                          print("test ===========");
+                                          if (appState.isOnline) {
+                                            await appState.goOnline('offline');
+                                          } else {
+                                            await appState.goOnline('active');
+                                          }
+                                        },
+                                        closeChild: Text(
+                                          "GO ONLINE",
+                                          style: TextStyle(
+                                              color: Colors.white, fontSize: 18, fontFamily: 'Red Hat Display',
+                                              fontWeight: FontWeight.w300
+                                          ),
+                                        ),
+                                        openChild: Text(
+                                          "GO OFFLINE",
+                                          style: TextStyle(
+                                              color: Colors.white, fontSize: 18,
+                                            fontFamily: 'Red Hat Display',
+
+                                          ),
+                                        ),
+                                        sliderChild: appState.slideIcon,
+                                      ),
+                                    ),
+                                    //  GO ONLINE BUTTON END
+
+                                    //  PICKUP PAGE
+                                    Visibility(
+                                        visible: appState.pickupVisibility,
+                                        child: Column(
+                                          mainAxisAlignment: MainAxisAlignment.center,
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: <Widget>[
+                                            Column(
+                                              mainAxisSize: MainAxisSize.max,
+                                              children: [
+                                                Padding(
+                                                  padding: EdgeInsetsDirectional.fromSTEB(24, 0, 24, 12),
+                                                  child: Row(
+                                                    mainAxisSize: MainAxisSize.max,
+                                                    children: [
+                                                      Container(
+                                                        width: 50,
+                                                        height: 50,
+                                                        clipBehavior: Clip.antiAlias,
+                                                        decoration: BoxDecoration(
+                                                          shape: BoxShape.circle,
+                                                        ),
+                                                        child: Image.asset(
+                                                          'assets/images/UI_avatar@2x.png',
+                                                        ),
+                                                      ),
+                                                      Padding(
+                                                        padding:
+                                                        EdgeInsetsDirectional.fromSTEB(18, 0, 0, 0),
+                                                        child: Column(
+                                                          mainAxisSize: MainAxisSize.max,
+                                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                                          children: [
+                                                            Padding(
+                                                              padding: EdgeInsetsDirectional.fromSTEB(
+                                                                  0, 5, 0, 5.0),
+                                                              child: (appState.riderDetails != null) ? Text(appState.riderDetails.fullName) : Text('test'),
+                                                            ),
+                                                            Row(mainAxisSize: MainAxisSize.max, children: [
+                                                              for (var i = 0; i < 5; i++)
+                                                                Icon(Icons.star_border_outlined),
+                                                              Padding(
+                                                                padding: EdgeInsetsDirectional.fromSTEB(
+                                                                    12, 0, 0, 0),
+                                                                child: TextButton(
+                                                                  style: TextButton.styleFrom(
+                                                                    backgroundColor: Colors.red[600],
+                                                                    primary: Colors.white,
+                                                                    textStyle: const TextStyle(
+                                                                      fontSize: 14.0,
+                                                                      fontFamily: 'Red Hat Display',
+                                                                      color: Colors.white,
+                                                                      fontWeight: FontWeight.w300,
+                                                                    ),
+                                                                  ),
+                                                                  onPressed: () {
+                                                                    Navigator.pop(context);
+                                                                  },
+                                                                  child: const Text('Cancel Ride',
+
+
+                                                                  ),
+                                                                ),
+                                                              )
+                                                            ]),
+                                                          ],
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                            Padding(
+                                              padding: const EdgeInsets.symmetric(
+                                                  horizontal: 30, vertical: 25),
+                                              child: SliderButton(
+                                                action: () async {
+                                                  await appState.driveToRiderDestination();
+                                                  appState.pickupVisibility = !appState.pickupVisibility;
+                                                  appState.dropoffVisibility = !appState.dropoffVisibility;
+                                                  appState.dragableSize = 0.2;
+                                                  // dropOff(context, appState);
+                                                },
+                                                label: Text(
+                                                  "SLIDE TO PICKUP",
+                                                  style: TextStyle(
+                                                      color: Color(0xff090f13), fontWeight: FontWeight.w300, fontSize: 18,fontFamily: 'Red Hat Display',),
+                                                ),
+                                                icon: Center(
+                                                    child: Icon(
+                                                      Icons.arrow_forward_ios_rounded,
+                                                      color: Color(0xff090f13),
+                                                      size: 40.0,
+                                                      semanticLabel: 'Text to announce in accessibility modes',
+                                                    )),
+                                                width: double.infinity,
+                                                buttonColor: Colors.white,
+                                                backgroundColor: Color(0xff090f13),
+                                                highlightedColor: Colors.white,
+                                                baseColor: Colors.white,
+
+                                              ),
+
+                                            ),
+                                          ],
+                                        )
+                                    ),
+
+                                    //  PICKUP PAGE END
+
+                                    //  DROPOFF PAGE START
+                                    Visibility(
+                                      visible: appState.dropoffVisibility,
+
+                                      child: Column(
+                                        mainAxisAlignment: MainAxisAlignment.center,
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: <Widget>[
+
+                                          Padding(
+                                            padding: const EdgeInsets.symmetric(
+                                                horizontal: 30, vertical: 25),
+                                            child: SliderButton(
+                                              action: () async {
+                                                showDialog(
+                                                  context: context,
+                                                  barrierDismissible: true, // set to false if you want to force a rating
+                                                  builder: (context) => _dialog,
+                                                );
+                                                appState.onlineVisibility = !appState.onlineVisibility;
+
+                                              },
+                                              label: Text(
+                                                "SLIDE TO DROP OFF",
+                                                style: TextStyle(
+                                                    color: Color(0xff090f13), fontWeight: FontWeight.w300, fontSize: 18, fontFamily: 'Red Hat Display',),
+                                              ),
+                                              icon: Center(
+                                                  child: Icon(
+                                                    Icons.arrow_forward_ios_rounded,
+                                                    color: Color(0xff090f13),
+                                                    size: 40.0,
+                                                    semanticLabel: 'Text to announce in accessibility modes',
+                                                  )),
+                                              width: double.infinity,
+                                              buttonColor: Colors.white,
+                                              backgroundColor: Color(0xff090f13),
+                                              highlightedColor: Colors.white,
+                                              baseColor: Colors.white,
+
+                                            ),
+
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                    //  DROPOFF PAGE ENDS
+                                  ],
+                                ));
+
+
+                          },
+                        ));
                   }),
+
               Column(
                 mainAxisSize: MainAxisSize.max,
                 children: [
