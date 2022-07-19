@@ -89,66 +89,7 @@ class _DocsWidgetState extends State<DocsWidget> {
                   child: Column(
                     mainAxisSize: MainAxisSize.max,
                     children: [
-                      Row(
-                        mainAxisSize: MainAxisSize.max,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Expanded(
-                            child: Stack(
-                              children: [
-                                Align(
-                                  alignment: AlignmentDirectional(0, 0),
-                                  child: Image.network(
-                                    'https://images.unsplash.com/photo-1626544827763-d516dce335e2?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxzZWFyY2h8MTc1fHxwcm9kdWN0fGVufDB8fDB8fA%3D%3D&auto=format&fit=crop&w=800&q=60',
-                                    width: MediaQuery.of(context).size.width,
-                                    height: 130,
-                                    fit: BoxFit.cover,
-                                  ),
-                                ),
-                                Align(
-                                  alignment: AlignmentDirectional(0, 0),
-                                  child: Container(
-                                    width: MediaQuery.of(context).size.width,
-                                    height: 130,
-                                    decoration: BoxDecoration(
-                                      color: Color(0x77090F13),
-                                    ),
-                                    child: Column(
-                                      mainAxisSize: MainAxisSize.max,
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      children: [
-                                        FlutterFlowIconButton(
-                                          borderColor: Colors.transparent,
-                                          borderRadius: 30,
-                                          buttonSize: 48,
-                                          icon: Icon(
-                                            Icons.photo_camera,
-                                            color: Colors.white,
-                                            size: 30,
-                                          ),
-                                          onPressed: () {
-                                            print('IconButton pressed ...');
-                                          },
-                                        ),
-                                        Text(
-                                          'Change Cover Photo',
-                                          style: GoogleFonts.getFont(
-                                            'DM Sans',
-                                            color: Colors.white,
-                                            fontWeight: FontWeight.w500,
-                                            fontSize: 10,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
+
                       Align(
                         alignment: AlignmentDirectional(0, 0),
                         child: Padding(
@@ -259,24 +200,7 @@ class _DocsWidgetState extends State<DocsWidget> {
                           ],
                         ),
                       ),
-                      SwitchListTile.adaptive(
-                        value: switchListTileValue ??= true,
-                        onChanged: (newValue) =>
-                            setState(() => switchListTileValue = newValue),
-                        title: Text(
-                          'Recieve Notifications',
-                          style: FlutterFlowTheme.of(context).subtitle2,
-                        ),
-                        subtitle: Text(
-                          'Turn on notifications.',
-                          style: FlutterFlowTheme.of(context).bodyText2,
-                        ),
-                        tileColor: Colors.white,
-                        activeColor: Color(0xFF4B39EF),
-                        activeTrackColor: Color(0x8D4B39EF),
-                        dense: false,
-                        controlAffinity: ListTileControlAffinity.trailing,
-                      ),
+
                       Padding(
                         padding: EdgeInsetsDirectional.fromSTEB(0, 12, 0, 12),
                         child: FFButtonWidget(

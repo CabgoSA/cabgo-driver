@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:cabgo_driver/services/local_notification_service.dart';
 import 'package:dio/dio.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
@@ -15,6 +16,8 @@ import '../request/device_info.dart';
 import '../request/directions_model.dart';
 import '../request/ride.dart';
 import '../request/secure_storage.dart';
+import 'package:image_picker/image_picker.dart';
+import 'dart:io';
 
 
 
@@ -23,8 +26,9 @@ class AppState with ChangeNotifier {
 
   //AUTH
   //LOGIN CONTOLLER
-    TextEditingController emailAddressController = TextEditingController();
+    TextEditingController phoneController = TextEditingController();
     TextEditingController passwordController = TextEditingController();
+    Driver driver;
 
     //REGISTER CONTROLLER
     TextEditingController registerEmailController = TextEditingController();
@@ -34,7 +38,30 @@ class AppState with ChangeNotifier {
     TextEditingController registerPasswordController = TextEditingController();
     TextEditingController registerConfirmPasswordController = TextEditingController();
     TextEditingController locationController = TextEditingController();
+
+
+    //verify
+    TextEditingController textController1 = TextEditingController();
+    TextEditingController textController2 = TextEditingController();
+    TextEditingController textController3 = TextEditingController();
+    TextEditingController textController4 = TextEditingController();
+    TextEditingController textController5 = TextEditingController();
+
+    //reset password
+    TextEditingController resetPhoneNumber = TextEditingController();
+
+    //new password
+    TextEditingController newPassword = TextEditingController();
+    TextEditingController newPasswordConfirm = TextEditingController();
+
+
     bool registerTermsAndConditionsValue = false;
+
+    int userId;
+
+    String userRegisterPhone;
+
+
 
     //TOKENS
     String _accessToken;
@@ -114,13 +141,23 @@ class AppState with ChangeNotifier {
     RouteDriver _routeDriver;
     RouteDriver get routeDriver => _routeDriver;
 
+    //past ride
+    List pastTrips;
+
+    Map<String, dynamic> earnings;
+
+  //  device information
+    String _providerID;
+    String _fcmToken;
+    String _deviceType;
+    String _deviceID;
+
   AppState(){
       _getUserLocation();
       _isUserLogged();
       _loadingInitialPosition();
       _registerNotification();
       _getDeviceData();
-       ApiClient();
     }
 
 //    register notification
@@ -136,30 +173,37 @@ class AppState with ChangeNotifier {
 
     if (settings.authorizationStatus == AuthorizationStatus.authorized) {
       print('User granted permision ');
-      final fcmToken = await FirebaseMessaging.instance.getToken();
-      GetTokenLocalStorage().addStorage('fcm_token', fcmToken);
+      _fcmToken = await FirebaseMessaging.instance.getToken();
 
     }
 
 
     FirebaseMessaging.onMessage.listen((RemoteMessage message) async {
+
       //get ride details
-      Response data =  await ApiClient().fetchRideDetails(message.data['requestID']);
+      Response data =  await ApiClient().fetchRideDetails(message.data['requestID'], _accessToken);
       Map<String, dynamic> rideData = jsonDecode(data.toString());
 
-      //create notification
-     notifications =   PushNotifications(message.data['message'], message.data['requestID']);
-     _riderDetails  = RiderDetails(fullName:  rideData['user']['first_name']+ ' '+ rideData['user']['last_name'],
-                                    picture: rideData['user']['picture'],
-                                    rating : rideData['user']['rating'],
-                                    price: 'R340',
-                                    riderLocation: LatLng(double.parse(rideData['s_latitude']),double.parse(rideData['s_longitude'])),
-                                 );
+      if(rideData != null) {
+        //create notification
+        notifications = PushNotifications(
+            message.data['message'], message.data['requestID']);
+        _riderDetails = RiderDetails(
+          fullName: rideData['user']['first_name'] + ' ' + rideData['user']['last_name'],
+          picture: rideData['user']['picture'],
+          rating: rideData['user']['rating'],
+          //servicetype price * distance
+          price: 'R340',
+          riderLocation: LatLng(double.parse(rideData['s_latitude']),
+              double.parse(rideData['s_longitude'])),
+        );
 
 
-
-     incomeMessage = true;
-      notifyListeners();
+        incomeMessage = true;
+        notifyListeners();
+      }else{
+        throw IncomingRequestError();
+      }
     });
   }
 
@@ -213,14 +257,13 @@ class AppState with ChangeNotifier {
       notifyListeners();
     }
 
-  //map details
-  Future<void> _getDeviceData() async{
+  //device info
+  void _getDeviceData() async{
 
     try {
      await DeviceInfo.getDeviceDetails().then((value) {
-         GetTokenLocalStorage().addStorage('device_id', value[0]);
-        GetTokenLocalStorage().addStorage('device_type', value[1]);
-
+                _deviceID = value[0];
+                _deviceType = value[1];
       });
 
     }catch(e){
@@ -235,33 +278,39 @@ class AppState with ChangeNotifier {
     Future<bool> _isUserLogged() async{
     try {
       await GetTokenLocalStorage().readStorage('access_token').then((value){
-        _accessToken = 'Bearer $value';
-        print(_accessToken);
-        //_isLoggedIn = (accessToken != null) ? true : false;
+        _isLoggedIn = (accessToken != null) ? true : false;
+        notifyListeners();
         return _isLoggedIn;
       });
     }catch(e){
       throw GettingTokenError();
     }
+    return false;
 
     }
 
     // ! SEND REQUEST
     Future<void> login() async {
-      final response = await ApiClient().login(emailAddressController.text,passwordController.text );
-      print(response);
 
     try{
+      final response = await ApiClient().login(phoneController.text,passwordController.text,_fcmToken, _deviceType,_deviceID );
 
-      if(response['access_token'] != null){
-        GetTokenLocalStorage().addStorage('access_token', response['access_token']);
-        GetTokenLocalStorage().addStorage('provider_id', response['id']);
+        _accessToken =  response['access_token'];
+        _providerID = response['id'].toString();
+        driver = Driver(fullName:  response['first_name']+ ' '+response['last_name'],
+                        phone: response['mobile'],
+                        email: response['email'],
+                        picture: response['avatar'],
+                        rating: double.parse(response['rating']));
         _isLoggedIn = true;
-      }
 
-      notifyListeners();
+
+        notifyListeners();
+
+    } on InvalidCridetials{
+        throw InvalidCridetials();
     }catch(e){
-      print(e);
+        throw GeneralError();
     }
 
 
@@ -269,44 +318,125 @@ class AppState with ChangeNotifier {
 
     // ! SEND REQUEST
 
-    void register() async {
-      final response = await ApiClient().registerUser(
-        registerEmailController.value.text,
-        registerFirstNameController.value.text,
-        registerLastNameController.value.text,
-        registerPhoneController.value.text,
-        registerPasswordController.value.text,
-        registerConfirmPasswordController.value.text,
+    Future<void> register() async {
+
+    try {
+      dynamic response = await ApiClient().registerUser(
+          registerEmailController.value.text,
+          registerFirstNameController.value.text,
+          registerLastNameController.value.text,
+          registerPhoneController.value.text,
+          registerPasswordController.value.text,
+          registerConfirmPasswordController.value.text,
+          _fcmToken,
+          _deviceType,
+          _deviceID
       );
-      print(response);
+      if(response != null){
+        userRegisterPhone = response['mobile'];
+        notifyListeners();
+
+      }else{
+        throw UserNotRegistered();
+      }
+    } catch(e){
+      throw RegisterError();
     }
+
+    }
+
+  Future<void> verifyOtp() async {
+        try {
+          String otpCode = textController1.text;
+          otpCode += textController2.text;
+          otpCode += textController3.text;
+          otpCode += textController4.text;
+          otpCode += textController5.text;
+
+
+          dynamic response = await ApiClient().verifyOtpPasswordReset(
+            resetPhoneNumber.text,
+            otpCode,
+          );
+
+        }catch(e){
+          throw OtpVerificationError();
+        }
+
+
+  }
 
 
     // ! SEND REQUEST
     Future<void> logout() async {
+          try{
+            _accessToken = null;
+              notifyListeners();
+          }catch(e){
+            print(e);
+          }
 
-       bool logout =  await GetTokenLocalStorage().deleteStorage('access_token');
-       if(logout){
-         _isUserLogged();
-       }
-      notifyListeners();
-    }
-
-  // ! SEND REQUEST
-  Future<void> goOnline(String status) async {
-
-      dynamic response =  await ApiClient().goOnline(status);
-      if(response['service']['status'] == 'active'){
-        _isOnline = true;
-        slideIcon = backIcon;
-      } else {
-        _isOnline = false;
-         slideIcon = forwardIcon;
-      }
-    notifyListeners();
   }
 
 
+  Future<dynamic> requestResetOtp() async {
+
+    dynamic data =  await ApiClient().requestResetOtp(resetPhoneNumber.text);
+    return data;
+  }
+
+  Future<dynamic> passwordReset() async {
+
+    dynamic data =  await ApiClient().passwordReset(resetPhoneNumber.text, newPassword.text, newPasswordConfirm.text);
+    return data;
+  }
+
+  // ! SEND REQUEST
+  Future<void> goOnline(String status) async {
+      dynamic response =  await ApiClient().goOnline(status,_accessToken);
+
+      if(response['service']['status'] == 'active') {
+          _isOnline = true;
+          slideIcon = backIcon;
+          notifyListeners();
+        } else {
+          _isOnline = false;
+          slideIcon = forwardIcon;
+          notifyListeners();
+        }
+
+  }
+
+ void uploadDocument(int documentId,) async {
+
+ String  endPoint = dotenv.get('BASE_URL') + 'api/provider/profile/documents/store';
+ // get file
+  var file;
+
+  file = await ImagePicker().pickImage(source: ImageSource.gallery);
+
+  file = File(file.path);
+
+  String fileName = file.path.split('/').last;
+
+  FormData data = FormData.fromMap({
+     "id" : documentId,
+    "document": await MultipartFile.fromFile(
+       file.path,
+       filename: fileName,
+     ),
+
+   });
+
+  Dio dio = new Dio();
+  String token =  _accessToken;
+  dio.options.headers["Authorization"] = 'Bearer $token';
+  dio.post(endPoint, data: data).then((response) {
+   var jsonResponse = jsonDecode(response.toString());
+    print('response here');
+    print(jsonResponse);
+   }).catchError((error) => print(error));
+ }
 
 
 
@@ -325,9 +455,9 @@ class AppState with ChangeNotifier {
 
   Future<void>acceptRequest(int requestID) async{
 
-      dynamic rideDetails = await Ride().acceptRide(requestID);
+      dynamic rideDetails = await Ride().acceptRide(requestID, _accessToken);
 
-     _info =  RideRoute(bookingID: rideDetails['booking_id'],
+     _info =  RideRoute(bookingID: rideDetails['id'].toString(),
                        paymentMethod: rideDetails['payment_mode'],
                        serviceType:  rideDetails['service_type_id'],
                       totalDistance: rideDetails['distance'],
@@ -364,26 +494,47 @@ class AppState with ChangeNotifier {
     List<PointLatLng> polylinePoints =  PolylinePoints().decodePolyline(info.route);
     _routeDriver =  RouteDriver(markerSource: info.riderLocation , markerDestination:  info.riderLocation, polypoints: polylinePoints);
     //update database
-    updateRide(int.parse(_info.bookingID), 'PICKEDUP');
+    updateRide( int.parse(_info.bookingID), 'PICKEDUP');
     notifyListeners();
   }
 
   Future<void> dropRider()async {
     //update database
-    updateRide(int.parse(_info.bookingID), 'DROPPED');
-
+    updateRide( int.parse(_info.bookingID), 'COMPLETED');
+    _routeDriver = null;
+    notifyListeners();
   }
-
 
 
 
   Future<void> updateRide(int requestID, String tripStatus) async{
 
-    Response status = await Ride().updateRide(requestID, tripStatus);
+    Map<String, dynamic> status = await Ride().updateRide(_accessToken, requestID, tripStatus);
     print(status);
     notifyListeners();
 
   }
+
+  Future<void> rateRide( int rating, String comment) async{
+
+    List<String> status = await Ride().rateRide(_accessToken, int.parse(_info.bookingID), rating, comment);
+
+    notifyListeners();
+
+  }
+
+  Future<void> historyTrips()async {
+     pastTrips = await Ride().historyTrips(_accessToken);
+
+    notifyListeners();
+  }
+  Future<void> summary()async {
+    earnings = await Ride().summary(_accessToken);
+
+
+    notifyListeners();
+  }
+
 
 
 }

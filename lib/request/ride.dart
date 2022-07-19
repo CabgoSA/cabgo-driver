@@ -21,8 +21,8 @@ class Ride {
   static const String _baseUrl =
       'https://maps.googleapis.com/maps/api/directions/json?';
 
-  Future<dynamic> acceptRide(int requestID) async {
-    _dio.options.headers["Authorization"] = _accessToken;
+  Future<dynamic> acceptRide(int requestID, String accessToken) async {
+    _dio.options.headers["Authorization"] = 'Bearer  $accessToken';
     try {
       Response response = await _dio.post(
         dotenv.get('BASE_URL') + 'api/provider/trip/$requestID' ,
@@ -70,14 +70,97 @@ class Ride {
     return null;
   }
 
-  Future<dynamic> updateRide(int requestID,String status) async{
-    _dio.options.headers["Authorization"] = _accessToken;
+  Future<dynamic> updateRide(String accessToken,int requestID,String status) async{
+
+    _dio.options.headers["Authorization"] = 'Bearer $accessToken';
+
     try {
       Response response = await _dio.post(
         dotenv.get('BASE_URL') + 'api/provider/trip/update/$requestID' ,
           data: {
             'status': status,
           },
+        options: Options(headers: {'Accept': 'application/json'}),
+      );
+      return response.data;
+    } on DioError catch (e) {
+      return e.response.data;
+    }
+  }
+
+  Future<dynamic> rateRide(String accessToken, int requestID,int rating, String comment ) async{
+
+    try {
+      _dio.options.headers["Authorization"] = 'Bearer  $accessToken';
+      Response response = await _dio.post(
+        dotenv.get('BASE_URL') + 'api/provider/trip/$requestID/rate' ,
+        data: {
+          'rating': rating,
+          'comment' : comment,
+        },
+        options: Options(headers: {'Accept': 'application/json'}),
+      );
+      return response.data;
+    } on DioError catch (e) {
+      return e.response.data;
+    }
+  }
+
+  Future<dynamic> upcomingTrips(String accessToken) async{
+
+    try {
+      _dio.options.headers["Authorization"] = 'Bearer  $accessToken';
+      Response response = await _dio.get(
+        dotenv.get('BASE_URL') + 'api/provider/requests/upcoming' ,
+
+        options: Options(headers: {'Accept': 'application/json'}),
+      );
+      return response.data;
+    } on DioError catch (e) {
+      return e.response.data;
+    }
+  }
+
+  Future<dynamic> historyTrips(String accessToken) async{
+    try {
+      _dio.options.headers["Authorization"] = 'Bearer  $accessToken';
+      Response response = await _dio.get(
+        dotenv.get('BASE_URL') + 'api/provider/requests/history' ,
+
+        options: Options(headers: {'Accept': 'application/json'}),
+      );
+      return response.data;
+    } on DioError catch (e) {
+      return e.response.data;
+    }
+  }
+
+  Future<dynamic> historyTripDetails(int requestID ,String accessToken) async{
+
+
+    try {
+      _dio.options.headers["Authorization"] = 'Bearer  $accessToken';
+      Response response = await _dio.post(
+        dotenv.get('BASE_URL') + 'api/provider/requests/history' ,
+        data: {
+          'request_id': requestID,
+        },
+
+        options: Options(headers: {'Accept': 'application/json'}),
+      );
+      return response.data;
+    } on DioError catch (e) {
+      return e.response.data;
+    }
+  }
+
+  Future<dynamic> summary(String accessToken) async{
+
+    try {
+      _dio.options.headers["Authorization"] = 'Bearer $accessToken';
+      Response response = await _dio.post(
+        dotenv.get('BASE_URL') + 'api/provider/summary' ,
+
         options: Options(headers: {'Accept': 'application/json'}),
       );
       return response.data;
@@ -149,4 +232,7 @@ class RouteDriver{
   final List<PointLatLng> polypoints;
 
   RouteDriver({@required this.markerSource, @required this.markerDestination, @required this.polypoints});
+
+
 }
+

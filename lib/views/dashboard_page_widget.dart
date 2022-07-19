@@ -1,7 +1,7 @@
 import 'package:cabgo_driver/services/local_notification_service.dart';
 import 'package:flutter_ringtone_player/flutter_ringtone_player.dart';
 import 'package:uuid/uuid.dart';
-import '../components/side_nav_widget.dart';
+import 'components/side_nav_widget.dart';
 import '../flutter_flow/flutter_flow_icon_button.dart';
 import '../flutter_flow/flutter_flow_theme.dart';
 import 'package:flutter/material.dart';
@@ -10,7 +10,6 @@ import 'package:provider/provider.dart';
 import 'package:cabgo_driver/states/app_state.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import '../flutter_flow/place.dart';
-import 'package:swipeable_button_view/swipeable_button_view.dart';
 import 'package:slider_button/slider_button.dart';
 import 'package:fswitch_nullsafety/fswitch_nullsafety.dart';
 import 'package:rating_dialog/rating_dialog.dart';
@@ -222,15 +221,12 @@ class _DashboardPageWidgetState extends State<DashboardPageWidget> {
                           ),
                         ),
                         onPressed: () async {
-                          await appState.acceptRequest(359);
-                          //await appState.acceptRequest( int.parse(notifications.requestID));
+                          await appState.acceptRequest( int.parse(notifications.requestID));
                           if (appState.info != null) {
                             appState.onlineVisibility = !appState.onlineVisibility;
                             appState.pickupVisibility = !appState.pickupVisibility;
                             appState.dragableSize = 0.35;
                             Navigator.pop(context);
-                          } else {
-                            print('ooops');
                           }
                         },
                         child: const Text('Accept'),
@@ -254,41 +250,37 @@ class _DashboardPageWidgetState extends State<DashboardPageWidget> {
 
 // Drop off page
 
-final _dialog = RatingDialog(
-  initialRating: 1.0,
 
-  // your app's name?
-  title: Text(
-    'TRIP HAS ENDED!!',
-    textAlign: TextAlign.center,
-    style: const TextStyle(
-      fontSize: 25,
-      fontWeight: FontWeight.bold,
+RatingDialog ratingDialog(AppState appState) {
+  return RatingDialog(
+    initialRating: 1.0,
+
+    // your app's name?
+    title: Text(
+      'TRIP HAS ENDED!!',
+      textAlign: TextAlign.center,
+      style: const TextStyle(
+        fontSize: 25,
+        fontWeight: FontWeight.bold,
+      ),
     ),
-  ),
-  // encourage your user to leave a high rating?
-  message: Text(
-    'Tap a star to set your rating. Add more description here if you want.',
-    textAlign: TextAlign.center,
-    style: const TextStyle(fontSize: 15,fontFamily: 'Red Hat Display', ),
-  ),
-  // your app's logo?
- starSize: 25.0,
-  submitButtonText: 'Submit' ,
-  commentHint: ' your  comment ',
-  onCancelled: () => print('cancelled'),
-  onSubmitted: (response) {
-    print('rating: ${response.rating}, comment: ${response.comment}');
+    // encourage your user to leave a high rating?
+    message: Text(
+      'Tap a star to set your rating. Add more description here if you want.',
+      textAlign: TextAlign.center,
+      style: const TextStyle(fontSize: 15, fontFamily: 'Red Hat Display',),
+    ),
+    // your app's logo?
+    starSize: 25.0,
+    submitButtonText: 'Submit',
+    commentHint: ' your  comment ',
+    onCancelled: () => print('cancelled'),
+    onSubmitted: (response) async {
+      await appState.rateRide(response.rating.toInt(), response.comment);
 
-    // TODO: add your own logic
-    if (response.rating < 3.0) {
-      // send their comments to your email or anywhere you wish
-      // ask the user to contact you instead of leaving a bad review
-    } else {
-      // _rateAndReviewApp();
-    }
-  },
-);
+    },
+  );
+}
 
 
 // drop off page
@@ -312,11 +304,11 @@ class _MapState extends State<Map> {
   Widget build(BuildContext context) {
     final appState = Provider.of<AppState>(context);
 
-    if (appState.isOnline) {
-      appState.slideIcon = appState.forwardIcon;
-    } else {
-      appState.slideIcon = appState.backIcon;
-    }
+    // if (appState.isOnline) {
+    //   appState.slideIcon = appState.forwardIcon;
+    // } else {
+    //   appState.slideIcon = appState.backIcon;
+    // }
 
     return appState.initialPosition == null
         ? Container(
@@ -358,7 +350,7 @@ class _MapState extends State<Map> {
                   child: (appState.routeDriver == null)
                       ? GoogleMap(
                           initialCameraPosition: CameraPosition(
-                              target: appState.initialPosition, zoom: 14),
+                              target: appState.initialPosition, zoom: 18),
                           onMapCreated: appState.onCreated,
                           myLocationEnabled: true,
                           mapType: MapType.normal,
@@ -453,13 +445,13 @@ class _MapState extends State<Map> {
                                     Visibility(
                                       visible: appState.onlineVisibility,
                                       child: FSwitch(
+                                        open: appState.isOnline,
                                         width: 300,
                                         height: 68,
                                         openColor: Color(0xff090f13),
                                         sliderColor: Color(0xff090f13),
 
                                         onChanged: (v) async {
-                                          print("test ===========");
                                           if (appState.isOnline) {
                                             await appState.goOnline('offline');
                                           } else {
@@ -614,9 +606,11 @@ class _MapState extends State<Map> {
                                                 showDialog(
                                                   context: context,
                                                   barrierDismissible: true, // set to false if you want to force a rating
-                                                  builder: (context) => _dialog,
+                                                  builder: (context) => ratingDialog(appState),
                                                 );
                                                 appState.onlineVisibility = !appState.onlineVisibility;
+
+                                                appState.dropRider();
 
                                               },
                                               label: Text(

@@ -1,10 +1,13 @@
+import 'package:provider/provider.dart';
 import '../flutter_flow/flutter_flow_icon_button.dart';
 import '../flutter_flow/flutter_flow_theme.dart';
 import '../flutter_flow/flutter_flow_util.dart';
 import '../flutter_flow/flutter_flow_widgets.dart';
 import 'package:easy_debounce/easy_debounce.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
+import 'verify_otp_widget.dart';
+
+import '../states/app_state.dart';
 
 class ResetPasswordWidget extends StatefulWidget {
   const ResetPasswordWidget({Key key}) : super(key: key);
@@ -25,6 +28,7 @@ class _ResetPasswordWidgetState extends State<ResetPasswordWidget> {
 
   @override
   Widget build(BuildContext context) {
+    final appState = Provider.of<AppState>(context);
     return Scaffold(
       key: scaffoldKey,
       appBar: AppBar(
@@ -82,7 +86,8 @@ class _ResetPasswordWidgetState extends State<ResetPasswordWidget> {
                           Padding(
                             padding: EdgeInsetsDirectional.fromSTEB(5, 5, 5, 5),
                             child: TextFormField(
-                              controller: textController,
+                              controller: appState.resetPhoneNumber,
+                              keyboardType: TextInputType.phone,
                               onChanged: (_) => EasyDebounce.debounce(
                                 'textController',
                                 Duration(milliseconds: 2000),
@@ -91,8 +96,8 @@ class _ResetPasswordWidgetState extends State<ResetPasswordWidget> {
                               autofocus: true,
                               obscureText: false,
                               decoration: InputDecoration(
-                                labelText: 'Enter your email',
-                                hintText: 'Enter email you used to register',
+                                labelText: 'Enter your phone number',
+                                hintText: 'Enter phone number',
                                 enabledBorder: OutlineInputBorder(
                                   borderSide: BorderSide(
                                     color: FlutterFlowTheme.of(context)
@@ -126,8 +131,17 @@ class _ResetPasswordWidgetState extends State<ResetPasswordWidget> {
                             ),
                           ),
                           FFButtonWidget(
-                            onPressed: () {
-                              print('Button pressed ...');
+                            onPressed: () async{
+                            dynamic result =  await appState.requestResetOtp();
+
+                            await Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) =>
+                                    VerifyOtpPageWidget(),
+                              ),
+                            );
+
                             },
                             text: 'reset',
                             options: FFButtonOptions(

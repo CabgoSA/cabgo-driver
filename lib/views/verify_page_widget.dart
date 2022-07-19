@@ -1,3 +1,5 @@
+import 'package:provider/provider.dart';
+
 import '../flutter_flow/flutter_flow_icon_button.dart';
 import '../flutter_flow/flutter_flow_theme.dart';
 import '../flutter_flow/flutter_flow_util.dart';
@@ -5,6 +7,8 @@ import '../flutter_flow/flutter_flow_widgets.dart';
 import 'package:easy_debounce/easy_debounce.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+
+import '../states/app_state.dart';
 
 class VerifyPageWidget extends StatefulWidget {
   const VerifyPageWidget({Key key}) : super(key: key);
@@ -20,17 +24,11 @@ class _VerifyPageWidgetState extends State<VerifyPageWidget> {
   TextEditingController textController4;
   final scaffoldKey = GlobalKey<ScaffoldState>();
 
-  @override
-  void initState() {
-    super.initState();
-    field1Controller = TextEditingController();
-    textController2 = TextEditingController();
-    textController3 = TextEditingController();
-    textController4 = TextEditingController();
-  }
+
 
   @override
   Widget build(BuildContext context) {
+    final appState = Provider.of<AppState>(context);
     return Scaffold(
       key: scaffoldKey,
       appBar: AppBar(
@@ -88,7 +86,8 @@ class _VerifyPageWidgetState extends State<VerifyPageWidget> {
                           child: Padding(
                             padding: EdgeInsetsDirectional.fromSTEB(5, 5, 5, 5),
                             child: TextFormField(
-                              controller: field1Controller,
+                              maxLength: 1,
+                              controller: appState.textController1,
                               onChanged: (_) => EasyDebounce.debounce(
                                 'field1Controller',
                                 Duration(milliseconds: 2000),
@@ -124,7 +123,8 @@ class _VerifyPageWidgetState extends State<VerifyPageWidget> {
                           child: Padding(
                             padding: EdgeInsetsDirectional.fromSTEB(5, 5, 5, 5),
                             child: TextFormField(
-                              controller: textController2,
+                              maxLength: 1,
+                              controller: appState.textController2,
                               onChanged: (_) => EasyDebounce.debounce(
                                 'textController2',
                                 Duration(milliseconds: 2000),
@@ -133,7 +133,6 @@ class _VerifyPageWidgetState extends State<VerifyPageWidget> {
                               autofocus: true,
                               obscureText: false,
                               decoration: InputDecoration(
-                                hintText: '[Some hint text...]',
                                 enabledBorder: OutlineInputBorder(
                                   borderSide: BorderSide(
                                     color: FlutterFlowTheme.of(context)
@@ -159,7 +158,8 @@ class _VerifyPageWidgetState extends State<VerifyPageWidget> {
                           child: Padding(
                             padding: EdgeInsetsDirectional.fromSTEB(5, 5, 5, 5),
                             child: TextFormField(
-                              controller: textController3,
+                              maxLength: 1,
+                              controller: appState.textController3,
                               onChanged: (_) => EasyDebounce.debounce(
                                 'textController3',
                                 Duration(milliseconds: 2000),
@@ -168,7 +168,6 @@ class _VerifyPageWidgetState extends State<VerifyPageWidget> {
                               autofocus: true,
                               obscureText: false,
                               decoration: InputDecoration(
-                                hintText: '[Some hint text...]',
                                 enabledBorder: OutlineInputBorder(
                                   borderSide: BorderSide(
                                     color: FlutterFlowTheme.of(context)
@@ -194,7 +193,8 @@ class _VerifyPageWidgetState extends State<VerifyPageWidget> {
                           child: Padding(
                             padding: EdgeInsetsDirectional.fromSTEB(5, 5, 5, 5),
                             child: TextFormField(
-                              controller: textController4,
+                              maxLength: 1,
+                              controller: appState.textController4,
                               onChanged: (_) => EasyDebounce.debounce(
                                 'textController4',
                                 Duration(milliseconds: 2000),
@@ -203,7 +203,41 @@ class _VerifyPageWidgetState extends State<VerifyPageWidget> {
                               autofocus: true,
                               obscureText: false,
                               decoration: InputDecoration(
-                                hintText: '[Some hint text...]',
+                                enabledBorder: OutlineInputBorder(
+                                  borderSide: BorderSide(
+                                    color: FlutterFlowTheme.of(context)
+                                        .secondaryText,
+                                    width: 1,
+                                  ),
+                                  borderRadius: BorderRadius.circular(0),
+                                ),
+                                focusedBorder: OutlineInputBorder(
+                                  borderSide: BorderSide(
+                                    color: FlutterFlowTheme.of(context)
+                                        .secondaryText,
+                                    width: 1,
+                                  ),
+                                  borderRadius: BorderRadius.circular(0),
+                                ),
+                              ),
+                              style: FlutterFlowTheme.of(context).bodyText1,
+                            ),
+                          ),
+                        ),
+                        Expanded(
+                          child: Padding(
+                            padding: EdgeInsetsDirectional.fromSTEB(5, 5, 5, 5),
+                            child: TextFormField(
+                              maxLength: 1,
+                              controller: appState.textController5,
+                              onChanged: (_) => EasyDebounce.debounce(
+                                'textController5',
+                                Duration(milliseconds: 2000),
+                                    () => setState(() {}),
+                              ),
+                              autofocus: true,
+                              obscureText: false,
+                              decoration: InputDecoration(
                                 enabledBorder: OutlineInputBorder(
                                   borderSide: BorderSide(
                                     color: FlutterFlowTheme.of(context)
@@ -239,7 +273,7 @@ class _VerifyPageWidgetState extends State<VerifyPageWidget> {
                           ),
                           FFButtonWidget(
                             onPressed: () {
-                              print('Button pressed ...');
+                                appState.verifyOtp();
                             },
                             text: 'Verify',
                             options: FFButtonOptions(

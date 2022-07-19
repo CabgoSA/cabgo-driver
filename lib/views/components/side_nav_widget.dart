@@ -1,14 +1,12 @@
+import 'package:cabgo_driver/index.dart';
 import 'package:provider/provider.dart';
-
-import '../flutter_flow/flutter_flow_theme.dart';
-import '../flutter_flow/flutter_flow_util.dart';
+import '../../flutter_flow/flutter_flow_theme.dart';
+import '../../flutter_flow/flutter_flow_util.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:share_plus/share_plus.dart';
-
-import '../home_page/home_page_widget.dart';
-import '../states/app_state.dart';
+import '../home_page_widget.dart';
+import '../../states/app_state.dart';
 
 class SideNavWidget extends StatefulWidget {
   const SideNavWidget({Key key}) : super(key: key);
@@ -53,7 +51,7 @@ class _SideNavWidgetState extends State<SideNavWidget> {
                     ClipRRect(
                       borderRadius: BorderRadius.circular(26),
                       child: Image.network(
-                        'https://images.unsplash.com/photo-1463453091185-61582044d556?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxzZWFyY2h8MzJ8fHVzZXJ8ZW58MHx8MHx8&auto=format&fit=crop&w=900&q=60',
+                        appState.driver.picture,
                         width: 36,
                         height: 36,
                         fit: BoxFit.cover,
@@ -68,7 +66,7 @@ class _SideNavWidgetState extends State<SideNavWidget> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             AutoSizeText(
-                              'Username',
+                              appState.driver.fullName,
                               style: FlutterFlowTheme.of(context)
                                   .bodyText1
                                   .override(
@@ -83,7 +81,7 @@ class _SideNavWidgetState extends State<SideNavWidget> {
                               mainAxisSize: MainAxisSize.max,
                               children: [
                                 Text(
-                                  'user@domainname.com',
+                                  appState.driver.phone,
                                   style: FlutterFlowTheme.of(context)
                                       .bodyText2
                                       .override(
@@ -122,7 +120,14 @@ class _SideNavWidgetState extends State<SideNavWidget> {
                   padding: EdgeInsetsDirectional.fromSTEB(5, 5, 5, 5),
                   child: InkWell(
                     onTap: () async {
-                      context.pushNamed('TripsPage');
+                      await appState.historyTrips();
+                      await Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) =>
+                              TripsPageWidget(),
+                        ),
+                      );
                     },
                     child: Text(
                       'My Trips',
@@ -137,7 +142,14 @@ class _SideNavWidgetState extends State<SideNavWidget> {
                   padding: EdgeInsetsDirectional.fromSTEB(5, 5, 5, 5),
                   child: InkWell(
                     onTap: () async {
-                      context.pushNamed('EarningsPage');
+                      await appState.summary();
+                      await Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) =>
+                              EarningsPageWidget(),
+                        ),
+                      );
                     },
                     child: Text(
                       'Earnings',
@@ -152,8 +164,16 @@ class _SideNavWidgetState extends State<SideNavWidget> {
                   padding: EdgeInsetsDirectional.fromSTEB(5, 5, 5, 5),
                   child: InkWell(
                     onTap: () async {
-                      context.pushNamed('SummeryPage');
-                    },
+                      await appState.summary();
+                      await Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                      builder: (context) =>
+                      SummeryPageWidget(),
+                      ),
+                      );
+                      },
+
                     child: Text(
                       'Summary',
                       style: FlutterFlowTheme.of(context).bodyText1.override(
@@ -167,7 +187,14 @@ class _SideNavWidgetState extends State<SideNavWidget> {
                   padding: EdgeInsetsDirectional.fromSTEB(5, 5, 5, 5),
                   child: InkWell(
                     onTap: () async {
-                      context.pushNamed('WalletPage');
+                    await Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                    builder: (context) =>
+                    WalletPageWidget(),
+                    ),
+                    );
+
                     },
                     child: Text(
                       'Wallet',
@@ -182,7 +209,13 @@ class _SideNavWidgetState extends State<SideNavWidget> {
                   padding: EdgeInsetsDirectional.fromSTEB(5, 5, 5, 5),
                   child: InkWell(
                     onTap: () async {
-                      context.pushNamed('Settings');
+                      await Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) =>
+                              SettingsWidget(),
+                        ),
+                      );
                     },
                     child: Text(
                       'Settings',
@@ -197,7 +230,13 @@ class _SideNavWidgetState extends State<SideNavWidget> {
                   padding: EdgeInsetsDirectional.fromSTEB(5, 5, 5, 5),
                   child: InkWell(
                     onTap: () async {
-                      context.pushNamed('HelpPage');
+                      await Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) =>
+                              HelpPageWidget(),
+                        ),
+                      );
                     },
                     child: Text(
                       'Help',

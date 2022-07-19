@@ -1,9 +1,11 @@
+import 'package:provider/provider.dart';
+
 import '../flutter_flow/flutter_flow_icon_button.dart';
 import '../flutter_flow/flutter_flow_theme.dart';
 import '../flutter_flow/flutter_flow_util.dart';
-import '../custom_code/widgets/index.dart' as custom_widgets;
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
+
+import '../states/app_state.dart';
 
 class EarningsPageWidget extends StatefulWidget {
   const EarningsPageWidget({Key key}) : super(key: key);
@@ -17,6 +19,7 @@ class _EarningsPageWidgetState extends State<EarningsPageWidget> {
 
   @override
   Widget build(BuildContext context) {
+    final appState = Provider.of<AppState>(context);
     return Scaffold(
       key: scaffoldKey,
       appBar: AppBar(
@@ -92,7 +95,7 @@ class _EarningsPageWidgetState extends State<EarningsPageWidget> {
                                     ),
                           ),
                           Text(
-                            'R0.00',
+                            'R'+appState.earnings['revenue'].toString(),
                             style:
                                 FlutterFlowTheme.of(context).bodyText1.override(
                                       fontFamily: 'Red Hat Display',
@@ -106,10 +109,7 @@ class _EarningsPageWidgetState extends State<EarningsPageWidget> {
                     Container(
                       width: MediaQuery.of(context).size.width,
                       height: MediaQuery.of(context).size.height * 1,
-                      child: custom_widgets.Datatable(
-                        width: MediaQuery.of(context).size.width,
-                        height: MediaQuery.of(context).size.height * 1,
-                      ),
+
                     ),
                   ],
                 ),

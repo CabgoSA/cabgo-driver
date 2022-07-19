@@ -1,3 +1,6 @@
+import 'package:cabgo_driver/index.dart';
+
+import '../exceptions/locationErrors.dart';
 import '../flutter_flow/flutter_flow_icon_button.dart';
 import '../flutter_flow/flutter_flow_theme.dart';
 import '../flutter_flow/flutter_flow_util.dart';
@@ -57,14 +60,27 @@ class _RegisterPageWidgetState extends State<RegisterPageWidget> {
       backgroundColor: FlutterFlowTheme.of(context).primaryBackground,
       floatingActionButton: FloatingActionButton(
         onPressed: () async {
-     
-      if(formKey.currentState.validate()){
+        if(formKey.currentState.validate()){
+        try {
+          await appState.register();
 
-        appState.register();
-        print('submitted to backend');
-      }
+          await Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) =>
+                  VerifyPageWidget(),
+            ),
+          );
+        }on UserNotRegistered {
+          print('error');
+        } on RegisterError {
+          print('error');
+        } catch(e){
 
-        },
+        }
+       }
+
+      },
         backgroundColor: FlutterFlowTheme.of(context).primaryColor,
         elevation: 8,
         child: Icon(

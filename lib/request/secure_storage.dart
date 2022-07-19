@@ -11,24 +11,31 @@ class GetTokenLocalStorage{
     final _storage = const FlutterSecureStorage();
 
   Future<String> readStorage(String key)  async{
-    var readData = await _storage.read(key: key, aOptions: _getAndroidOptions());
-      print(key);
-      print(readData);
-    return readData;
+    try {
+      var readData = await _storage.read(
+          key: key);
+      return readData;
+    }catch(e){
+      print('test me read $e');
+    }
   }
 
   void addStorage(String key, dynamic value){
-     _storage.write(
-      key: key,
-      value: value,
-      aOptions: _getAndroidOptions(),
-    );
+    try {
+      _storage.write(
+        key: key,
+        value: value,
+        aOptions: _getAndroidOptions(),
+      );
+    }catch(e){
+      print('test me  again $e');
+    }
   }
 
-  Future<bool> deleteStorage(String data)  async{
+  Future<bool> deleteStorage(String key)  async{
     try {
         await _storage.delete(
-          key: data, aOptions: _getAndroidOptions());
+          key: key, aOptions: _getAndroidOptions());
        return true;
     }catch(e){
       return false;

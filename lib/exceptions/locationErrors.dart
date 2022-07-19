@@ -14,3 +14,17 @@ class GettingTokenError implements Exception{}
 class LogoutError implements Exception{}
 
 class InvalidCridetials implements Exception{}
+
+class LoginError implements Exception{}
+
+//Register
+class RegisterError implements Exception{}
+class UserNotRegistered implements Exception{}
+
+
+class OtpVerificationError implements Exception{}
+
+
+//incoming ride
+
+class IncomingRequestError implements Exception{}
