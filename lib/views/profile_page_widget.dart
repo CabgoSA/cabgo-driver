@@ -1,13 +1,9 @@
 import 'package:provider/provider.dart';
-
 import '../flutter_flow/flutter_flow_icon_button.dart';
 import '../flutter_flow/flutter_flow_theme.dart';
-import '../flutter_flow/flutter_flow_util.dart';
-import '../flutter_flow/flutter_flow_widgets.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
-
 import '../states/app_state.dart';
+import 'package:progress_dialog/progress_dialog.dart';
 
 class ProfilePageWidget extends StatefulWidget {
   const ProfilePageWidget({Key key}) : super(key: key);
@@ -21,6 +17,26 @@ class _ProfilePageWidgetState extends State<ProfilePageWidget> {
 
   @override
   Widget build(BuildContext context) {
+
+
+    ProgressDialog pr = ProgressDialog(context);
+    pr = ProgressDialog(context,type: ProgressDialogType.Normal, isDismissible: false, showLogs: true);
+
+
+    pr.style(
+        message: 'Loading....please wait.',
+        borderRadius: 10.0,
+        backgroundColor: Colors.white,
+        progressWidget: CircularProgressIndicator( valueColor: AlwaysStoppedAnimation<Color>(Colors.black), strokeWidth: 2,),
+        elevation: 10.0,
+        insetAnimCurve: Curves.easeInOut,
+        progress: 0.0,
+        maxProgress: 100.0,
+        progressTextStyle: TextStyle(
+            color: Colors.black, fontSize: 13.0, fontWeight: FontWeight.w400),
+        messageTextStyle: TextStyle(
+            color: Colors.black, fontSize: 14.0, fontWeight: FontWeight.w600)
+    );
     final appState = Provider.of<AppState>(context);
     return Scaffold(
       key: scaffoldKey,
@@ -51,17 +67,22 @@ class _ProfilePageWidgetState extends State<ProfilePageWidget> {
                             children: [
                               Align(
                                 alignment: AlignmentDirectional(-0.7, 0),
-                                child: Container(
-                                  width: 80,
-                                  height: 80,
-                                  clipBehavior: Clip.antiAlias,
-                                  decoration: BoxDecoration(
-                                    shape: BoxShape.circle,
-                                  ),
-                                  child: Image.asset(
-                                    'assets/images/UI_avatar@2x.png',
-                                  ),
-                                ),
+                                child: ClipRRect(
+                                  borderRadius: BorderRadius.circular(26),
+                                  child: appState.driver.picture!=null?
+                                  Image.network(
+                                    appState.driver.picture,
+                                    width: 36,
+                                    height: 36,
+                                    fit: BoxFit.cover,
+                                  ):  Image.asset(
+                                    'assets/images/profile.png',
+                                    width: 36,
+                                    height: 36,
+                                    fit: BoxFit.cover,
+                                  )
+                                  ,
+                                )
                               ),
                               Expanded(
                                 child: Align(
@@ -82,7 +103,7 @@ class _ProfilePageWidgetState extends State<ProfilePageWidget> {
                             mainAxisSize: MainAxisSize.max,
                             children: [
                               Text(
-                                '[User Name]',
+                                appState.driver.fullName,
                                 style: FlutterFlowTheme.of(context)
                                     .title3
                                     .override(
@@ -101,7 +122,7 @@ class _ProfilePageWidgetState extends State<ProfilePageWidget> {
                             mainAxisSize: MainAxisSize.max,
                             children: [
                               Text(
-                                '[username@domain.com]',
+                                appState.driver.email,
                                 style: FlutterFlowTheme.of(context)
                                     .subtitle2
                                     .override(
@@ -167,8 +188,21 @@ class _ProfilePageWidgetState extends State<ProfilePageWidget> {
                                         decoration: BoxDecoration(
                                           shape: BoxShape.circle,
                                         ),
-                                        child: Image.asset(
-                                          'assets/images/Work_40x40pt.png',
+                                        child: ClipRRect(
+                                          borderRadius: BorderRadius.circular(26),
+                                          child: appState.driver.picture!=null?
+                                          Image.network(
+                                            appState.driver.picture,
+                                            width: 36,
+                                            height: 36,
+                                            fit: BoxFit.cover,
+                                          ):  Image.asset(
+                                            'assets/images/profile.png',
+                                            width: 36,
+                                            height: 36,
+                                            fit: BoxFit.cover,
+                                          )
+                                          ,
                                         ),
                                       ),
                                     ),
@@ -200,7 +234,7 @@ class _ProfilePageWidgetState extends State<ProfilePageWidget> {
                               padding:
                                   EdgeInsetsDirectional.fromSTEB(0, 8, 0, 0),
                               child: Text(
-                                'name',
+                                appState.driver.fullName,
                                 style: FlutterFlowTheme.of(context)
                                     .title1
                                     .override(
@@ -213,7 +247,7 @@ class _ProfilePageWidgetState extends State<ProfilePageWidget> {
                             ),
                           ],
                         ),
-                        Row(
+                        Column(
                           mainAxisSize: MainAxisSize.max,
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
@@ -221,7 +255,7 @@ class _ProfilePageWidgetState extends State<ProfilePageWidget> {
                               padding:
                                   EdgeInsetsDirectional.fromSTEB(0, 4, 0, 0),
                               child: Text(
-                                'User.name@domainname.com',
+                                appState.driver.email,
                                 style: FlutterFlowTheme.of(context)
                                     .bodyText1
                                     .override(
@@ -231,6 +265,23 @@ class _ProfilePageWidgetState extends State<ProfilePageWidget> {
                                       fontSize: 14,
                                       fontWeight: FontWeight.normal,
                                     ),
+                              ),
+                            ),
+
+                            Padding(
+                              padding:
+                              EdgeInsetsDirectional.fromSTEB(0, 4, 0, 0),
+                              child: Text(
+                                appState.driver.phone,
+                                style: FlutterFlowTheme.of(context)
+                                    .bodyText1
+                                    .override(
+                                  fontFamily: 'Lexend Deca',
+                                  color: FlutterFlowTheme.of(context)
+                                      .secondaryColor,
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.normal,
+                                ),
                               ),
                             ),
                           ],
@@ -275,8 +326,11 @@ class _ProfilePageWidgetState extends State<ProfilePageWidget> {
                        ),
 
                        child: GestureDetector(
-                         onTap: () {
-                            appState.uploadDocument(1);
+                         onTap: () async{
+
+                            await appState.uploadDocument(1,  pr.show(), pr.hide());
+                            pr.hide();
+
                          },
                          child :Row(
 
@@ -310,7 +364,9 @@ class _ProfilePageWidgetState extends State<ProfilePageWidget> {
                          ],
 
 
-                       ),),
+                       ),
+
+                       ),
                      ),
                    ],
                  ),
@@ -331,7 +387,7 @@ class _ProfilePageWidgetState extends State<ProfilePageWidget> {
 
                        child: GestureDetector(
                          onTap: () {
-                           appState.uploadDocument(3);
+                           appState.uploadDocument(3, pr.show(), pr.hide());
                          },
                          child :Row(
 
@@ -386,7 +442,7 @@ class _ProfilePageWidgetState extends State<ProfilePageWidget> {
 
                        child: GestureDetector(
                          onTap: () {
-                           appState.uploadDocument(15);
+                           appState.uploadDocument(15, pr.show(), pr.hide());
                          },
                          child :Row(
 
@@ -441,7 +497,7 @@ class _ProfilePageWidgetState extends State<ProfilePageWidget> {
 
                        child: GestureDetector(
                          onTap: () {
-                           appState.uploadDocument(14);
+                           appState.uploadDocument(14, pr.show(), pr.hide());
                          },
                          child :Row(
 
@@ -496,7 +552,7 @@ class _ProfilePageWidgetState extends State<ProfilePageWidget> {
 
                        child: GestureDetector(
                          onTap: () {
-                           appState.uploadDocument(17);
+                           appState.uploadDocument(17, pr.show(), pr.hide());
                          },
                          child :Row(
 
@@ -551,7 +607,7 @@ class _ProfilePageWidgetState extends State<ProfilePageWidget> {
 
                        child: GestureDetector(
                          onTap: () {
-                           appState.uploadDocument(18);
+                           appState.uploadDocument(18, pr.show(), pr.hide());
                          },
                          child :Row(
 
@@ -606,7 +662,7 @@ class _ProfilePageWidgetState extends State<ProfilePageWidget> {
 
                        child: GestureDetector(
                          onTap: () {
-                           appState.uploadDocument(19);
+                           appState.uploadDocument(19, pr.show(), pr.hide());
                          },
                          child :Row(
 
@@ -661,7 +717,7 @@ class _ProfilePageWidgetState extends State<ProfilePageWidget> {
 
                        child: GestureDetector(
                          onTap: () {
-                           appState.uploadDocument(20);
+                           appState.uploadDocument(20, pr.show(), pr.hide());
                          },
                          child :Row(
 

@@ -54,66 +54,241 @@ class _EarningsPageWidgetState extends State<EarningsPageWidget> {
       ),
       backgroundColor: FlutterFlowTheme.of(context).primaryBackground,
       body: SafeArea(
-        child: GestureDetector(
-          onTap: () => FocusScope.of(context).unfocus(),
+        child: Padding(
+          padding: const EdgeInsets.only(top: 30.0, left: 8.0, right: 8.0),
           child: Column(
+
             mainAxisSize: MainAxisSize.max,
             children: [
-              Expanded(
-                child: ListView(
-                  padding: EdgeInsets.zero,
-                  scrollDirection: Axis.vertical,
-                  children: [
-                    Padding(
-                      padding: EdgeInsetsDirectional.fromSTEB(5, 0, 0, 0),
-                      child: Column(
-                        mainAxisSize: MainAxisSize.max,
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.center,
+
+              Container(
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.all(Radius.circular(10)),
+                  color: Color(0xffD1090F13),
+                ),
+
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Column(
+                    children: [
+                      Row(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                        children: <Widget>[
+                          Column(
+
+                            children: [
+                              Text('Wallet Balance',
+                                style: TextStyle(
+                                    fontSize: 14,
+                                    color: Colors.white
+                                ),
+                              ),
+                              Text('R1400',
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.w700,
+                                      fontSize: 32,
+                                      color: Colors.white
+                                  )
+                              ),
+                            ],
+                          ),
+
+                        ],
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
                         children: [
-                          Padding(
-                            padding:
-                                EdgeInsetsDirectional.fromSTEB(0, 14, 0, 0),
-                            child: Text(
-                              'Total Earnings',
-                              style: FlutterFlowTheme.of(context)
-                                  .bodyText1
-                                  .override(
-                                    fontFamily: 'Red Hat Display',
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.w300,
-                                  ),
+                          Text('Due on: ',
+                            style: TextStyle(
+                                fontSize: 14,
+                                color: Colors.white,
+                                fontWeight: FontWeight.w700
                             ),
                           ),
 
-                          Text(
-                            'Total  Earnings ',
-                            style:
-                                FlutterFlowTheme.of(context).bodyText1.override(
-                                      fontFamily: 'Red Hat Display',
-                                      fontSize: 18,
-                                    ),
-                          ),
-                          Text(
-                            'R'+appState.earnings['revenue'].toString(),
-                            style:
-                                FlutterFlowTheme.of(context).bodyText1.override(
-                                      fontFamily: 'Red Hat Display',
-                                      fontSize: 25,
-                                      fontWeight: FontWeight.w300,
-                                    ),
+                          Text('31 August 2022',
+                              style: TextStyle(
+
+                                  fontSize: 14,
+                                  color: Colors.white
+                              )
                           ),
                         ],
-                      ),
-                    ),
-                    Container(
-                      width: MediaQuery.of(context).size.width,
-                      height: MediaQuery.of(context).size.height * 1,
-
-                    ),
-                  ],
-                ),
+                      )
+                    ],
+                  ),
+                )
               ),
+
+              Padding(
+                  padding: const EdgeInsets.only(top: 50),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+
+                    Column(
+                      children: [
+                        Container(
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.all(Radius.circular(10)),
+                              color: Color(0xffD1090F13),
+                            ),
+
+                            child: Padding(
+                              padding: const EdgeInsets.all(12.0),
+                              child: Column(
+                                children: [
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.end,
+                                    children: <Widget>[
+                                      Column(
+
+                                        children: [
+
+                                          Text('R400',
+                                              style: TextStyle(
+                                                  fontWeight: FontWeight.w500,
+                                                  fontSize: 18,
+                                                  color: Colors.white
+                                              )
+                                          ),
+                                        ],
+                                      ),
+
+                                    ],
+                                  ),
+
+                                ],
+                              ),
+                            )
+                        ),
+                        Text(
+                          'Today’s Earnings',
+                          style: TextStyle(
+                              fontSize: 12
+                          ),
+                        ),
+                      ],
+                    ),
+
+                    Column(
+                      children: [
+                        Container(
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.all(Radius.circular(10)),
+                              color: Color(0xffD1090F13),
+                            ),
+
+                            child: Padding(
+                              padding: const EdgeInsets.all(12.0),
+                              child: Column(
+                                children: [
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.end,
+                                    children: <Widget>[
+                                      Column(
+
+                                        children: [
+
+                                          Text('R400',
+                                              style: TextStyle(
+                                                  fontWeight: FontWeight.w500,
+                                                  fontSize: 18,
+                                                  color: Colors.white
+                                              )
+                                          ),
+                                        ],
+                                      ),
+
+                                    ],
+                                  ),
+
+                                ],
+                              ),
+                            )
+                        ),
+                        Text(
+                          'Weekly’s Earnings',
+                          style: TextStyle(
+                              fontSize: 12
+                          ),
+                        )
+                      ],
+                    ),
+
+                    Column(
+                      children: [
+                        Container(
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.all(Radius.circular(10)),
+                              color: Color(0xffD1090F13),
+                            ),
+
+                            child: Padding(
+                              padding: const EdgeInsets.all(12.0),
+                              child: Column(
+                                children: [
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.end,
+                                    children: <Widget>[
+                                      Column(
+
+                                        children: [
+
+                                          Text('R400',
+                                              style: TextStyle(
+                                                  fontWeight: FontWeight.w500,
+                                                  fontSize: 18,
+                                                  color: Colors.white
+                                              )
+                                          ),
+                                        ],
+                                      ),
+
+                                    ],
+                                  ),
+
+                                ],
+                              ),
+                            )
+                        ),
+                        Text(
+                          'Montly’s Earnings',
+                          style: TextStyle(
+                              fontSize: 12
+                          ),
+                        )
+                      ],
+                    ),
+
+                  ],
+                )
+
+                ,
+
+              ),
+
+
+             // Padding(
+             //   padding: const EdgeInsets.only(top: 50),
+             // child:  SizedBox(
+             //   width: double.infinity,
+             //   height: 50,
+             //   child: TextButton(
+             //     style: ButtonStyle(
+             //         backgroundColor: MaterialStateProperty.all(Color(0xff090F13))
+             //     ),
+             //     child: Text('Cash Out',
+             //       style: TextStyle(
+             //           fontSize: 18,
+             //           fontWeight: FontWeight.w700,
+             //           color: Colors.white
+             //       ),
+             //     ),
+             //   ),
+             // ),
+             // ),
+
             ],
           ),
         ),

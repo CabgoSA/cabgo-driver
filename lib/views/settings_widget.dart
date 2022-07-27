@@ -4,6 +4,7 @@ import '../flutter_flow/flutter_flow_theme.dart';
 import '../flutter_flow/flutter_flow_util.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import './profile_page_widget.dart';
 
 class SettingsWidget extends StatefulWidget {
   const SettingsWidget({Key key}) : super(key: key);
@@ -83,26 +84,7 @@ class _SettingsWidgetState extends State<SettingsWidget> {
                             child: Column(
                               mainAxisSize: MainAxisSize.max,
                               children: [
-                                Padding(
-                                  padding: EdgeInsetsDirectional.fromSTEB(
-                                      0, 0, 0, 12),
-                                  child: Row(
-                                    mainAxisSize: MainAxisSize.max,
-                                    children: [
-                                      Text(
-                                        'Favorites',
-                                        style: FlutterFlowTheme.of(context)
-                                            .subtitle1
-                                            .override(
-                                              fontFamily: 'Lexend Deca',
-                                              color: Color(0xFF090F13),
-                                              fontSize: 20,
-                                              fontWeight: FontWeight.w500,
-                                            ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
+
                                 Container(
                                   decoration: BoxDecoration(),
                                   child: Padding(
@@ -113,115 +95,7 @@ class _SettingsWidgetState extends State<SettingsWidget> {
                                       shrinkWrap: true,
                                       scrollDirection: Axis.vertical,
                                       children: [
-                                        Padding(
-                                          padding:
-                                              EdgeInsetsDirectional.fromSTEB(
-                                                  0, 0, 0, 8),
-                                          child: Container(
-                                            width: double.infinity,
-                                            height: 60,
-                                            decoration: BoxDecoration(
-                                              color: Color(0xFFF4F4F4),
-                                              borderRadius:
-                                                  BorderRadius.circular(8),
-                                            ),
-                                            child: Padding(
-                                              padding: EdgeInsetsDirectional
-                                                  .fromSTEB(12, 8, 12, 8),
-                                              child: Row(
-                                                mainAxisSize: MainAxisSize.max,
-                                                children: [
-                                                  Expanded(
-                                                    child: Padding(
-                                                      padding:
-                                                          EdgeInsetsDirectional
-                                                              .fromSTEB(
-                                                                  12, 0, 0, 0),
-                                                      child: Column(
-                                                        mainAxisSize:
-                                                            MainAxisSize.max,
-                                                        mainAxisAlignment:
-                                                            MainAxisAlignment
-                                                                .center,
-                                                        crossAxisAlignment:
-                                                            CrossAxisAlignment
-                                                                .start,
-                                                        children: [
-                                                          Text(
-                                                            'Choose Language',
-                                                            style: FlutterFlowTheme
-                                                                    .of(context)
-                                                                .subtitle2
-                                                                .override(
-                                                                  fontFamily:
-                                                                      'Lexend Deca',
-                                                                  color: Colors
-                                                                      .black,
-                                                                  fontSize: 18,
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .w300,
-                                                                ),
-                                                          ),
-                                                          FlutterFlowRadioButton(
-                                                            options: ['English']
-                                                                .toList(),
-                                                            onChanged: (value) {
-                                                              setState(() =>
-                                                                  radioButtonValue =
-                                                                      value);
-                                                            },
-                                                            optionHeight: 25,
-                                                            textStyle:
-                                                                FlutterFlowTheme.of(
-                                                                        context)
-                                                                    .bodyText1
-                                                                    .override(
-                                                                      fontFamily:
-                                                                          'Red Hat Display',
-                                                                      color: Colors
-                                                                          .black,
-                                                                    ),
-                                                            selectedTextStyle:
-                                                                FlutterFlowTheme.of(
-                                                                        context)
-                                                                    .bodyText1
-                                                                    .override(
-                                                                      fontFamily:
-                                                                          'Red Hat Display',
-                                                                      color: Colors
-                                                                          .black,
-                                                                      fontWeight:
-                                                                          FontWeight
-                                                                              .w600,
-                                                                    ),
-                                                            buttonPosition:
-                                                                RadioButtonPosition
-                                                                    .left,
-                                                            direction:
-                                                                Axis.vertical,
-                                                            radioButtonColor:
-                                                                Colors.blue,
-                                                            inactiveRadioButtonColor:
-                                                                Color(
-                                                                    0x8A000000),
-                                                            toggleable: false,
-                                                            horizontalAlignment:
-                                                                WrapAlignment
-                                                                    .start,
-                                                            verticalAlignment:
-                                                                WrapCrossAlignment
-                                                                    .start,
-                                                          ),
-                                                        ],
-                                                      ),
-                                                    ),
-                                                  ),
-                                                ],
-                                              ),
-                                            ),
-                                          ),
-                                        ),
+
                                         Padding(
                                           padding:
                                               EdgeInsetsDirectional.fromSTEB(
@@ -239,8 +113,13 @@ class _SettingsWidgetState extends State<SettingsWidget> {
                                                   .fromSTEB(12, 8, 12, 8),
                                               child: InkWell(
                                                 onTap: () async {
-                                                  context
-                                                      .pushNamed('ProfilePage');
+                                                  await Navigator.push(
+                                                    context,
+                                                    MaterialPageRoute(
+                                                      builder: (context) =>
+                                                          ProfilePageWidget(),
+                                                    ),
+                                                  );
                                                 },
                                                 child: Row(
                                                   mainAxisSize:

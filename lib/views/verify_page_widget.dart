@@ -22,6 +22,7 @@ class _VerifyPageWidgetState extends State<VerifyPageWidget> {
   TextEditingController textController2;
   TextEditingController textController3;
   TextEditingController textController4;
+  bool isLoading = false;
   final scaffoldKey = GlobalKey<ScaffoldState>();
 
 
@@ -261,6 +262,46 @@ class _VerifyPageWidgetState extends State<VerifyPageWidget> {
                         ),
                       ],
                     ),
+
+                    Padding(
+                      padding: const EdgeInsets.all(10.0),
+                      child: SizedBox(
+                        width: double.infinity,
+                        height: 50,
+                        child:  TextButton(
+                          onPressed: () async {
+                            appState.verifyOtp();
+
+
+                          },
+
+                          child: isLoading ?   CircularProgressIndicator(
+                            color: Colors.white,
+                          )
+                              : Text( 'Verify',
+                            style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 20.0,
+                                fontWeight: FontWeight.w500,
+                                fontFamily: 'Red Hat Display'
+                            ),
+
+                          ),
+
+
+                          style: ElevatedButton.styleFrom(
+                              primary: FlutterFlowTheme.of(context).primaryColor),
+
+
+                        ),
+                      ),
+                    ),
+
+
+
+
+
+
                     Padding(
                       padding: EdgeInsetsDirectional.fromSTEB(0, 18, 0, 0),
                       child: Row(
@@ -271,28 +312,7 @@ class _VerifyPageWidgetState extends State<VerifyPageWidget> {
                             'Reend OTP',
                             style: FlutterFlowTheme.of(context).bodyText1,
                           ),
-                          FFButtonWidget(
-                            onPressed: () {
-                                appState.verifyOtp();
-                            },
-                            text: 'Verify',
-                            options: FFButtonOptions(
-                              width: 130,
-                              height: 40,
-                              color: FlutterFlowTheme.of(context).primaryColor,
-                              textStyle: FlutterFlowTheme.of(context)
-                                  .subtitle2
-                                  .override(
-                                    fontFamily: 'Red Hat Display',
-                                    color: Colors.white,
-                                  ),
-                              borderSide: BorderSide(
-                                color: Colors.transparent,
-                                width: 1,
-                              ),
-                              borderRadius: 12,
-                            ),
-                          ),
+
                         ],
                       ),
                     ),

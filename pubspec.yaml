@@ -76,6 +76,15 @@ dependencies:
   rating_dialog: ^2.0.4
   device_info_plus: ^4.0.0
   image_picker: ^0.8.5+3
+  colorful_safe_area: ^0.3.0
+  flutter_native_splash: ^2.2.0+1
+  screen_loader: ^4.0.1
+  progress_dialog: ^1.2.4
+  flutter_share: ^2.0.0
+flutter_native_splash:
+  color: "#ffffff"
+  image: assets/images/BLACK_CABGO_LOGO.png
+
 
 dev_dependencies:
 

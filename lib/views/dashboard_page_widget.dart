@@ -13,6 +13,8 @@ import '../flutter_flow/place.dart';
 import 'package:slider_button/slider_button.dart';
 import 'package:fswitch_nullsafety/fswitch_nullsafety.dart';
 import 'package:rating_dialog/rating_dialog.dart';
+import'./chat_page_widget.dart';
+import 'package:progress_dialog/progress_dialog.dart';
 
 class DashboardPageWidget extends StatefulWidget {
   const DashboardPageWidget({Key key}) : super(key: key);
@@ -28,8 +30,13 @@ class _DashboardPageWidgetState extends State<DashboardPageWidget> {
   var placePickerValue = FFPlace();
   final scaffoldKey = GlobalKey<ScaffoldState>();
 
-  @override
+
+
   Widget build(BuildContext context) {
+
+
+
+
     final appState = Provider.of<AppState>(context);
     if (appState.notifications != null) {
       FlutterRingtonePlayer.play(fromAsset: "assets/audios/request.mp3");
@@ -221,7 +228,9 @@ class _DashboardPageWidgetState extends State<DashboardPageWidget> {
                           ),
                         ),
                         onPressed: () async {
-                          await appState.acceptRequest( int.parse(notifications.requestID));
+                          //test
+                          await appState.acceptRequest(359);
+                          //await appState.acceptRequest( int.parse(notifications.requestID));
                           if (appState.info != null) {
                             appState.onlineVisibility = !appState.onlineVisibility;
                             appState.pickupVisibility = !appState.pickupVisibility;
@@ -302,6 +311,28 @@ class _MapState extends State<Map> {
   bool isVisible = false;
   @override
   Widget build(BuildContext context) {
+
+
+
+
+    ProgressDialog pr = ProgressDialog(context);
+    pr = ProgressDialog(context,type: ProgressDialogType.Normal, isDismissible: false, showLogs: true);
+
+
+    pr.style(
+        message: 'Loading....please wait.',
+        borderRadius: 10.0,
+        backgroundColor: Colors.white,
+        progressWidget: CircularProgressIndicator( valueColor: AlwaysStoppedAnimation<Color>(Colors.black), strokeWidth: 2,),
+        elevation: 10.0,
+        insetAnimCurve: Curves.easeInOut,
+        progress: 0.0,
+        maxProgress: 100.0,
+        progressTextStyle: TextStyle(
+            color: Colors.black, fontSize: 13.0, fontWeight: FontWeight.w400),
+        messageTextStyle: TextStyle(
+            color: Colors.black, fontSize: 14.0, fontWeight: FontWeight.w600)
+    );
     final appState = Provider.of<AppState>(context);
 
     // if (appState.isOnline) {
@@ -452,10 +483,13 @@ class _MapState extends State<Map> {
                                         sliderColor: Color(0xff090f13),
 
                                         onChanged: (v) async {
+                                          pr.show();
                                           if (appState.isOnline) {
                                             await appState.goOnline('offline');
+                                            pr.hide();
                                           } else {
                                             await appState.goOnline('active');
+                                            pr.hide();
                                           }
                                         },
                                         closeChild: Text(
@@ -511,10 +545,27 @@ class _MapState extends State<Map> {
                                                           mainAxisSize: MainAxisSize.max,
                                                           crossAxisAlignment: CrossAxisAlignment.start,
                                                           children: [
-                                                            Padding(
-                                                              padding: EdgeInsetsDirectional.fromSTEB(
-                                                                  0, 5, 0, 5.0),
-                                                              child: (appState.riderDetails != null) ? Text(appState.riderDetails.fullName) : Text('test'),
+                                                            Row(
+                                                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                              children: [
+                                                                Padding(
+                                                                  padding: EdgeInsetsDirectional.fromSTEB(
+                                                                      0, 5, 0, 5.0),
+                                                                  child: (appState.riderDetails != null) ? Text(appState.riderDetails.fullName) : Text('test'),
+                                                                ),
+                                                                IconButton(
+                                                                    onPressed: () async{
+                                                                      await Navigator.push(
+                                                                        context,
+                                                                        MaterialPageRoute(
+                                                                          builder: (context) =>
+                                                                              ChatPageWidget(),
+                                                                        ),
+                                                                      );
+                                                                    },
+                                                                    icon: Icon(Icons.message)
+                                                                )
+                                                              ],
                                                             ),
                                                             Row(mainAxisSize: MainAxisSize.max, children: [
                                                               for (var i = 0; i < 5; i++)

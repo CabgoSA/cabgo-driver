@@ -7,6 +7,8 @@ import 'package:flutter/material.dart';
 import 'package:share_plus/share_plus.dart';
 import '../home_page_widget.dart';
 import '../../states/app_state.dart';
+import 'dart:io' show Platform;
+
 
 class SideNavWidget extends StatefulWidget {
   const SideNavWidget({Key key}) : super(key: key);
@@ -25,270 +27,289 @@ class _SideNavWidgetState extends State<SideNavWidget> {
       decoration: BoxDecoration(
         color: Color(0xFFEEEEEE),
       ),
-      child: Column(
-        mainAxisSize: MainAxisSize.max,
-        children: [
-          Padding(
-            padding: EdgeInsetsDirectional.fromSTEB(0, 25, 0, 8),
-            child: Container(
-              width: MediaQuery.of(context).size.width,
-              height: 80,
-              decoration: BoxDecoration(
-                color: FlutterFlowTheme.of(context).gray200,
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.transparent,
-                  )
-                ],
-                borderRadius: BorderRadius.circular(0),
-              ),
-              child: Padding(
-                padding: EdgeInsetsDirectional.fromSTEB(8, 0, 8, 0),
-                child: Row(
-                  mainAxisSize: MainAxisSize.max,
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    ClipRRect(
-                      borderRadius: BorderRadius.circular(26),
-                      child: Image.network(
-                        appState.driver.picture,
-                        width: 36,
-                        height: 36,
-                        fit: BoxFit.cover,
-                      ),
-                    ),
-                    Expanded(
-                      child: Padding(
-                        padding: EdgeInsetsDirectional.fromSTEB(12, 0, 0, 0),
-                        child: Column(
-                          mainAxisSize: MainAxisSize.max,
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            AutoSizeText(
-                              appState.driver.fullName,
-                              style: FlutterFlowTheme.of(context)
-                                  .bodyText1
-                                  .override(
-                                    fontFamily: 'Outfit',
-                                    color: FlutterFlowTheme.of(context)
-                                        .primaryText,
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.normal,
-                                  ),
-                            ),
-                            Row(
-                              mainAxisSize: MainAxisSize.max,
-                              children: [
-                                Text(
-                                  appState.driver.phone,
-                                  style: FlutterFlowTheme.of(context)
-                                      .bodyText2
-                                      .override(
-                                        fontFamily: 'Outfit',
-                                        color: FlutterFlowTheme.of(context)
-                                            .primaryText,
-                                        fontSize: 14,
-                                        fontWeight: FontWeight.normal,
-                                      ),
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
+      child: SingleChildScrollView(
+        child: Column(
+          mainAxisSize: MainAxisSize.max,
+          children: [
+            Padding(
+              padding: EdgeInsetsDirectional.fromSTEB(0, 25, 0, 8),
+              child: Container(
+                width: MediaQuery.of(context).size.width,
+                height: 80,
+                decoration: BoxDecoration(
+                  color: FlutterFlowTheme.of(context).gray200,
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.transparent,
+                    )
                   ],
+                  borderRadius: BorderRadius.circular(0),
+                ),
+                child: Padding(
+                  padding: EdgeInsetsDirectional.fromSTEB(8, 0, 8, 0),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.max,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(26),
+                        child: appState.driver.picture!=null?
+                          Image.network(
+                          appState.driver.picture,
+                          width: 36,
+                          height: 36,
+                          fit: BoxFit.cover,
+                        ):  Image.asset(
+                          'assets/images/profile.png',
+                          width: 36,
+                          height: 36,
+                          fit: BoxFit.cover,
+                        )
+
+                ,
+                      ),
+                      Expanded(
+                        child: Padding(
+                          padding: EdgeInsetsDirectional.fromSTEB(12, 0, 0, 0),
+                          child: Column(
+                            mainAxisSize: MainAxisSize.max,
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              AutoSizeText(
+                                appState.driver.fullName,
+                                style: FlutterFlowTheme.of(context)
+                                    .bodyText1
+                                    .override(
+                                      fontFamily: 'Outfit',
+                                      color: FlutterFlowTheme.of(context)
+                                          .primaryText,
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.normal,
+                                    ),
+                              ),
+                              Row(
+                                mainAxisSize: MainAxisSize.max,
+                                children: [
+                                  Text(
+                                    appState.driver.phone,
+                                    style: FlutterFlowTheme.of(context)
+                                        .bodyText2
+                                        .override(
+                                          fontFamily: 'Outfit',
+                                          color: FlutterFlowTheme.of(context)
+                                              .primaryText,
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.normal,
+                                        ),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),
-          ),
-          Container(
-            width: MediaQuery.of(context).size.width,
-            height: MediaQuery.of(context).size.height * 1,
-            constraints: BoxConstraints(
-              maxWidth: MediaQuery.of(context).size.width,
-            ),
-            decoration: BoxDecoration(
-              color: Color(0x00EEEEEE),
-            ),
-            child: Column(
-              mainAxisSize: MainAxisSize.max,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Padding(
-                  padding: EdgeInsetsDirectional.fromSTEB(5, 5, 5, 5),
-                  child: InkWell(
-                    onTap: () async {
-                      await appState.historyTrips();
-                      await Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) =>
-                              TripsPageWidget(),
-                        ),
-                      );
-                    },
-                    child: Text(
-                      'My Trips',
-                      style: FlutterFlowTheme.of(context).bodyText1.override(
-                            fontFamily: 'Red Hat Display',
-                            fontSize: 18,
+            Container(
+              width: MediaQuery.of(context).size.width,
+              height: MediaQuery.of(context).size.height * 1,
+              constraints: BoxConstraints(
+                maxWidth: MediaQuery.of(context).size.width,
+              ),
+              decoration: BoxDecoration(
+                color: Color(0x00EEEEEE),
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.max,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Padding(
+                    padding: EdgeInsetsDirectional.fromSTEB(5, 5, 5, 5),
+                    child: InkWell(
+                      onTap: () async {
+                        await appState.historyTrips();
+                        await Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) =>
+                                TripsPageWidget(),
                           ),
+                        );
+                      },
+                      child: Text(
+                        'My Trips',
+                        style: FlutterFlowTheme.of(context).bodyText1.override(
+                              fontFamily: 'Red Hat Display',
+                              fontSize: 18,
+                            ),
+                      ),
                     ),
                   ),
-                ),
-                Padding(
-                  padding: EdgeInsetsDirectional.fromSTEB(5, 5, 5, 5),
-                  child: InkWell(
-                    onTap: () async {
-                      await appState.summary();
-                      await Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) =>
-                              EarningsPageWidget(),
-                        ),
-                      );
-                    },
-                    child: Text(
-                      'Earnings',
-                      style: FlutterFlowTheme.of(context).bodyText1.override(
-                            fontFamily: 'Red Hat Display',
-                            fontSize: 18,
+                  Padding(
+                    padding: EdgeInsetsDirectional.fromSTEB(5, 5, 5, 5),
+                    child: InkWell(
+                      onTap: () async {
+                        await appState.summary();
+                        await Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) =>
+                                EarningsPageWidget(),
                           ),
+                        );
+                      },
+                      child: Text(
+                        'Earnings',
+                        style: FlutterFlowTheme.of(context).bodyText1.override(
+                              fontFamily: 'Red Hat Display',
+                              fontSize: 18,
+                            ),
+                      ),
                     ),
                   ),
-                ),
-                Padding(
-                  padding: EdgeInsetsDirectional.fromSTEB(5, 5, 5, 5),
-                  child: InkWell(
-                    onTap: () async {
-                      await appState.summary();
+                  Padding(
+                    padding: EdgeInsetsDirectional.fromSTEB(5, 5, 5, 5),
+                    child: InkWell(
+                      onTap: () async {
+                        await appState.summary();
+                        await Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                        builder: (context) =>
+                        SummeryPageWidget(),
+                        ),
+                        );
+                        },
+
+                      child: Text(
+                        'Summary',
+                        style: FlutterFlowTheme.of(context).bodyText1.override(
+                              fontFamily: 'Red Hat Display',
+                              fontSize: 18,
+                            ),
+                      ),
+                    ),
+                  ),
+                  Padding(
+                    padding: EdgeInsetsDirectional.fromSTEB(5, 5, 5, 5),
+                    child: InkWell(
+                      onTap: () async {
                       await Navigator.push(
                       context,
                       MaterialPageRoute(
                       builder: (context) =>
-                      SummeryPageWidget(),
+                      WalletPageWidget(),
                       ),
                       );
+
                       },
-
-                    child: Text(
-                      'Summary',
-                      style: FlutterFlowTheme.of(context).bodyText1.override(
-                            fontFamily: 'Red Hat Display',
-                            fontSize: 18,
-                          ),
+                      child: Text(
+                        'Wallet',
+                        style: FlutterFlowTheme.of(context).bodyText1.override(
+                              fontFamily: 'Red Hat Display',
+                              fontSize: 18,
+                            ),
+                      ),
                     ),
                   ),
-                ),
-                Padding(
-                  padding: EdgeInsetsDirectional.fromSTEB(5, 5, 5, 5),
-                  child: InkWell(
-                    onTap: () async {
-                    await Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                    builder: (context) =>
-                    WalletPageWidget(),
-                    ),
-                    );
-
-                    },
-                    child: Text(
-                      'Wallet',
-                      style: FlutterFlowTheme.of(context).bodyText1.override(
-                            fontFamily: 'Red Hat Display',
-                            fontSize: 18,
-                          ),
-                    ),
-                  ),
-                ),
-                Padding(
-                  padding: EdgeInsetsDirectional.fromSTEB(5, 5, 5, 5),
-                  child: InkWell(
-                    onTap: () async {
-                      await Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) =>
-                              SettingsWidget(),
-                        ),
-                      );
-                    },
-                    child: Text(
-                      'Settings',
-                      style: FlutterFlowTheme.of(context).bodyText1.override(
-                            fontFamily: 'Red Hat Display',
-                            fontSize: 18,
-                          ),
-                    ),
-                  ),
-                ),
-                Padding(
-                  padding: EdgeInsetsDirectional.fromSTEB(5, 5, 5, 5),
-                  child: InkWell(
-                    onTap: () async {
-                      await Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) =>
-                              HelpPageWidget(),
-                        ),
-                      );
-                    },
-                    child: Text(
-                      'Help',
-                      style: FlutterFlowTheme.of(context).bodyText1.override(
-                            fontFamily: 'Red Hat Display',
-                            fontSize: 18,
-                          ),
-                    ),
-                  ),
-                ),
-                Padding(
-                  padding: EdgeInsetsDirectional.fromSTEB(5, 5, 5, 5),
-                  child: InkWell(
-                    onTap: () async {
-                      await Share.share('');
-                    },
-                    child: Text(
-                      'Share',
-                      style: FlutterFlowTheme.of(context).bodyText1.override(
-                            fontFamily: 'Red Hat Display',
-                            fontSize: 18,
-                          ),
-                    ),
-                  ),
-                ),
-                Padding(
-                  padding: EdgeInsetsDirectional.fromSTEB(5, 5, 5, 5),
-                  child: InkWell(
-                    onTap: () async {
-                      appState.logout();
-                      if(!appState.isLoggedIn) {
+                  Padding(
+                    padding: EdgeInsetsDirectional.fromSTEB(5, 5, 5, 5),
+                    child: InkWell(
+                      onTap: () async {
                         await Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => HomePageWidget(),
+                            builder: (context) =>
+                                SettingsWidget(),
                           ),
                         );
-                      }
-                    },
-                    child: Text(
-                      'Logout',
-                      style: FlutterFlowTheme.of(context).bodyText1.override(
-                            fontFamily: 'Red Hat Display',
-                            fontSize: 18,
-                          ),
+                      },
+                      child: Text(
+                        'Settings',
+                        style: FlutterFlowTheme.of(context).bodyText1.override(
+                              fontFamily: 'Red Hat Display',
+                              fontSize: 18,
+                            ),
+                      ),
                     ),
                   ),
-                ),
-              ],
+                  Padding(
+                    padding: EdgeInsetsDirectional.fromSTEB(5, 5, 5, 5),
+                    child: InkWell(
+                      onTap: () async {
+                        await Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) =>
+                                HelpPageWidget(),
+                          ),
+                        );
+                      },
+                      child: Text(
+                        'Help',
+                        style: FlutterFlowTheme.of(context).bodyText1.override(
+                              fontFamily: 'Red Hat Display',
+                              fontSize: 18,
+                            ),
+                      ),
+                    ),
+                  ),
+                  Padding(
+                    padding: EdgeInsetsDirectional.fromSTEB(5, 5, 5, 5),
+                    child: InkWell(
+                      onTap: () async {
+
+
+                        if (Platform.isAndroid) {
+                          // Android-specific code
+                          await Share.share('https://play.google.com/store/apps/details?id=com.cabsgo.user&hl=en_ZA&gl=US');
+                        } else if (Platform.isIOS) {
+                          // iOS-specific code
+                          await Share.share('');
+                        }
+
+                      },
+                      child: Text(
+                        'Share',
+                        style: FlutterFlowTheme.of(context).bodyText1.override(
+                              fontFamily: 'Red Hat Display',
+                              fontSize: 18,
+                            ),
+                      ),
+                    ),
+                  ),
+                  Padding(
+                    padding: EdgeInsetsDirectional.fromSTEB(5, 5, 5, 5),
+                    child: InkWell(
+                      onTap: () async {
+                        appState.logout();
+                        if(!appState.isLoggedIn) {
+                          await Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => HomePageWidget(),
+                            ),
+                          );
+                        }
+                      },
+                      child: Text(
+                        'Logout',
+                        style: FlutterFlowTheme.of(context).bodyText1.override(
+                              fontFamily: 'Red Hat Display',
+                              fontSize: 18,
+                            ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

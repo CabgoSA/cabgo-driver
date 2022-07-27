@@ -106,7 +106,7 @@ class AppState with ChangeNotifier {
     final scaffoldKey = GlobalKey<ScaffoldState>();
 
     //GO ONLINE ICONS
-    Icon slideIcon;
+
 
     Icon forwardIcon = Icon(
       Icons.arrow_forward_ios_rounded,
@@ -118,17 +118,22 @@ class AppState with ChangeNotifier {
       color: Colors.white,
       size: 30,
     );
-
-    //errors
-    Exception error;
-
-
+    Icon slideIcon = Icon(
+      Icons.arrow_forward_ios_rounded,
+      color: Colors.white,
+      size: 30,
+    );
 
     LatLng get initialPosition => _initialPosition;
     LatLng get lastPosition => _lastPosition;
     GoogleMapsServices get googleMapsServices => _googleMapsServices;
     GoogleMapController get mapController => _mapController;
 
+
+
+
+    // chat height
+    double chatHeight = 1.5;
      //push notifications
     FirebaseMessaging _messaging;
     PushNotifications notifications;
@@ -172,9 +177,7 @@ class AppState with ChangeNotifier {
     );
 
     if (settings.authorizationStatus == AuthorizationStatus.authorized) {
-      print('User granted permision ');
       _fcmToken = await FirebaseMessaging.instance.getToken();
-
     }
 
 
@@ -407,37 +410,39 @@ class AppState with ChangeNotifier {
 
   }
 
- void uploadDocument(int documentId,) async {
 
+
+ void uploadDocument(int documentId, Future<bool> show, Future<bool> hide ) async {
  String  endPoint = dotenv.get('BASE_URL') + 'api/provider/profile/documents/store';
  // get file
   var file;
-
   file = await ImagePicker().pickImage(source: ImageSource.gallery);
 
   file = File(file.path);
-
   String fileName = file.path.split('/').last;
-
   FormData data = FormData.fromMap({
      "id" : documentId,
     "document": await MultipartFile.fromFile(
        file.path,
        filename: fileName,
      ),
-
    });
 
+  if(file){
+    show;
+  }
   Dio dio = new Dio();
   String token =  _accessToken;
   dio.options.headers["Authorization"] = 'Bearer $token';
   dio.post(endPoint, data: data).then((response) {
+
    var jsonResponse = jsonDecode(response.toString());
-    print('response here');
-    print(jsonResponse);
+
    }).catchError((error) => print(error));
+
  }
 
+  //loading
 
 
   //  Dashboard Map
@@ -532,6 +537,11 @@ class AppState with ChangeNotifier {
     earnings = await Ride().summary(_accessToken);
 
 
+    notifyListeners();
+  }
+
+  void changeHeight(double height){
+    chatHeight = height;
     notifyListeners();
   }
 
