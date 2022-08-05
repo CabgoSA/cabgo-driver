@@ -144,18 +144,18 @@ class ApiClient {
     }
   }
 
-  Future<dynamic> requestResetOtp(String phone) async {
+  Future<void> requestResetOtp(String phone) async {
     try {
-      Response response = await _dio.post(
+      await _dio.post(
         dotenv.get('BASE_URL') + 'api/provider/forgot/password' ,
         data : {
           'mobile': '+27$phone',
         },
         options: Options(headers: {'Accept': 'application/json'}),
       );
-      print(response);
+
     } on DioError catch (e) {
-      return e.response.data;
+      throw ErrorResetingPassword;
     }
   }
 
@@ -185,25 +185,34 @@ class ApiClient {
     }
   }
 
+  Future<void> setFcmToken(String accessToken,String token) async{
+    try{
+      _dio.options.headers["Authorization"] = 'Bearer $accessToken';
+      _dio.options.headers['content-Type'] = 'application/json';
+      Response response = await _dio.get(
+        dotenv.get('BASE_URL') + 'api/provider/setFcmToken/$token',
+        options: Options(headers: {'Accept': 'application/json'}),
+      );
+      print(response);
+    }catch(e){
+
+    }
+  }
+
   Future<dynamic> logOut(String providerID) async {
 
     try {
 
        Response response = await _dio.post(
         dotenv.get('BASE_URL') + 'api/provider/logout',
-        data: {
-          'id': providerID,
-        },
+
         options: Options(headers: {'Accept': 'application/json'}),
       );
 
-       print(response);
-
       return response;
-    }on DioError catch(e) {
-     print(e);
+
     } catch(e){
-      print(e);
+      throw LogoutError();
     }
   }
 
@@ -224,6 +233,8 @@ class ApiClient {
       return e.response.data;
     }
   }
+
+
 
   Future<Response> fetchRideDetails(String requestID,String accessToken) async {
 

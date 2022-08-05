@@ -5,6 +5,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
+import '../exceptions/locationErrors.dart';
 import 'directions_model.dart';
 
 
@@ -88,6 +89,26 @@ class Ride {
     }
   }
 
+  Future<dynamic> cancelRide(String accessToken,String requestID,String reason) async{
+
+    _dio.options.headers["Authorization"] = 'Bearer $accessToken';
+
+    try {
+      Response response = await _dio.post(
+        dotenv.get('BASE_URL') + 'api/provider/cancel' ,
+        data: {
+          'id': requestID,
+          'cancel_reason': reason,
+        },
+        options: Options(headers: {'Accept': 'application/json'}),
+      );
+      print(response);
+
+    } on DioError catch (e) {
+      return e.response.data;
+    }
+  }
+
   Future<dynamic> rateRide(String accessToken, int requestID,int rating, String comment ) async{
 
     try {
@@ -158,14 +179,33 @@ class Ride {
 
     try {
       _dio.options.headers["Authorization"] = 'Bearer $accessToken';
-      Response response = await _dio.post(
-        dotenv.get('BASE_URL') + 'api/provider/summary' ,
+      Response response = await _dio.get(
+        dotenv.get('BASE_URL') + 'api/provider/earnings' ,
 
         options: Options(headers: {'Accept': 'application/json'}),
       );
       return response.data;
     } on DioError catch (e) {
-      return e.response.data;
+      throw ErrorGettingEarnings;
+    }
+  }
+
+  Future<void> callDriver(String accessToken,String userPhone,String driverPhone ) async{
+
+    try {
+      _dio.options.headers["Authorization"] = 'Bearer $accessToken';
+      await _dio.post(
+        dotenv.get('BASE_URL') + 'api/provider/call/user',
+        data: {
+          'phone_number': userPhone,
+          'phone_number2': driverPhone,
+        },
+
+        options: Options(headers: {'Accept': 'application/json'}),
+      );
+
+    } on DioError catch (e) {
+      throw ErrorCallingDriver;
     }
   }
 
@@ -212,6 +252,7 @@ class RideRoute{
 class RiderDetails{
   final String  fullName;
   final String  picture;
+  final String  phone;
   final String  rating;
   final String price;
   final LatLng riderLocation;
@@ -220,6 +261,7 @@ class RiderDetails{
   const RiderDetails({
        @required this.fullName,
        @required this.picture,
+       @required this.phone,
        @required  this.rating,
       @required this.price,
       @required this.riderLocation,

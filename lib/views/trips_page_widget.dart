@@ -33,7 +33,7 @@ class _TripsPageWidgetState extends State<TripsPageWidget> {
         automaticallyImplyLeading: true,
         leading: InkWell(
           onTap: () async {
-            context.pop();
+            Navigator.pop(context);
           },
           child: Icon(
             Icons.arrow_back_sharp,

@@ -21,6 +21,8 @@ class LoginError implements Exception{}
 class RegisterError implements Exception{}
 class UserNotRegistered implements Exception{}
 
+class ErrorResetingPassword implements Exception{}
+
 
 class OtpVerificationError implements Exception{}
 
@@ -28,3 +30,11 @@ class OtpVerificationError implements Exception{}
 //incoming ride
 
 class IncomingRequestError implements Exception{}
+
+class ErrorCallingDriver implements Exception{}
+
+class ErrorCancelingRide implements Exception{}
+class ErrorRatingRide implements Exception{}
+
+
+class ErrorGettingEarnings implements Exception{}

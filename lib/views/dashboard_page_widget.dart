@@ -34,10 +34,8 @@ class _DashboardPageWidgetState extends State<DashboardPageWidget> {
 
   Widget build(BuildContext context) {
 
-
-
-
     final appState = Provider.of<AppState>(context);
+
     if (appState.notifications != null) {
       FlutterRingtonePlayer.play(fromAsset: "assets/audios/request.mp3");
       WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -289,6 +287,41 @@ RatingDialog ratingDialog(AppState appState) {
 
     },
   );
+}
+
+
+Future<void> _displayTextInputDialog(BuildContext context, AppState appState) async {
+  return showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text('You Are about to cancel Ride'),
+          content: TextField(
+            controller: appState.reasonController,
+            decoration: InputDecoration(hintText: "Enter your reason why you are canceling here!!!!"),
+          ),
+          actions: <Widget>[
+            FlatButton(
+              color: Colors.red,
+              textColor: Colors.white,
+              child: Text('CANCEL'),
+              onPressed: () {
+                Navigator.pop(context);
+              },
+            ),
+            FlatButton(
+              color: Colors.green,
+              textColor: Colors.white,
+              child: Text('OK'),
+              onPressed: () async{
+                 await appState.cancelRide();
+                 Navigator.pop(context);
+              },
+            ),
+
+          ],
+        );
+      });
 }
 
 
@@ -555,15 +588,15 @@ class _MapState extends State<Map> {
                                                                 ),
                                                                 IconButton(
                                                                     onPressed: () async{
-                                                                      await Navigator.push(
-                                                                        context,
-                                                                        MaterialPageRoute(
-                                                                          builder: (context) =>
-                                                                              ChatPageWidget(),
-                                                                        ),
-                                                                      );
+
+                                                                      try {
+                                                                        await appState
+                                                                            .callDriver();
+                                                                      }catch(e){
+                                                                        print(e);
+                                                                      }
                                                                     },
-                                                                    icon: Icon(Icons.message)
+                                                                    icon: Icon(Icons.phone)
                                                                 )
                                                               ],
                                                             ),
@@ -584,8 +617,10 @@ class _MapState extends State<Map> {
                                                                       fontWeight: FontWeight.w300,
                                                                     ),
                                                                   ),
-                                                                  onPressed: () {
-                                                                    Navigator.pop(context);
+                                                                  onPressed: () async{
+                                                                  //  cancel ride
+                                                                  _displayTextInputDialog(context, appState);
+                                                                  //  end cancel
                                                                   },
                                                                   child: const Text('Cancel Ride',
 

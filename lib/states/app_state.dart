@@ -55,6 +55,8 @@ class AppState with ChangeNotifier {
     TextEditingController newPasswordConfirm = TextEditingController();
 
 
+    TextEditingController reasonController = TextEditingController();
+
     bool registerTermsAndConditionsValue = false;
 
     int userId;
@@ -194,9 +196,9 @@ class AppState with ChangeNotifier {
         _riderDetails = RiderDetails(
           fullName: rideData['user']['first_name'] + ' ' + rideData['user']['last_name'],
           picture: rideData['user']['picture'],
+          phone: rideData['user']['mobile'],
           rating: rideData['user']['rating'],
-          //servicetype price * distance
-          price: 'R340',
+          price: (double.parse(rideData['service_type']['price']) * double.parse(rideData['distance'])).toString(),
           riderLocation: LatLng(double.parse(rideData['s_latitude']),
               double.parse(rideData['s_longitude'])),
         );
@@ -306,9 +308,9 @@ class AppState with ChangeNotifier {
                         picture: response['avatar'],
                         rating: double.parse(response['rating']));
         _isLoggedIn = true;
+      await ApiClient().setFcmToken(_accessToken, _fcmToken);
 
-
-        notifyListeners();
+      notifyListeners();
 
     } on InvalidCridetials{
         throw InvalidCridetials();
@@ -373,6 +375,7 @@ class AppState with ChangeNotifier {
     // ! SEND REQUEST
     Future<void> logout() async {
           try{
+            await ApiClient().logOut(_accessToken);
             _accessToken = null;
               notifyListeners();
           }catch(e){
@@ -382,10 +385,12 @@ class AppState with ChangeNotifier {
   }
 
 
-  Future<dynamic> requestResetOtp() async {
-
-    dynamic data =  await ApiClient().requestResetOtp(resetPhoneNumber.text);
-    return data;
+  Future<void> requestResetOtp() async {
+    try {
+       await ApiClient().requestResetOtp(resetPhoneNumber.text);
+    }catch(e){
+      throw e;
+    }
   }
 
   Future<dynamic> passwordReset() async {
@@ -412,7 +417,7 @@ class AppState with ChangeNotifier {
 
 
 
- void uploadDocument(int documentId, Future<bool> show, Future<bool> hide ) async {
+ void uploadDocument(int documentId) async {
  String  endPoint = dotenv.get('BASE_URL') + 'api/provider/profile/documents/store';
  // get file
   var file;
@@ -428,9 +433,7 @@ class AppState with ChangeNotifier {
      ),
    });
 
-  if(file){
-    show;
-  }
+
   Dio dio = new Dio();
   String token =  _accessToken;
   dio.options.headers["Authorization"] = 'Bearer $token';
@@ -462,7 +465,9 @@ class AppState with ChangeNotifier {
 
       dynamic rideDetails = await Ride().acceptRide(requestID, _accessToken);
 
-     _info =  RideRoute(bookingID: rideDetails['id'].toString(),
+      print(rideDetails);
+
+     _info =  RideRoute(bookingID: (rideDetails['id']).toString(),
                        paymentMethod: rideDetails['payment_mode'],
                        serviceType:  rideDetails['service_type_id'],
                       totalDistance: rideDetails['distance'],
@@ -493,6 +498,40 @@ class AppState with ChangeNotifier {
 
   }
 
+  Future<void> callDriver() async{
+
+    try{
+     await Ride().callDriver(_accessToken, driver.phone,_riderDetails.phone);
+    }catch(e){
+      throw ErrorCallingDriver;
+    }
+
+
+  }
+
+  Future<void> cancelRide() async{
+
+    try{
+      await Ride().cancelRide(_accessToken, _info.bookingID, reasonController.text);
+      _info = null;
+      _routeDriver = null;
+      notifications = null;
+
+      //Visibility variables
+      onlineVisibility = true;
+      pickupVisibility = false;
+      dropoffVisibility = false;
+      ratingsVisibility = false;
+      invoiceVisibility = false;
+      dragableSize = 0.2;
+
+    }catch(e){
+      throw ErrorCancelingRide;
+    }
+
+
+  }
+
 
   Future<void> driveToRiderDestination()async {
 
@@ -505,7 +544,7 @@ class AppState with ChangeNotifier {
 
   Future<void> dropRider()async {
     //update database
-    updateRide( int.parse(_info.bookingID), 'COMPLETED');
+    updateRide(int.parse(_info.bookingID), 'COMPLETED');
     _routeDriver = null;
     notifyListeners();
   }
@@ -521,10 +560,14 @@ class AppState with ChangeNotifier {
   }
 
   Future<void> rateRide( int rating, String comment) async{
+    try {
+      List<String> status = await Ride().rateRide(
+          _accessToken, int.parse(_info.bookingID), rating, comment);
 
-    List<String> status = await Ride().rateRide(_accessToken, int.parse(_info.bookingID), rating, comment);
-
-    notifyListeners();
+      notifyListeners();
+    }catch(e){
+      throw ErrorRatingRide;
+    }
 
   }
 
@@ -533,10 +576,13 @@ class AppState with ChangeNotifier {
 
     notifyListeners();
   }
-  Future<void> summary()async {
-    earnings = await Ride().summary(_accessToken);
-
-
+  Future<Map<String, dynamic>> summary()async {
+    try {
+      earnings = await Ride().summary(_accessToken);
+      return earnings;
+    }catch(e){
+      throw e;
+    }
     notifyListeners();
   }
 

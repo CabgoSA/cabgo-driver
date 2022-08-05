@@ -36,7 +36,7 @@ class _EarningsPageWidgetState extends State<EarningsPageWidget> {
             size: 30,
           ),
           onPressed: () async {
-            context.pop();
+            Navigator.pop(context);
           },
         ),
         title: Text(
@@ -145,7 +145,8 @@ class _EarningsPageWidgetState extends State<EarningsPageWidget> {
 
                                         children: [
 
-                                          Text('R400',
+                                          Text(
+                                            'R'+appState.earnings['daily'].toString(),
                                               style: TextStyle(
                                                   fontWeight: FontWeight.w500,
                                                   fontSize: 18,
@@ -190,7 +191,8 @@ class _EarningsPageWidgetState extends State<EarningsPageWidget> {
 
                                         children: [
 
-                                          Text('R400',
+                                          Text(
+                                              'R'+appState.earnings['weekly'].toString(),
                                               style: TextStyle(
                                                   fontWeight: FontWeight.w500,
                                                   fontSize: 18,
@@ -235,7 +237,8 @@ class _EarningsPageWidgetState extends State<EarningsPageWidget> {
 
                                         children: [
 
-                                          Text('R400',
+                                          Text(
+                                              'R'+appState.earnings['monthly'].toString(),
                                               style: TextStyle(
                                                   fontWeight: FontWeight.w500,
                                                   fontSize: 18,

@@ -85,6 +85,7 @@ class _LoginPageWidgetState extends State<LoginPageWidget> {
                               child: TextField(
                                 controller: appState.phoneController,
                                 obscureText: false,
+                                keyboardType: TextInputType.number,
                                 cursorColor: Colors.black,
                                 decoration: InputDecoration(
                                   hintText: "Enter Your Phone Number",

@@ -328,8 +328,7 @@ class _ProfilePageWidgetState extends State<ProfilePageWidget> {
                        child: GestureDetector(
                          onTap: () async{
 
-                            await appState.uploadDocument(1,  pr.show(), pr.hide());
-                            pr.hide();
+                            await appState.uploadDocument(1);
 
                          },
                          child :Row(
@@ -387,7 +386,7 @@ class _ProfilePageWidgetState extends State<ProfilePageWidget> {
 
                        child: GestureDetector(
                          onTap: () {
-                           appState.uploadDocument(3, pr.show(), pr.hide());
+                           appState.uploadDocument(3);
                          },
                          child :Row(
 
@@ -442,7 +441,7 @@ class _ProfilePageWidgetState extends State<ProfilePageWidget> {
 
                        child: GestureDetector(
                          onTap: () {
-                           appState.uploadDocument(15, pr.show(), pr.hide());
+                           appState.uploadDocument(15);
                          },
                          child :Row(
 
@@ -497,7 +496,7 @@ class _ProfilePageWidgetState extends State<ProfilePageWidget> {
 
                        child: GestureDetector(
                          onTap: () {
-                           appState.uploadDocument(14, pr.show(), pr.hide());
+                           appState.uploadDocument(14);
                          },
                          child :Row(
 
@@ -552,7 +551,7 @@ class _ProfilePageWidgetState extends State<ProfilePageWidget> {
 
                        child: GestureDetector(
                          onTap: () {
-                           appState.uploadDocument(17, pr.show(), pr.hide());
+                           appState.uploadDocument(17);
                          },
                          child :Row(
 
@@ -607,7 +606,7 @@ class _ProfilePageWidgetState extends State<ProfilePageWidget> {
 
                        child: GestureDetector(
                          onTap: () {
-                           appState.uploadDocument(18, pr.show(), pr.hide());
+                           appState.uploadDocument(18);
                          },
                          child :Row(
 
@@ -662,7 +661,7 @@ class _ProfilePageWidgetState extends State<ProfilePageWidget> {
 
                        child: GestureDetector(
                          onTap: () {
-                           appState.uploadDocument(19, pr.show(), pr.hide());
+                           appState.uploadDocument(19);
                          },
                          child :Row(
 
@@ -717,7 +716,7 @@ class _ProfilePageWidgetState extends State<ProfilePageWidget> {
 
                        child: GestureDetector(
                          onTap: () {
-                           appState.uploadDocument(20, pr.show(), pr.hide());
+                           appState.uploadDocument(20);
                          },
                          child :Row(
 

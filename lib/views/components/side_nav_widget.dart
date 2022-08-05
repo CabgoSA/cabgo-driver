@@ -131,14 +131,18 @@ class _SideNavWidgetState extends State<SideNavWidget> {
                     padding: EdgeInsetsDirectional.fromSTEB(5, 5, 5, 5),
                     child: InkWell(
                       onTap: () async {
-                        await appState.historyTrips();
-                        await Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) =>
-                                TripsPageWidget(),
-                          ),
-                        );
+                        try {
+                          await appState.historyTrips();
+                          await Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) =>
+                                  TripsPageWidget(),
+                            ),
+                          );
+                        }catch(e){
+                          print(e);
+                        }
                       },
                       child: Text(
                         'My Trips',
@@ -153,14 +157,18 @@ class _SideNavWidgetState extends State<SideNavWidget> {
                     padding: EdgeInsetsDirectional.fromSTEB(5, 5, 5, 5),
                     child: InkWell(
                       onTap: () async {
-                        await appState.summary();
-                        await Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) =>
-                                EarningsPageWidget(),
-                          ),
-                        );
+                        try {
+                          await appState.summary();
+                          await Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) =>
+                                  EarningsPageWidget(),
+                            ),
+                          );
+                        }catch(e){
+                          print(e);
+                        }
                       },
                       child: Text(
                         'Earnings',
@@ -171,29 +179,7 @@ class _SideNavWidgetState extends State<SideNavWidget> {
                       ),
                     ),
                   ),
-                  Padding(
-                    padding: EdgeInsetsDirectional.fromSTEB(5, 5, 5, 5),
-                    child: InkWell(
-                      onTap: () async {
-                        await appState.summary();
-                        await Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                        builder: (context) =>
-                        SummeryPageWidget(),
-                        ),
-                        );
-                        },
-
-                      child: Text(
-                        'Summary',
-                        style: FlutterFlowTheme.of(context).bodyText1.override(
-                              fontFamily: 'Red Hat Display',
-                              fontSize: 18,
-                            ),
-                      ),
-                    ),
-                  ),
+                  
                   Padding(
                     padding: EdgeInsetsDirectional.fromSTEB(5, 5, 5, 5),
                     child: InkWell(
@@ -286,14 +272,17 @@ class _SideNavWidgetState extends State<SideNavWidget> {
                     padding: EdgeInsetsDirectional.fromSTEB(5, 5, 5, 5),
                     child: InkWell(
                       onTap: () async {
-                        appState.logout();
-                        if(!appState.isLoggedIn) {
-                          await Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => HomePageWidget(),
-                            ),
-                          );
+                        try {
+                          await appState.logout();
+                            await Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => LoginPageWidget(),
+                              ),
+                            );
+
+                        }catch(e){
+                          print(e);
                         }
                       },
                       child: Text(

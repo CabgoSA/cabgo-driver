@@ -170,16 +170,18 @@ class _ResetPasswordWidgetState extends State<ResetPasswordWidget> {
                       ),
                       onPressed: () async {
 
-                        // if (isLoading) return;
-                        setState(() => isLoading = true);
-                        dynamic result = await appState.requestResetOtp();
-                        print('test');
-                        await Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => VerifyOtpPageWidget(),
-                          ),
-                        );
+                       setState(() => isLoading = true);
+                       try {
+                         await appState.requestResetOtp();
+                          await Navigator.push(
+                           context,
+                           MaterialPageRoute(
+                             builder: (context) => VerifyOtpPageWidget(),
+                           ),
+                         );
+                       }catch(e){
+                         print(e);
+                       }
                       },
                     ),
                   ),

@@ -33,7 +33,7 @@ class _HelpPageWidgetState extends State<HelpPageWidget> {
             size: 30,
           ),
           onPressed: () async {
-            context.pop();
+            Navigator.pop(context);
           },
         ),
         title: Text(
