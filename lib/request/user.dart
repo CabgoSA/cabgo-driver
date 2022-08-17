@@ -81,7 +81,6 @@ class ApiClient {
         options: Options(headers: {'Accept': 'application/json'}),
       );
 
-      print(response);
       return;
     } on DioError catch (e) {
       return e.response.data;
@@ -91,16 +90,16 @@ class ApiClient {
 
   Future<dynamic> verifyOtpPasswordReset(String phone, String otp) async {
     try {
+
       Response response = await _dio.post(
         dotenv.get('BASE_URL') + 'api/provider/verify/otp/password',
         data: {
-          'mobile': '+27$phone',
-          'otp': otp
+          'mobile': phone,
+          'otp': otp,
         },
         options: Options(headers: {'Accept': 'application/json'}),
       );
 
-      print(response);
       return;
     } on DioError catch (e) {
       return e.response.data;
@@ -109,17 +108,17 @@ class ApiClient {
 
   Future<dynamic> passwordReset(String phone, String newPassword, newPasswordConfirm) async {
     try {
+      String mobile = int.parse(phone).toString();
       Response response = await _dio.post(
         dotenv.get('BASE_URL') + 'api/provider/reset/password',
         data: {
-          'mobile': '+27$phone',
+          'mobile': '+27$mobile',
           'password': newPassword,
           'password_confirmation': newPasswordConfirm,
         },
         options: Options(headers: {'Accept': 'application/json'}),
       );
 
-      print(response);
       return;
     } on DioError catch (e) {
       return e.response.data;
@@ -129,11 +128,10 @@ class ApiClient {
   Future<dynamic> resetPassword(String password, String passwordConfirmation ,int id) async {
     try {
       Response response = await _dio.post(
-        dotenv.get('BASE_URL') + 'api/provider/verify/otp',
+        dotenv.get('BASE_URL') + 'api/provider/verify/otp/password',
         data: {
           'password': password,
           'password_confirmation': passwordConfirmation,
-          'id' : id,
         },
         options: Options(headers: {'Accept': 'application/json'}),
       );
@@ -146,10 +144,11 @@ class ApiClient {
 
   Future<void> requestResetOtp(String phone) async {
     try {
+      String mobile = int.parse(phone).toString();
       await _dio.post(
         dotenv.get('BASE_URL') + 'api/provider/forgot/password' ,
         data : {
-          'mobile': '+27$phone',
+          'mobile': '+27$mobile',
         },
         options: Options(headers: {'Accept': 'application/json'}),
       );
@@ -164,10 +163,11 @@ class ApiClient {
   Future<dynamic> login(String phone, String password, String fcmToken, String deviceType, String deviceID) async {
 
     try {
+      String mobile = int.parse(phone).toString();
       Response response = await _dio.post(
         dotenv.get('BASE_URL') + 'api/provider/oauth/token',
         data: {
-          'mobile': '+27$phone',
+          'mobile': '+27$mobile',
           'password': password,
           'grant_type': 'password',
           'device_type': deviceType,
@@ -193,7 +193,7 @@ class ApiClient {
         dotenv.get('BASE_URL') + 'api/provider/setFcmToken/$token',
         options: Options(headers: {'Accept': 'application/json'}),
       );
-      print(response);
+
     }catch(e){
 
     }

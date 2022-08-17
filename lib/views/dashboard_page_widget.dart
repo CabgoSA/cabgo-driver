@@ -226,14 +226,19 @@ class _DashboardPageWidgetState extends State<DashboardPageWidget> {
                           ),
                         ),
                         onPressed: () async {
-                          //test
-                          await appState.acceptRequest(359);
-                          //await appState.acceptRequest( int.parse(notifications.requestID));
-                          if (appState.info != null) {
-                            appState.onlineVisibility = !appState.onlineVisibility;
-                            appState.pickupVisibility = !appState.pickupVisibility;
-                            appState.dragableSize = 0.35;
-                            Navigator.pop(context);
+
+                          try {
+                            await appState.acceptRequest(
+                                int.parse(notifications.requestID));
+                            if (appState.info != null) {
+                              appState.onlineVisibility =
+                              !appState.onlineVisibility;
+                              appState.pickupVisibility =
+                              !appState.pickupVisibility;
+                              appState.dragableSize = 0.35;
+                              Navigator.pop(context);
+                            }
+                          }catch(e){
                           }
                         },
                         child: const Text('Accept'),
@@ -301,17 +306,19 @@ Future<void> _displayTextInputDialog(BuildContext context, AppState appState) as
             decoration: InputDecoration(hintText: "Enter your reason why you are canceling here!!!!"),
           ),
           actions: <Widget>[
-            FlatButton(
-              color: Colors.red,
-              textColor: Colors.white,
+            TextButton(
+             style: TextButton.styleFrom(
+              foregroundColor: Colors.white,
+              ),
               child: Text('CANCEL'),
               onPressed: () {
                 Navigator.pop(context);
               },
             ),
-            FlatButton(
-              color: Colors.green,
-              textColor: Colors.white,
+            TextButton(
+              style: TextButton.styleFrom(
+                foregroundColor: Colors.green,
+              ),
               child: Text('OK'),
               onPressed: () async{
                  await appState.cancelRide();
@@ -593,7 +600,7 @@ class _MapState extends State<Map> {
                                                                         await appState
                                                                             .callDriver();
                                                                       }catch(e){
-                                                                        print(e);
+
                                                                       }
                                                                     },
                                                                     icon: Icon(Icons.phone)
@@ -696,7 +703,7 @@ class _MapState extends State<Map> {
                                                 );
                                                 appState.onlineVisibility = !appState.onlineVisibility;
 
-                                                appState.dropRider();
+                                                await appState.dropRider();
 
                                               },
                                               label: Text(

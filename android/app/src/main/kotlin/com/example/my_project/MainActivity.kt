@@ -1,4 +1,4 @@
-package com.cabsgo.partner
+package com.cabgo.udriver
 
 import io.flutter.embedding.android.FlutterActivity
 

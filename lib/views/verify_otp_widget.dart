@@ -268,19 +268,23 @@ class _VerifyOtpPageWidgetState extends State<VerifyOtpPageWidget> {
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: [
                           Text(
-                            'Reend OTP',
+                            'Resend OTP',
                             style: FlutterFlowTheme.of(context).bodyText1,
                           ),
                           FFButtonWidget(
                             onPressed: () async{
-                             await appState.verifyOtp();
-                             await Navigator.push(
-                               context,
-                               MaterialPageRoute(
-                                 builder: (context) =>
-                                     NewPasswordPageWidget(),
-                               ),
-                             );
+                              try {
+                                await appState.verifyOtp();
+                                await Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) =>
+                                        NewPasswordPageWidget(),
+                                  ),
+                                );
+                              }catch(e){
+                                print(e);
+                              }
 
                             },
                             text: 'Verify',

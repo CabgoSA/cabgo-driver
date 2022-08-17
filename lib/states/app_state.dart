@@ -272,7 +272,7 @@ class AppState with ChangeNotifier {
       });
 
     }catch(e){
-      print(e);
+
     }
 
   }
@@ -302,7 +302,7 @@ class AppState with ChangeNotifier {
 
         _accessToken =  response['access_token'];
         _providerID = response['id'].toString();
-        driver = Driver(fullName:  response['first_name']+ ' '+response['last_name'],
+        driver = Driver(fullName:  response['first_name']+' '+response['last_name'],
                         phone: response['mobile'],
                         email: response['email'],
                         picture: response['avatar'],
@@ -360,7 +360,7 @@ class AppState with ChangeNotifier {
 
 
           dynamic response = await ApiClient().verifyOtpPasswordReset(
-            resetPhoneNumber.text,
+            userRegisterPhone,
             otpCode,
           );
 
@@ -379,7 +379,7 @@ class AppState with ChangeNotifier {
             _accessToken = null;
               notifyListeners();
           }catch(e){
-            print(e);
+
           }
 
   }
@@ -465,7 +465,6 @@ class AppState with ChangeNotifier {
 
       dynamic rideDetails = await Ride().acceptRide(requestID, _accessToken);
 
-      print(rideDetails);
 
      _info =  RideRoute(bookingID: (rideDetails['id']).toString(),
                        paymentMethod: rideDetails['payment_mode'],
@@ -544,7 +543,7 @@ class AppState with ChangeNotifier {
 
   Future<void> dropRider()async {
     //update database
-    updateRide(int.parse(_info.bookingID), 'COMPLETED');
+   await updateRide(int.parse(_info.bookingID), 'COMPLETED');
     _routeDriver = null;
     notifyListeners();
   }
@@ -552,9 +551,7 @@ class AppState with ChangeNotifier {
 
 
   Future<void> updateRide(int requestID, String tripStatus) async{
-
-    Map<String, dynamic> status = await Ride().updateRide(_accessToken, requestID, tripStatus);
-    print(status);
+     await Ride().updateRide(_accessToken, requestID, tripStatus);
     notifyListeners();
 
   }
@@ -563,7 +560,6 @@ class AppState with ChangeNotifier {
     try {
       List<String> status = await Ride().rateRide(
           _accessToken, int.parse(_info.bookingID), rating, comment);
-
       notifyListeners();
     }catch(e){
       throw ErrorRatingRide;

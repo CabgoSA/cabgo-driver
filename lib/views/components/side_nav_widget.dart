@@ -1,11 +1,9 @@
 import 'package:cabgo_driver/index.dart';
 import 'package:provider/provider.dart';
 import '../../flutter_flow/flutter_flow_theme.dart';
-import '../../flutter_flow/flutter_flow_util.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:share_plus/share_plus.dart';
-import '../home_page_widget.dart';
 import '../../states/app_state.dart';
 import 'dart:io' show Platform;
 
@@ -55,7 +53,7 @@ class _SideNavWidgetState extends State<SideNavWidget> {
                         borderRadius: BorderRadius.circular(26),
                         child: appState.driver.picture!=null?
                           Image.network(
-                          appState.driver.picture,
+                          'http://cabgo.co.za/uploads/772a0d10d50275d90eb66a74dae0db194ee4ea65.jpg',
                           width: 36,
                           height: 36,
                           fit: BoxFit.cover,
@@ -252,7 +250,7 @@ class _SideNavWidgetState extends State<SideNavWidget> {
 
                         if (Platform.isAndroid) {
                           // Android-specific code
-                          await Share.share('https://play.google.com/store/apps/details?id=com.cabsgo.user&hl=en_ZA&gl=US');
+                          await Share.share('https://play.google.com/store/apps/details?id=com.cabgo.udriver&hl=en_ZA&gl=US');
                         } else if (Platform.isIOS) {
                           // iOS-specific code
                           await Share.share('');

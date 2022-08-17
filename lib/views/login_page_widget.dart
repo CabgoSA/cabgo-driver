@@ -24,6 +24,10 @@ class _LoginPageWidgetState extends State<LoginPageWidget> {
   bool isLoading = false;
   bool isChecked = false;
 
+  var snackBar = SnackBar(
+    content: Text('Incorect Login Details'),
+  );
+
   @override
   void initState() {
     super.initState();
@@ -156,7 +160,6 @@ class _LoginPageWidgetState extends State<LoginPageWidget> {
                                 ),
                               ),
                             ),
-
                             Padding(
                               padding: const EdgeInsets.only(
                                   top: 10.0, left: 10.0, right: 10.0),
@@ -184,7 +187,6 @@ class _LoginPageWidgetState extends State<LoginPageWidget> {
                                 ],
                               ),
                             ),
-
                             Padding(
                                 padding: const EdgeInsets.all(10.0),
                               child: SizedBox(
@@ -192,20 +194,23 @@ class _LoginPageWidgetState extends State<LoginPageWidget> {
                                 height: 50,
                                 child:  TextButton(
                                   onPressed: () async {
-                                    if(formKey.currentState.validate()){
-                                      isLoading = true;
-                                      await appState.login();
-                                      if(appState.isLoggedIn) {
-                                        await Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                            builder: (context) =>
-                                                DashboardPageWidget(),
-                                          ),
-                                        );
+                                    try {
+                                      if (formKey.currentState.validate()) {
+                                        isLoading = true;
+                                        await appState.login();
+                                        if (appState.isLoggedIn) {
+                                          await Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                              builder: (context) =>
+                                                  DashboardPageWidget(),
+                                            ),
+                                          );
+                                        }
+                                        isLoading = false;
                                       }
-                                      isLoading = false;
-
+                                    }catch(e){
+                                      ScaffoldMessenger.of(context).showSnackBar(snackBar);
                                     }
 
 
@@ -235,33 +240,6 @@ class _LoginPageWidgetState extends State<LoginPageWidget> {
                                 ),
                               ),
                             ),
-                            // Padding(
-                            //   padding: const EdgeInsets.only(
-                            //       top: 10.0, left: 10.0, right: 10.0),
-                            //   child: Row(
-                            //     mainAxisAlignment: MainAxisAlignment.start,
-                            //     children: [
-                            //     Checkbox(
-                            //     checkColor: Colors.black,
-                            //     value: isChecked,
-                            //     onChanged: (value) {
-                            //       setState(() {
-                            //         isChecked = !isChecked;
-                            //         print(value);
-                            //       });
-                            //     },
-                            //   ),
-                            //       Text(
-                            //         'Remember Me',
-                            //         style: TextStyle(
-                            //             fontFamily: 'Red Hat Display',
-                            //             fontSize: 12,
-                            //             fontWeight: FontWeight.w400),
-                            //       ),
-                            //     ],
-                            //   ),
-                            // ),
-
                             Row(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [

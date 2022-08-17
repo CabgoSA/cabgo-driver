@@ -16,7 +16,6 @@ class GetTokenLocalStorage{
           key: key);
       return readData;
     }catch(e){
-      print('test me read $e');
     }
   }
 
@@ -28,7 +27,6 @@ class GetTokenLocalStorage{
         aOptions: _getAndroidOptions(),
       );
     }catch(e){
-      print('test me  again $e');
     }
   }
 

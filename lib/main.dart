@@ -60,6 +60,7 @@ class _MyAppState extends State<MyApp> {
     final appState = Provider.of<AppState>(context);
     if (appState.isLoggedIn) {
       return MaterialApp(
+        debugShowCheckedModeBanner: false,
         title: 'Cabgo',
         localizationsDelegates: [
           FFLocalizationsDelegate(),
@@ -76,6 +77,7 @@ class _MyAppState extends State<MyApp> {
       );
     }else{
       return MaterialApp(
+        debugShowCheckedModeBanner: false,
         title: 'Cabgo',
         localizationsDelegates: [
           FFLocalizationsDelegate(),

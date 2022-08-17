@@ -10,7 +10,7 @@ export 'views/search_location_page_widget.dart'
     show SearchLocationPageWidget;
 export 'views/payment_page_widget.dart' show PaymentPageWidget;
 export 'views/earnings_page_widget.dart' show EarningsPageWidget;
-export 'wallet_page/wallet_page_widget.dart' show WalletPageWidget;
+export 'views/wallet_page_widget.dart' show WalletPageWidget;
 export 'views/paygate_page_widget.dart' show PaygatePageWidget;
 export 'views/settings_widget.dart' show SettingsWidget;
 export 'views/set_location_page_widget.dart'
