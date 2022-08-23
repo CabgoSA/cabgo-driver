@@ -18,6 +18,7 @@ import '../request/ride.dart';
 import '../request/secure_storage.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
+import 'package:permission_handler/permission_handler.dart';
 
 
 
@@ -29,6 +30,9 @@ class AppState with ChangeNotifier {
     TextEditingController phoneController = TextEditingController();
     TextEditingController passwordController = TextEditingController();
     Driver driver;
+
+    PermissionStatus pushPermission;
+    PermissionStatus storagePermission;
 
     //REGISTER CONTROLLER
     TextEditingController registerEmailController = TextEditingController();
@@ -185,29 +189,32 @@ class AppState with ChangeNotifier {
 
     FirebaseMessaging.onMessage.listen((RemoteMessage message) async {
 
-      //get ride details
-      Response data =  await ApiClient().fetchRideDetails(message.data['requestID'], _accessToken);
-      Map<String, dynamic> rideData = jsonDecode(data.toString());
-
-      if(rideData != null) {
-        //create notification
-        notifications = PushNotifications(
-            message.data['message'], message.data['requestID']);
-        _riderDetails = RiderDetails(
-          fullName: rideData['user']['first_name'] + ' ' + rideData['user']['last_name'],
-          picture: rideData['user']['picture'],
-          phone: rideData['user']['mobile'],
-          rating: rideData['user']['rating'],
-          price: (double.parse(rideData['service_type']['price']) * double.parse(rideData['distance'])).toString(),
-          riderLocation: LatLng(double.parse(rideData['s_latitude']),
-              double.parse(rideData['s_longitude'])),
-        );
-
-
-        incomeMessage = true;
-        notifyListeners();
-      }else{
-        throw IncomingRequestError();
+      if(pushPermission == PermissionStatus.granted){
+        //get ride details
+        Response data =  await ApiClient().fetchRideDetails(message.data['requestID'], _accessToken);
+        Map<String, dynamic> rideData = jsonDecode(data.toString());
+        if(rideData != null) {
+          //create notification
+          notifications = PushNotifications(
+              message.data['message'], message.data['requestID']);
+          _riderDetails = RiderDetails(
+            fullName: rideData['user']['first_name'] + ' ' + rideData['user']['last_name'],
+            picture: rideData['user']['picture'],
+            phone: rideData['user']['mobile'],
+            rating: rideData['user']['rating'],
+            price: (double.parse(rideData['service_type']['price']) * double.parse(rideData['distance'])).toString(),
+            riderLocation: LatLng(double.parse(rideData['s_latitude']),
+                double.parse(rideData['s_longitude'])),
+          );
+          incomeMessage = true;
+          notifyListeners();
+        }else{
+          throw IncomingRequestError();
+        }
+      } else if(pushPermission == PermissionStatus.denied) {
+        throw PushPermissionError;
+      }else if(pushPermission == PermissionStatus.permanentlyDenied) {
+        openAppSettings();
       }
     });
   }
@@ -298,7 +305,7 @@ class AppState with ChangeNotifier {
     Future<void> login() async {
 
     try{
-      final response = await ApiClient().login(phoneController.text,passwordController.text,_fcmToken, _deviceType,_deviceID );
+      final response = await ApiClient().login(phoneController.text,passwordController.text,_fcmToken, _deviceType,_deviceID, _initialPosition.latitude, _initialPosition.longitude);
 
         _accessToken =  response['access_token'];
         _providerID = response['id'].toString();
@@ -308,6 +315,7 @@ class AppState with ChangeNotifier {
                         picture: response['avatar'],
                         rating: double.parse(response['rating']));
         _isLoggedIn = true;
+        _isOnline = false;
       await ApiClient().setFcmToken(_accessToken, _fcmToken);
 
       notifyListeners();
@@ -339,6 +347,12 @@ class AppState with ChangeNotifier {
       );
       if(response != null){
         userRegisterPhone = response['mobile'];
+        registerEmailController.clear();
+        registerFirstNameController.clear();
+        registerLastNameController.clear();
+        registerPhoneController.clear();
+        registerPasswordController.clear();
+        registerConfirmPasswordController.clear();
         notifyListeners();
 
       }else{
@@ -359,11 +373,17 @@ class AppState with ChangeNotifier {
           otpCode += textController5.text;
 
 
-          dynamic response = await ApiClient().verifyOtpPasswordReset(
+           await ApiClient().verifyOtpPasswordReset(
             userRegisterPhone,
             otpCode,
           );
 
+          textController1.clear();
+          textController2.clear();
+          textController3.clear();
+          textController4.clear();
+          textController5.clear();
+          notifyListeners();
         }catch(e){
           throw OtpVerificationError();
         }
@@ -377,7 +397,8 @@ class AppState with ChangeNotifier {
           try{
             await ApiClient().logOut(_accessToken);
             _accessToken = null;
-              notifyListeners();
+            _isOnline = false;
+            notifyListeners();
           }catch(e){
 
           }
@@ -394,9 +415,13 @@ class AppState with ChangeNotifier {
   }
 
   Future<dynamic> passwordReset() async {
+      try {
+        dynamic data = await ApiClient().passwordReset(
+            resetPhoneNumber.text, newPassword.text, newPasswordConfirm.text);
+        return data;
+      }catch(_){
 
-    dynamic data =  await ApiClient().passwordReset(resetPhoneNumber.text, newPassword.text, newPasswordConfirm.text);
-    return data;
+      }
   }
 
   // ! SEND REQUEST
@@ -438,14 +463,10 @@ class AppState with ChangeNotifier {
   String token =  _accessToken;
   dio.options.headers["Authorization"] = 'Bearer $token';
   dio.post(endPoint, data: data).then((response) {
-
-   var jsonResponse = jsonDecode(response.toString());
-
+    jsonDecode(response.toString());
    }).catchError((error) => print(error));
 
  }
-
-  //loading
 
 
   //  Dashboard Map
@@ -458,6 +479,8 @@ class AppState with ChangeNotifier {
         }
       });
 
+      pushPermission = await Permission.notification.request();
+      storagePermission = await Permission.storage.request();
 
     }
 

@@ -43,7 +43,7 @@ class _DocsWidgetState extends State<DocsWidget> {
             size: 30,
           ),
           onPressed: () {
-            print('IconButton pressed ...');
+           Navigator.pop(context);
           },
         ),
         title: Text(

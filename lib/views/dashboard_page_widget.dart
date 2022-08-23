@@ -83,6 +83,15 @@ class _DashboardPageWidgetState extends State<DashboardPageWidget> {
                     color: Color(0xFFEEEEEE),
                   ),
                 ),
+
+                Align(
+                  alignment: AlignmentDirectional.topStart,
+                  child: IconButton(
+                      onPressed: () async {
+                        scaffoldKey.currentState.openDrawer();
+                      },
+                      icon: Icon(Icons.menu)),
+                ),
               ],
             ),
           ),
@@ -375,11 +384,6 @@ class _MapState extends State<Map> {
     );
     final appState = Provider.of<AppState>(context);
 
-    // if (appState.isOnline) {
-    //   appState.slideIcon = appState.forwardIcon;
-    // } else {
-    //   appState.slideIcon = appState.backIcon;
-    // }
 
     return appState.initialPosition == null
         ? Container(
@@ -746,23 +750,7 @@ class _MapState extends State<Map> {
                     mainAxisSize: MainAxisSize.max,
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Align(
-                        alignment: AlignmentDirectional(-1, -1),
-                        child: FlutterFlowIconButton(
-                          borderColor: Colors.transparent,
-                          borderRadius: 30,
-                          borderWidth: 1,
-                          buttonSize: 60,
-                          icon: Icon(
-                            Icons.menu_sharp,
-                            color: Colors.black,
-                            size: 30,
-                          ),
-                          onPressed: () async {
-                            appState.scaffoldKey.currentState.openDrawer();
-                          },
-                        ),
-                      ),
+
                     ],
                   ),
                 ],

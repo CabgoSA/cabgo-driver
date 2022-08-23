@@ -208,7 +208,7 @@ class _SideNavWidgetState extends State<SideNavWidget> {
                           context,
                           MaterialPageRoute(
                             builder: (context) =>
-                                SettingsWidget(),
+                                ProfilePageWidget(),
                           ),
                         );
                       },

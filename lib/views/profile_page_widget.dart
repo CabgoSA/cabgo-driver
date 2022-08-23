@@ -4,6 +4,7 @@ import '../flutter_flow/flutter_flow_theme.dart';
 import 'package:flutter/material.dart';
 import '../states/app_state.dart';
 import 'package:progress_dialog/progress_dialog.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 class ProfilePageWidget extends StatefulWidget {
   const ProfilePageWidget({Key key}) : super(key: key);
@@ -18,6 +19,12 @@ class _ProfilePageWidgetState extends State<ProfilePageWidget> {
   @override
   Widget build(BuildContext context) {
 
+    const snackBar = SnackBar(
+      content: Text('Something went wrong uploading Document'),
+    );
+    const snackBarStorage = SnackBar(
+      content: Text('Something went wrong uploading Document'),
+    );
 
     ProgressDialog pr = ProgressDialog(context);
     pr = ProgressDialog(context,type: ProgressDialogType.Normal, isDismissible: false, showLogs: true);
@@ -218,7 +225,7 @@ class _ProfilePageWidgetState extends State<ProfilePageWidget> {
                                       size: 30,
                                     ),
                                     onPressed: () async {
-
+                                        Navigator.pop(context);
                                     },
                                   ),
                                 ],
@@ -327,9 +334,17 @@ class _ProfilePageWidgetState extends State<ProfilePageWidget> {
 
                        child: GestureDetector(
                          onTap: () async{
-
-                            await appState.uploadDocument(1);
-
+                           try {
+                             if(appState.storagePermission == PermissionStatus.granted) {
+                               appState.uploadDocument(1);
+                             }else if(appState.storagePermission == PermissionStatus.denied) {
+                               ScaffoldMessenger.of(context).showSnackBar(snackBarStorage);
+                             }else if(appState.storagePermission == PermissionStatus.permanentlyDenied) {
+                               openAppSettings();
+                             }
+                           }catch(e){
+                             ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                           }
                          },
                          child :Row(
 
@@ -386,7 +401,17 @@ class _ProfilePageWidgetState extends State<ProfilePageWidget> {
 
                        child: GestureDetector(
                          onTap: () {
-                           appState.uploadDocument(3);
+                           try {
+                             if(appState.storagePermission == PermissionStatus.granted) {
+                               appState.uploadDocument(3);
+                             }else if(appState.storagePermission == PermissionStatus.denied) {
+                               ScaffoldMessenger.of(context).showSnackBar(snackBarStorage);
+                             }else if(appState.storagePermission == PermissionStatus.permanentlyDenied) {
+                               openAppSettings();
+                             }
+                           }catch(e){
+                             ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                           }
                          },
                          child :Row(
 
@@ -441,7 +466,17 @@ class _ProfilePageWidgetState extends State<ProfilePageWidget> {
 
                        child: GestureDetector(
                          onTap: () {
-                           appState.uploadDocument(15);
+                           try {
+                             if(appState.storagePermission == PermissionStatus.granted) {
+                               appState.uploadDocument(15);
+                             }else if(appState.storagePermission == PermissionStatus.denied) {
+                               ScaffoldMessenger.of(context).showSnackBar(snackBarStorage);
+                             }else if(appState.storagePermission == PermissionStatus.permanentlyDenied) {
+                               openAppSettings();
+                             }
+                           }catch(e){
+                             ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                           }
                          },
                          child :Row(
 
@@ -496,7 +531,17 @@ class _ProfilePageWidgetState extends State<ProfilePageWidget> {
 
                        child: GestureDetector(
                          onTap: () {
-                           appState.uploadDocument(14);
+                           try {
+                             if(appState.storagePermission == PermissionStatus.granted) {
+                               appState.uploadDocument(14);
+                             }else if(appState.storagePermission == PermissionStatus.denied) {
+                               ScaffoldMessenger.of(context).showSnackBar(snackBarStorage);
+                             }else if(appState.storagePermission == PermissionStatus.permanentlyDenied) {
+                               openAppSettings();
+                             }
+                           }catch(e){
+                             ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                           }
                          },
                          child :Row(
 
@@ -551,7 +596,17 @@ class _ProfilePageWidgetState extends State<ProfilePageWidget> {
 
                        child: GestureDetector(
                          onTap: () {
-                           appState.uploadDocument(17);
+                           try {
+                             if(appState.storagePermission == PermissionStatus.granted) {
+                               appState.uploadDocument(17);
+                             }else if(appState.storagePermission == PermissionStatus.denied) {
+                               ScaffoldMessenger.of(context).showSnackBar(snackBarStorage);
+                             }else if(appState.storagePermission == PermissionStatus.permanentlyDenied) {
+                               openAppSettings();
+                             }
+                           }catch(e){
+                             ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                           }
                          },
                          child :Row(
 
@@ -606,7 +661,17 @@ class _ProfilePageWidgetState extends State<ProfilePageWidget> {
 
                        child: GestureDetector(
                          onTap: () {
-                           appState.uploadDocument(18);
+                           try {
+                             if(appState.storagePermission == PermissionStatus.granted) {
+                               appState.uploadDocument(18);
+                             }else if(appState.storagePermission == PermissionStatus.denied) {
+                               ScaffoldMessenger.of(context).showSnackBar(snackBarStorage);
+                             }else if(appState.storagePermission == PermissionStatus.permanentlyDenied) {
+                               openAppSettings();
+                             }
+                           }catch(e){
+                             ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                           }
                          },
                          child :Row(
 
@@ -661,7 +726,19 @@ class _ProfilePageWidgetState extends State<ProfilePageWidget> {
 
                        child: GestureDetector(
                          onTap: () {
-                           appState.uploadDocument(19);
+                           {
+                             try {
+                               if(appState.storagePermission == PermissionStatus.granted) {
+                                 appState.uploadDocument(19);
+                               }else if(appState.storagePermission == PermissionStatus.denied) {
+                                 ScaffoldMessenger.of(context).showSnackBar(snackBarStorage);
+                               }else if(appState.storagePermission == PermissionStatus.permanentlyDenied) {
+                                 openAppSettings();
+                               }
+                             }catch(e){
+                               ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                             }
+                           }
                          },
                          child :Row(
 
@@ -716,7 +793,17 @@ class _ProfilePageWidgetState extends State<ProfilePageWidget> {
 
                        child: GestureDetector(
                          onTap: () {
-                           appState.uploadDocument(20);
+                           try {
+                             if(appState.storagePermission == PermissionStatus.granted) {
+                               appState.uploadDocument(20);
+                             }else if(appState.storagePermission == PermissionStatus.denied) {
+                               ScaffoldMessenger.of(context).showSnackBar(snackBarStorage);
+                             }else if(appState.storagePermission == PermissionStatus.permanentlyDenied) {
+                               openAppSettings();
+                             }
+                           }catch(e){
+                             ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                           }
                          },
                          child :Row(
 

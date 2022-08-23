@@ -35,7 +35,7 @@ class _PaygatePageWidgetState extends State<PaygatePageWidget> {
             size: 30,
           ),
           onPressed: () async {
-            context.pop();
+            Navigator.pop(context);
           },
         ),
         title: Text(

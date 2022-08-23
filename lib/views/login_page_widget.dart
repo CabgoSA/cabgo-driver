@@ -199,12 +199,14 @@ class _LoginPageWidgetState extends State<LoginPageWidget> {
                                         isLoading = true;
                                         await appState.login();
                                         if (appState.isLoggedIn) {
-                                          await Navigator.push(
+                                           Navigator.popUntil(context,
+                                          await Navigator.pushReplacement(
                                             context,
                                             MaterialPageRoute(
                                               builder: (context) =>
                                                   DashboardPageWidget(),
                                             ),
+                                          )
                                           );
                                         }
                                         isLoading = false;

@@ -45,7 +45,7 @@ class _VerifyOtpPageWidgetState extends State<VerifyOtpPageWidget> {
             size: 30,
           ),
           onPressed: () async {
-            context.pop();
+            Navigator.pop(context);
           },
         ),
         actions: [],

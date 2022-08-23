@@ -2,7 +2,6 @@ import '../flutter_flow/flutter_flow_icon_button.dart';
 import '../flutter_flow/flutter_flow_theme.dart';
 import '../flutter_flow/flutter_flow_util.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 class SummeryPageWidget extends StatefulWidget {
   const SummeryPageWidget({Key key}) : super(key: key);
@@ -32,7 +31,7 @@ class _SummeryPageWidgetState extends State<SummeryPageWidget> {
             size: 30,
           ),
           onPressed: () async {
-            context.pop();
+            Navigator.pop(context);
           },
         ),
         title: Text(

@@ -160,7 +160,7 @@ class ApiClient {
 
 
 
-  Future<dynamic> login(String phone, String password, String fcmToken, String deviceType, String deviceID) async {
+  Future<dynamic> login(String phone, String password, String fcmToken, String deviceType, String deviceID, double lat , double long) async {
 
     try {
       String mobile = int.parse(phone).toString();
@@ -172,7 +172,9 @@ class ApiClient {
           'grant_type': 'password',
           'device_type': deviceType,
           'device_token': fcmToken,
-          'device_id': deviceID
+          'device_id': deviceID,
+          'latitude' : lat,
+          'longitude' : long,
         },
         options: Options(headers: {'Accept': 'application/json'}),
       );

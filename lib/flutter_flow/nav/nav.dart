@@ -97,11 +97,7 @@ GoRouter createRouter(AppStateNotifier appStateNotifier) => GoRouter(
               path: 'dashboardPage',
               builder: (context, params) => DashboardPageWidget(),
             ),
-            FFRoute(
-              name: 'SearchLocationPage',
-              path: 'searchLocationPage',
-              builder: (context, params) => SearchLocationPageWidget(),
-            ),
+
             FFRoute(
               name: 'PaymentPage',
               path: 'paymentPage',
@@ -122,16 +118,8 @@ GoRouter createRouter(AppStateNotifier appStateNotifier) => GoRouter(
               path: 'paygatePage',
               builder: (context, params) => PaygatePageWidget(),
             ),
-            FFRoute(
-              name: 'Settings',
-              path: 'settings',
-              builder: (context, params) => SettingsWidget(),
-            ),
-            FFRoute(
-              name: 'SetLocationPage',
-              path: 'setLocationPage',
-              builder: (context, params) => SetLocationPageWidget(),
-            ),
+
+
             FFRoute(
               name: 'HelpPage',
               path: 'helpPage',

@@ -1,8 +1,6 @@
 import '../flutter_flow/flutter_flow_icon_button.dart';
 import '../flutter_flow/flutter_flow_theme.dart';
-import '../flutter_flow/flutter_flow_util.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 class SocialsPageWidget extends StatefulWidget {
   const SocialsPageWidget({Key key}) : super(key: key);
@@ -32,7 +30,7 @@ class _SocialsPageWidgetState extends State<SocialsPageWidget> {
             size: 30,
           ),
           onPressed: () async {
-            context.pop();
+            Navigator.pop(context);
           },
         ),
         actions: [],

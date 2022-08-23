@@ -32,7 +32,7 @@ class _TermsPageWidgetState extends State<TermsPageWidget> {
             size: 30,
           ),
           onPressed: () async {
-            context.pop();
+            Navigator.pop(context);
           },
         ),
         actions: [],

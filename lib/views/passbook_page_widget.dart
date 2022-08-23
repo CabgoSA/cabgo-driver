@@ -33,7 +33,7 @@ class _PassbookPageWidgetState extends State<PassbookPageWidget> {
             size: 30,
           ),
           onPressed: () async {
-            context.pop();
+            Navigator.pop(context);
           },
         ),
         title: Text(

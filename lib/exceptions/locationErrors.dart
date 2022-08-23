@@ -38,3 +38,5 @@ class ErrorRatingRide implements Exception{}
 
 
 class ErrorGettingEarnings implements Exception{}
+
+class PushPermissionError implements Exception{}
