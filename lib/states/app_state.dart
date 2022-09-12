@@ -316,6 +316,7 @@ class AppState with ChangeNotifier {
                         rating: double.parse(response['rating']));
         _isLoggedIn = true;
         _isOnline = false;
+        
       await ApiClient().setFcmToken(_accessToken, _fcmToken);
 
       notifyListeners();
