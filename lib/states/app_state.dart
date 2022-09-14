@@ -188,7 +188,7 @@ class AppState with ChangeNotifier {
 
 
     FirebaseMessaging.onMessage.listen((RemoteMessage message) async {
-
+        print("test");
       if(pushPermission == PermissionStatus.granted){
         //get ride details
         Response data =  await ApiClient().fetchRideDetails(message.data['requestID'], _accessToken);

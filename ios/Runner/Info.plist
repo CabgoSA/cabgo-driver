@@ -39,6 +39,8 @@
 	<string>$(FLUTTER_BUILD_NUMBER)</string>
 	<key>FlutterDeepLinkingEnabled</key>
 	<true/>
+	<key>FlutterAppDelecateProxyEnabled</key>
+	<string>NO</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>UIBackgroundModes</key>
@@ -70,5 +72,7 @@
 	<false/>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>Allow this app to use location</string>
+	<key>FirebaseAppDelegateProxyEnabled</key>
+	<string>false</string>
 </dict>
 </plist>
