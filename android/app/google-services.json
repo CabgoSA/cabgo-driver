@@ -8,6 +8,78 @@
   "client": [
     {
       "client_info": {
+        "mobilesdk_app_id": "1:628757832787:android:de2c9c6280221edf9e52a6",
+        "android_client_info": {
+          "package_name": "com.cabgo.adriver"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "628757832787-6mpgkidjhr423ggn37iv77gpb1ls53bs.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBA2435XrHbyg3OpOEVnUpPp7_pHFuQAOU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "628757832787-6mpgkidjhr423ggn37iv77gpb1ls53bs.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "628757832787-vbtau32mj3cgfd6c88jvq7jqth3pak43.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.cabgo.user"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:628757832787:android:5b475d57ffed117d9e52a6",
+        "android_client_info": {
+          "package_name": "com.cabgo.passanger"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "628757832787-6mpgkidjhr423ggn37iv77gpb1ls53bs.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBA2435XrHbyg3OpOEVnUpPp7_pHFuQAOU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "628757832787-6mpgkidjhr423ggn37iv77gpb1ls53bs.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "628757832787-vbtau32mj3cgfd6c88jvq7jqth3pak43.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.cabgo.user"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
         "mobilesdk_app_id": "1:628757832787:android:5111378b1b06d4379e52a6",
         "android_client_info": {
           "package_name": "com.cabgo.udriver"

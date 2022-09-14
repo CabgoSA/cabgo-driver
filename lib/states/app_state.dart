@@ -317,7 +317,8 @@ class AppState with ChangeNotifier {
         _isLoggedIn = true;
         _isOnline = false;
       await ApiClient().setFcmToken(_accessToken, _fcmToken);
-
+      pushPermission = await Permission.notification.request();
+      storagePermission = await Permission.storage.request();
       notifyListeners();
 
     } on InvalidCridetials{
@@ -479,8 +480,6 @@ class AppState with ChangeNotifier {
         }
       });
 
-      pushPermission = await Permission.notification.request();
-      storagePermission = await Permission.storage.request();
 
     }
 
@@ -568,6 +567,8 @@ class AppState with ChangeNotifier {
     //update database
    await updateRide(int.parse(_info.bookingID), 'COMPLETED');
     _routeDriver = null;
+    _info = null;
+    _riderDetails = null;
     notifyListeners();
   }
 

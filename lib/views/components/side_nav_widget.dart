@@ -7,7 +7,6 @@ import 'package:share_plus/share_plus.dart';
 import '../../states/app_state.dart';
 import 'dart:io' show Platform;
 
-
 class SideNavWidget extends StatefulWidget {
   const SideNavWidget({Key key}) : super(key: key);
 
@@ -51,20 +50,19 @@ class _SideNavWidgetState extends State<SideNavWidget> {
                     children: [
                       ClipRRect(
                         borderRadius: BorderRadius.circular(26),
-                        child: appState.driver.picture!=null?
-                          Image.network(
-                          'http://cabgo.co.za/uploads/772a0d10d50275d90eb66a74dae0db194ee4ea65.jpg',
-                          width: 36,
-                          height: 36,
-                          fit: BoxFit.cover,
-                        ):  Image.asset(
-                          'assets/images/profile.png',
-                          width: 36,
-                          height: 36,
-                          fit: BoxFit.cover,
-                        )
-
-                ,
+                        child: appState.driver.picture != null
+                            ? Image.network(
+                                'http://cabgo.co.za/uploads/772a0d10d50275d90eb66a74dae0db194ee4ea65.jpg',
+                                width: 36,
+                                height: 36,
+                                fit: BoxFit.cover,
+                              )
+                            : Image.asset(
+                                'assets/images/profile.png',
+                                width: 36,
+                                height: 36,
+                                fit: BoxFit.cover,
+                              ),
                       ),
                       Expanded(
                         child: Padding(
@@ -134,11 +132,10 @@ class _SideNavWidgetState extends State<SideNavWidget> {
                           await Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) =>
-                                  TripsPageWidget(),
+                              builder: (context) => TripsPageWidget(),
                             ),
                           );
-                        }catch(e){
+                        } catch (e) {
                           print(e);
                         }
                       },
@@ -160,11 +157,10 @@ class _SideNavWidgetState extends State<SideNavWidget> {
                           await Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) =>
-                                  EarningsPageWidget(),
+                              builder: (context) => EarningsPageWidget(),
                             ),
                           );
-                        }catch(e){
+                        } catch (e) {
                           print(e);
                         }
                       },
@@ -177,19 +173,16 @@ class _SideNavWidgetState extends State<SideNavWidget> {
                       ),
                     ),
                   ),
-                  
                   Padding(
                     padding: EdgeInsetsDirectional.fromSTEB(5, 5, 5, 5),
                     child: InkWell(
                       onTap: () async {
-                      await Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                      builder: (context) =>
-                      WalletPageWidget(),
-                      ),
-                      );
-
+                        await Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => WalletPageWidget(),
+                          ),
+                        );
                       },
                       child: Text(
                         'Wallet',
@@ -207,8 +200,7 @@ class _SideNavWidgetState extends State<SideNavWidget> {
                         await Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) =>
-                                ProfilePageWidget(),
+                            builder: (context) => ProfilePageWidget(),
                           ),
                         );
                       },
@@ -228,8 +220,7 @@ class _SideNavWidgetState extends State<SideNavWidget> {
                         await Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) =>
-                                HelpPageWidget(),
+                            builder: (context) => HelpPageWidget(),
                           ),
                         );
                       },
@@ -246,16 +237,14 @@ class _SideNavWidgetState extends State<SideNavWidget> {
                     padding: EdgeInsetsDirectional.fromSTEB(5, 5, 5, 5),
                     child: InkWell(
                       onTap: () async {
-
-
                         if (Platform.isAndroid) {
                           // Android-specific code
-                          await Share.share('https://play.google.com/store/apps/details?id=com.cabgo.udriver&hl=en_ZA&gl=US');
+                          await Share.share(
+                              'https://play.google.com/store/apps/details?id=com.cabgo.adriver&hl=en_ZA&gl=US');
                         } else if (Platform.isIOS) {
                           // iOS-specific code
                           await Share.share('');
                         }
-
                       },
                       child: Text(
                         'Share',
@@ -272,14 +261,13 @@ class _SideNavWidgetState extends State<SideNavWidget> {
                       onTap: () async {
                         try {
                           await appState.logout();
-                            await Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => LoginPageWidget(),
-                              ),
-                            );
-
-                        }catch(e){
+                          await Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => LoginPageWidget(),
+                            ),
+                          );
+                        } catch (e) {
                           print(e);
                         }
                       },

@@ -2,7 +2,6 @@ import 'package:cabgo_driver/services/local_notification_service.dart';
 import 'package:flutter_ringtone_player/flutter_ringtone_player.dart';
 import 'package:uuid/uuid.dart';
 import 'components/side_nav_widget.dart';
-import '../flutter_flow/flutter_flow_icon_button.dart';
 import '../flutter_flow/flutter_flow_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -13,7 +12,6 @@ import '../flutter_flow/place.dart';
 import 'package:slider_button/slider_button.dart';
 import 'package:fswitch_nullsafety/fswitch_nullsafety.dart';
 import 'package:rating_dialog/rating_dialog.dart';
-import'./chat_page_widget.dart';
 import 'package:progress_dialog/progress_dialog.dart';
 
 class DashboardPageWidget extends StatefulWidget {
@@ -45,7 +43,7 @@ class _DashboardPageWidgetState extends State<DashboardPageWidget> {
           appState.notifications,
         );
       });
-      Future.delayed(Duration(milliseconds: 1500), () {
+      Future.delayed(Duration(milliseconds: 15000), () {
         FlutterRingtonePlayer.stop();
         appState.notifications = null;
       });
@@ -246,6 +244,7 @@ class _DashboardPageWidgetState extends State<DashboardPageWidget> {
                               !appState.pickupVisibility;
                               appState.dragableSize = 0.35;
                               Navigator.pop(context);
+                              FlutterRingtonePlayer.stop();
                             }
                           }catch(e){
                           }
