@@ -188,7 +188,7 @@ class AppState with ChangeNotifier {
 
 
     FirebaseMessaging.onMessage.listen((RemoteMessage message) async {
-        print("test");
+        print("test ------- cominng message");
       if(pushPermission == PermissionStatus.granted){
         //get ride details
         Response data =  await ApiClient().fetchRideDetails(message.data['requestID'], _accessToken);
@@ -318,8 +318,7 @@ class AppState with ChangeNotifier {
         _isOnline = false;
         
       await ApiClient().setFcmToken(_accessToken, _fcmToken);
-      pushPermission = await Permission.notification.request();
-      storagePermission = await Permission.storage.request();
+
       notifyListeners();
 
     } on InvalidCridetials{
@@ -481,6 +480,8 @@ class AppState with ChangeNotifier {
         }
       });
 
+      pushPermission = await Permission.notification.request();
+      storagePermission = await Permission.storage.request();
 
     }
 
@@ -568,8 +569,6 @@ class AppState with ChangeNotifier {
     //update database
    await updateRide(int.parse(_info.bookingID), 'COMPLETED');
     _routeDriver = null;
-    _info = null;
-    _riderDetails = null;
     notifyListeners();
   }
 
