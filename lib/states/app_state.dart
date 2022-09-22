@@ -188,8 +188,7 @@ class AppState with ChangeNotifier {
 
 
     FirebaseMessaging.onMessage.listen((RemoteMessage message) async {
-        print("test ------- cominng message");
-      if(pushPermission == PermissionStatus.granted){
+        
         //get ride details
         Response data =  await ApiClient().fetchRideDetails(message.data['requestID'], _accessToken);
         Map<String, dynamic> rideData = jsonDecode(data.toString());
@@ -211,11 +210,7 @@ class AppState with ChangeNotifier {
         }else{
           throw IncomingRequestError();
         }
-      } else if(pushPermission == PermissionStatus.denied) {
-        throw PushPermissionError;
-      }else if(pushPermission == PermissionStatus.permanentlyDenied) {
-        openAppSettings();
-      }
+      
     });
   }
 
