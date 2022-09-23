@@ -438,7 +438,7 @@ class _RegisterPageWidgetState extends State<RegisterPageWidget> {
                                 child: isLoading ?   CircularProgressIndicator(
                                   color: Colors.white,
                                 )
-                                    : Text( 'Sign In',
+                                    : Text( 'Register Now',
                                   style: TextStyle(
                                       color: Colors.white,
                                       fontSize: 20.0,
@@ -457,19 +457,18 @@ class _RegisterPageWidgetState extends State<RegisterPageWidget> {
                             ),
                           ),
 
-
-
-
-
-
-
-
                           Row(
                             mainAxisSize: MainAxisSize.max,
                             children: [
                               InkWell(
                                 onTap: () async {
-                                  context.pushNamed('TermsPage');
+                                  await Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) =>
+                                              TermsPageWidget(),
+                                        ),
+                                      );
                                 },
                                 child: Text(
                                   'READ',
