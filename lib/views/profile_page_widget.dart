@@ -1,3 +1,4 @@
+import 'package:cabgo_driver/index.dart';
 import 'package:provider/provider.dart';
 import '../flutter_flow/flutter_flow_icon_button.dart';
 import '../flutter_flow/flutter_flow_theme.dart';
@@ -15,6 +16,44 @@ class ProfilePageWidget extends StatefulWidget {
 
 class _ProfilePageWidgetState extends State<ProfilePageWidget> {
   final scaffoldKey = GlobalKey<ScaffoldState>();
+
+
+  void _delete(BuildContext context,AppState appState) {
+
+    showDialog(
+        context: context,
+        builder: (BuildContext ctx) {
+          return AlertDialog(
+            title: const Text('Please Confirm'),
+            content: const Text('Are you sure to remove this account, You will lose all your Benefits'),
+            actions: [
+              // The "Yes" button
+              TextButton(
+                  onPressed: () async{
+                    try {
+                      await appState.delete();
+                      await Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => HomePageWidget(),
+                          ),
+                        );
+                    } catch (e) {
+                    Navigator.of(context).pop();
+                    }
+                    
+                  },
+                  child: const Text('Yes')),
+              TextButton(
+                  onPressed: () {
+                    // Close the dialog
+                    Navigator.of(context).pop();
+                  },
+                  child: const Text('No'))
+            ],
+          );
+        });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -834,6 +873,61 @@ class _ProfilePageWidgetState extends State<ProfilePageWidget> {
                              IconButton(
                                icon: Icon(Icons.drive_folder_upload, size: 18.0 ,),
                              ),
+                           ],
+
+
+                         ),),
+                     ),
+                   ],
+                 ),
+                 Row(
+                   mainAxisSize: MainAxisSize.max,
+                   children: [
+                     Container(
+                       width: MediaQuery.of(context).size.width,
+                       height: 50,
+                       decoration: BoxDecoration(
+                         color: FlutterFlowTheme.of(context).secondaryBackground,
+                         shape: BoxShape.rectangle,
+                         border: Border.all(
+                           color: FlutterFlowTheme.of(context).primaryBackground,
+                           width: 1,
+                         ),
+                       ),
+
+                       child: GestureDetector(
+                         onTap: () {
+                           try {
+                             if(appState.storagePermission == PermissionStatus.granted) {
+                               appState.uploadDocument(20);
+                             }else if(appState.storagePermission == PermissionStatus.denied) {
+                               ScaffoldMessenger.of(context).showSnackBar(snackBarStorage);
+                             }else if(appState.storagePermission == PermissionStatus.permanentlyDenied) {
+                               openAppSettings();
+                             }
+                           }catch(e){
+                             ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                           }
+                         },
+                         child :Row(
+
+                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                           children: [
+                            
+                             Padding(
+                               padding:
+                               EdgeInsetsDirectional.fromSTEB(12, 0, 0, 0),
+                               child: TextButton(
+                                      style: TextButton.styleFrom(
+                                        textStyle: const TextStyle(fontSize: 20),
+                                      ),
+                                      onPressed: () {
+                                         _delete(context,appState);
+                                      },
+                                      child: const Text('Delete Account'),
+                                    ),
+                             ),
+                             
                            ],
 
 

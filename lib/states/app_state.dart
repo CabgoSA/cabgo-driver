@@ -388,7 +388,7 @@ class AppState with ChangeNotifier {
   }
 
 
-    // ! SEND REQUEST
+    
     Future<void> logout() async {
           try{
             await ApiClient().logOut(_accessToken);
@@ -434,6 +434,10 @@ class AppState with ChangeNotifier {
           notifyListeners();
         }
 
+  }
+
+  Future<void> delete() async {
+      await ApiClient().delete(_accessToken);
   }
 
 

@@ -240,7 +240,7 @@ class _SideNavWidgetState extends State<SideNavWidget> {
                         if (Platform.isAndroid) {
                           // Android-specific code
                           await Share.share(
-                              'https://play.google.com/store/apps/details?id=com.cabgo.adriver&hl=en_ZA&gl=US');
+                              'https://play.google.com/store/apps/details?id=com.cabgo.udriver&hl=en_ZA&gl=US');
                         } else if (Platform.isIOS) {
                           // iOS-specific code
                           await Share.share('');
