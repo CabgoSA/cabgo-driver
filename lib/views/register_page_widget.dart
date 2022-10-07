@@ -3,7 +3,6 @@ import 'package:cabgo_driver/index.dart';
 import '../exceptions/locationErrors.dart';
 import '../flutter_flow/flutter_flow_icon_button.dart';
 import '../flutter_flow/flutter_flow_theme.dart';
-import '../flutter_flow/flutter_flow_util.dart';
 import 'package:easy_debounce/easy_debounce.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -31,6 +30,10 @@ class _RegisterPageWidgetState extends State<RegisterPageWidget> {
     passwordVisibility = false;
     confirmPasswordVisibility = false;
   }
+
+  var snackBar = SnackBar(
+    content: Text('Error Registering User'),
+  );
 
   @override
   Widget build(BuildContext context) {
@@ -425,12 +428,25 @@ class _RegisterPageWidgetState extends State<RegisterPageWidget> {
 
                                     }on UserNotRegistered {
                                       isLoading = false;
-                                      print('error');
+                                      ScaffoldMessenger.of(context).showSnackBar(
+                                          SnackBar(
+                                            content: Text('User Not Register'),
+                                          )
+                                      );
                                     } on RegisterError {
                                       isLoading = false;
-                                      print('error');
+                                      ScaffoldMessenger.of(context).showSnackBar(
+                                          SnackBar(
+                                            content: Text('Error Registering'),
+                                          )
+                                      );
                                     } catch(e){
                                       isLoading = false;
+                                      ScaffoldMessenger.of(context).showSnackBar(
+                                          SnackBar(
+                                            content: Text('Server Error please check your internet or contact Cabgo'),
+                                          )
+                                      );
                                     }
                                   }
 

@@ -43,11 +43,14 @@ class ApiClient {
       String fcmToken,
       String deviceType,
       String deviceID) async {
+    
+
     try {
       String trimmedPhone = phone.replaceAll(' ', '');
       if (trimmedPhone.startsWith('0')) {
         trimmedPhone = trimmedPhone.substring(1);
       }
+
       Response response = await _dio.post(
         dotenv.get('BASE_URL') + 'api/provider/register',
         data: {
@@ -68,15 +71,16 @@ class ApiClient {
 
       return response.data;
     } on DioError catch (e) {
-      return 'error';
+      return "error";
     }
   }
 
   Future<dynamic> verifyOtp(String phone, String otp) async {
     try {
+
       Response response = await _dio.post(
         dotenv.get('BASE_URL') + 'api/provider/verify/otp',
-        data: {'mobile': '+27$phone', 'otp': otp},
+        data: {'mobile': phone, 'otp': otp},
         options: Options(headers: {'Accept': 'application/json'}),
       );
 
@@ -88,6 +92,7 @@ class ApiClient {
 
   Future<dynamic> verifyOtpPasswordReset(String phone, String otp) async {
     try {
+
       Response response = await _dio.post(
         dotenv.get('BASE_URL') + 'api/provider/verify/otp/password',
         data: {

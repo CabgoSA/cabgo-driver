@@ -367,9 +367,7 @@ class AppState with ChangeNotifier {
           otpCode += textController3.text;
           otpCode += textController4.text;
           otpCode += textController5.text;
-
-
-           await ApiClient().verifyOtpPasswordReset(
+           await ApiClient().verifyOtp(
             userRegisterPhone,
             otpCode,
           );
@@ -383,6 +381,33 @@ class AppState with ChangeNotifier {
         }catch(e){
           throw OtpVerificationError();
         }
+
+
+  }
+
+  Future<void> verifyOtpPasswordReset() async {
+    try {
+      String otpCode = textController1.text;
+      otpCode += textController2.text;
+      otpCode += textController3.text;
+      otpCode += textController4.text;
+      otpCode += textController5.text;
+
+
+      await ApiClient().verifyOtpPasswordReset(
+        resetPhoneNumber.text,
+        otpCode,
+      );
+
+      textController1.clear();
+      textController2.clear();
+      textController3.clear();
+      textController4.clear();
+      textController5.clear();
+      notifyListeners();
+    }catch(e){
+      throw OtpVerificationError();
+    }
 
 
   }

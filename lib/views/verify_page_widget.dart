@@ -1,8 +1,7 @@
+import 'package:cabgo_driver/index.dart';
 import 'package:provider/provider.dart';
-
 import '../flutter_flow/flutter_flow_icon_button.dart';
 import '../flutter_flow/flutter_flow_theme.dart';
-import '../flutter_flow/flutter_flow_util.dart';
 import 'package:easy_debounce/easy_debounce.dart';
 import 'package:flutter/material.dart';
 import '../states/app_state.dart';
@@ -22,6 +21,9 @@ class _VerifyPageWidgetState extends State<VerifyPageWidget> {
   bool isLoading = false;
   final scaffoldKey = GlobalKey<ScaffoldState>();
 
+  var snackBar = SnackBar(
+    content: Text('Error in verifying account'),
+  );
 
 
   @override
@@ -149,6 +151,8 @@ class _VerifyPageWidgetState extends State<VerifyPageWidget> {
                                 ),
                               ),
                               style: FlutterFlowTheme.of(context).bodyText1,
+                              maxLines: 1,
+                              keyboardType: TextInputType.number,
                             ),
                           ),
                         ),
@@ -184,6 +188,8 @@ class _VerifyPageWidgetState extends State<VerifyPageWidget> {
                                 ),
                               ),
                               style: FlutterFlowTheme.of(context).bodyText1,
+                              maxLines: 1,
+                              keyboardType: TextInputType.number,
                             ),
                           ),
                         ),
@@ -219,6 +225,8 @@ class _VerifyPageWidgetState extends State<VerifyPageWidget> {
                                 ),
                               ),
                               style: FlutterFlowTheme.of(context).bodyText1,
+                              maxLines: 1,
+                              keyboardType: TextInputType.number,
                             ),
                           ),
                         ),
@@ -254,6 +262,8 @@ class _VerifyPageWidgetState extends State<VerifyPageWidget> {
                                 ),
                               ),
                               style: FlutterFlowTheme.of(context).bodyText1,
+                              maxLines: 1,
+                              keyboardType: TextInputType.number,
                             ),
                           ),
                         ),
@@ -267,9 +277,18 @@ class _VerifyPageWidgetState extends State<VerifyPageWidget> {
                         height: 50,
                         child:  TextButton(
                           onPressed: () async {
-                            appState.verifyOtp();
-
-
+                            try {
+                              appState.verifyOtp();
+                              await Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) =>
+                                      LoginPageWidget(),
+                                ),
+                              );
+                            }catch(e){
+                              ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                            }
                           },
 
                           child: isLoading ?   CircularProgressIndicator(
@@ -294,25 +313,6 @@ class _VerifyPageWidgetState extends State<VerifyPageWidget> {
                       ),
                     ),
 
-
-
-
-
-
-                    Padding(
-                      padding: EdgeInsetsDirectional.fromSTEB(0, 18, 0, 0),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.max,
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: [
-                          Text(
-                            'Reend OTP',
-                            style: FlutterFlowTheme.of(context).bodyText1,
-                          ),
-
-                        ],
-                      ),
-                    ),
                   ],
                 ),
               ),

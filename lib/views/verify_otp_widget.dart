@@ -1,13 +1,10 @@
 import 'package:cabgo_driver/views/new_password_page_widget.dart';
 import 'package:provider/provider.dart';
-
 import '../flutter_flow/flutter_flow_icon_button.dart';
 import '../flutter_flow/flutter_flow_theme.dart';
-import '../flutter_flow/flutter_flow_util.dart';
 import '../flutter_flow/flutter_flow_widgets.dart';
 import 'package:easy_debounce/easy_debounce.dart';
 import 'package:flutter/material.dart';
-
 import '../states/app_state.dart';
 
 class VerifyOtpPageWidget extends StatefulWidget {
@@ -274,7 +271,7 @@ class _VerifyOtpPageWidgetState extends State<VerifyOtpPageWidget> {
                           FFButtonWidget(
                             onPressed: () async{
                               try {
-                                await appState.verifyOtp();
+                                await appState.verifyOtpPasswordReset();
                                 await Navigator.push(
                                   context,
                                   MaterialPageRoute(
