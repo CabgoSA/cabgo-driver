@@ -6,12 +6,8 @@ import '../exceptions/locationErrors.dart';
 import '../request/secure_storage.dart';
 import 'package:flutter/foundation.dart';
 
-
-
-
 class ApiClient {
   final Dio _dio = Dio();
-
 
   // ApiClient(){
   //   getLocalData();
@@ -37,19 +33,31 @@ class ApiClient {
   //   });
   // }
 
-
-  Future<dynamic> registerUser(String email, String firstName,  String lastName,  String phone,  String password,  String confirmPassword,String fcmToken,String deviceType,String deviceID) async {
+  Future<dynamic> registerUser(
+      String email,
+      String firstName,
+      String lastName,
+      String phone,
+      String password,
+      String confirmPassword,
+      String fcmToken,
+      String deviceType,
+      String deviceID) async {
     try {
+      String trimmedPhone = phone.replaceAll(' ', '');
+      if (trimmedPhone.startsWith('0')) {
+        trimmedPhone = trimmedPhone.substring(1);
+      }
       Response response = await _dio.post(
-        dotenv.get('BASE_URL') + 'api/provider/register' ,
-        data : {
+        dotenv.get('BASE_URL') + 'api/provider/register',
+        data: {
           'first_name': firstName,
           'last_name': lastName,
           'email': email,
           'password': password,
           'password_confirmation': confirmPassword,
           'device_token': fcmToken,
-          'mobile': '+27'+phone,
+          'mobile': '+27' + trimmedPhone,
           'dial_code': '0027',
           'device_type': deviceType,
           'login_by': 'manual',
@@ -59,25 +67,16 @@ class ApiClient {
       );
 
       return response.data;
-
-
     } on DioError catch (e) {
-
-        return 'error';
-
+      return 'error';
     }
   }
-
-
 
   Future<dynamic> verifyOtp(String phone, String otp) async {
     try {
       Response response = await _dio.post(
         dotenv.get('BASE_URL') + 'api/provider/verify/otp',
-        data: {
-          'mobile': '+27$phone',
-          'otp': otp
-        },
+        data: {'mobile': '+27$phone', 'otp': otp},
         options: Options(headers: {'Accept': 'application/json'}),
       );
 
@@ -85,12 +84,10 @@ class ApiClient {
     } on DioError catch (e) {
       return e.response.data;
     }
-
   }
 
   Future<dynamic> verifyOtpPasswordReset(String phone, String otp) async {
     try {
-
       Response response = await _dio.post(
         dotenv.get('BASE_URL') + 'api/provider/verify/otp/password',
         data: {
@@ -106,7 +103,8 @@ class ApiClient {
     }
   }
 
-  Future<dynamic> passwordReset(String phone, String newPassword, newPasswordConfirm) async {
+  Future<dynamic> passwordReset(
+      String phone, String newPassword, newPasswordConfirm) async {
     try {
       String mobile = int.parse(phone).toString();
       Response response = await _dio.post(
@@ -125,7 +123,8 @@ class ApiClient {
     }
   }
 
-  Future<dynamic> resetPassword(String password, String passwordConfirmation ,int id) async {
+  Future<dynamic> resetPassword(
+      String password, String passwordConfirmation, int id) async {
     try {
       Response response = await _dio.post(
         dotenv.get('BASE_URL') + 'api/provider/verify/otp/password',
@@ -146,97 +145,83 @@ class ApiClient {
     try {
       String mobile = int.parse(phone).toString();
       await _dio.post(
-        dotenv.get('BASE_URL') + 'api/provider/forgot/password' ,
-        data : {
+        dotenv.get('BASE_URL') + 'api/provider/forgot/password',
+        data: {
           'mobile': '+27$mobile',
         },
         options: Options(headers: {'Accept': 'application/json'}),
       );
-
     } on DioError catch (e) {
       throw ErrorResetingPassword;
     }
   }
 
-
-
-  Future<dynamic> login(String phone, String password, String fcmToken, String deviceType, String deviceID, double lat , double long) async {
-
+  Future<dynamic> login(String phone, String password, String fcmToken,
+      String deviceType, String deviceID, double lat, double long) async {
     try {
-      String mobile = int.parse(phone).toString();
+      String trimmedPhone = phone.replaceAll(' ', '');
+      if (trimmedPhone.startsWith('0')) {
+        trimmedPhone = trimmedPhone.substring(1);
+      }
+
       Response response = await _dio.post(
         dotenv.get('BASE_URL') + 'api/provider/oauth/token',
         data: {
-          'mobile': '+27$mobile',
+          'mobile': '+27' + trimmedPhone,
           'password': password,
           'grant_type': 'password',
           'device_type': deviceType,
           'device_token': fcmToken,
           'device_id': deviceID,
-          'latitude' : lat,
-          'longitude' : long,
+          'latitude': lat,
+          'longitude': long,
         },
         options: Options(headers: {'Accept': 'application/json'}),
       );
 
-
       return response.data;
-
     } on DioError catch (e) {
       throw InvalidCridetials();
     }
   }
 
-  Future<void> setFcmToken(String accessToken,String token) async{
-    try{
+  Future<void> setFcmToken(String accessToken, String token) async {
+    try {
       _dio.options.headers["Authorization"] = 'Bearer $accessToken';
       _dio.options.headers['content-Type'] = 'application/json';
       Response response = await _dio.get(
         dotenv.get('BASE_URL') + 'api/provider/setFcmToken/$token',
         options: Options(headers: {'Accept': 'application/json'}),
       );
-
-    }catch(e){
-
-    }
+    } catch (e) {}
   }
 
   Future<dynamic> logOut(String providerID) async {
-
     try {
-
-       Response response = await _dio.post(
+      Response response = await _dio.post(
         dotenv.get('BASE_URL') + 'api/provider/logout',
-
         options: Options(headers: {'Accept': 'application/json'}),
       );
 
       return response;
-
-    } catch(e){
+    } catch (e) {
       throw LogoutError();
     }
   }
 
   Future<dynamic> delete(String accessToken) async {
-
     try {
-       _dio.options.headers["Authorization"] = 'Bearer $accessToken';
-       Response response = await _dio.post(
+      _dio.options.headers["Authorization"] = 'Bearer $accessToken';
+      Response response = await _dio.post(
         dotenv.get('BASE_URL') + 'api/provider/delete',
-
         options: Options(headers: {'Accept': 'application/json'}),
       );
 
       return response;
-
-    } catch(e){
-      
-    }
+    } catch (e) {}
   }
 
   Future<dynamic> goOnline(String status, String accessToken) async {
-
     _dio.options.headers["Authorization"] = 'Bearer $accessToken';
     try {
       Response response = await _dio.post(
@@ -253,17 +238,14 @@ class ApiClient {
     }
   }
 
-
-
-  Future<Response> fetchRideDetails(String requestID,String accessToken) async {
-
+  Future<Response> fetchRideDetails(
+      String requestID, String accessToken) async {
     int id = int.parse(requestID);
 
     _dio.options.headers["Authorization"] = 'Bearer $accessToken';
     try {
-      var response = await _dio.get(
-          dotenv.get('BASE_URL') + 'api/provider/trip/details/$id'
-      );
+      var response = await _dio
+          .get(dotenv.get('BASE_URL') + 'api/provider/trip/details/$id');
 
       return response;
     } on DioError catch (e) {
@@ -271,38 +253,26 @@ class ApiClient {
     }
   }
 
+  void callRider(RiderDetails phone) {}
 
+  void chatRider(RiderDetails riderID, String message) {}
 
-
-  void callRider(RiderDetails phone){
-
-  }
-
-  void chatRider(RiderDetails riderID, String message){
-
-  }
-
-  double tripInvoice(double distance, int   serviceTypePrice){
-
+  double tripInvoice(double distance, int serviceTypePrice) {
     return distance * serviceTypePrice;
   }
-
-
-
-
 }
 
-class Driver{
+class Driver {
   final String fullName;
   final String phone;
   final String email;
   final String picture;
   final double rating;
- const Driver({
-               @required this.fullName,
-               @required this.phone,
-               @required this.email,
-               @required this.picture,
-               @required this.rating,
-              });
+  const Driver({
+    @required this.fullName,
+    @required this.phone,
+    @required this.email,
+    @required this.picture,
+    @required this.rating,
+  });
 }
