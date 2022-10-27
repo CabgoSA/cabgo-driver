@@ -1,11 +1,10 @@
 import 'package:cabgo_driver/index.dart';
-
-import 'dashboard_page_widget.dart';
 import '../flutter_flow/flutter_flow_theme.dart';
 import 'package:flutter/material.dart';
 import '../states/app_state.dart';
 import 'package:provider/provider.dart';
 import 'package:colorful_safe_area/colorful_safe_area.dart';
+import 'package:internet_connection_checker/internet_connection_checker.dart';
 
 class LoginPageWidget extends StatefulWidget {
   const LoginPageWidget({Key key}) : super(key: key);
@@ -20,10 +19,6 @@ class _LoginPageWidgetState extends State<LoginPageWidget> {
   final formKey = GlobalKey<FormState>();
   bool isLoading = false;
   bool isChecked = false;
-
-  var snackBar = SnackBar(
-    content: Text('Incorect Login Details'),
-  );
 
   @override
   void initState() {
@@ -40,9 +35,7 @@ class _LoginPageWidgetState extends State<LoginPageWidget> {
         backgroundColor: Color(0xff090F13FF),
         body: ColorfulSafeArea(
           color: Colors.white,
-
           child: Form(
-
             key: formKey,
             child: SingleChildScrollView(
               child: Column(
@@ -70,7 +63,7 @@ class _LoginPageWidgetState extends State<LoginPageWidget> {
                   Padding(
                     padding: const EdgeInsets.only(top: 30.0),
                     child: Container(
-                      height: MediaQuery.of(context).size.height*4.1/5,
+                      height: MediaQuery.of(context).size.height * 4.1 / 5,
                       width: MediaQuery.of(context).size.width,
                       decoration: BoxDecoration(
                           color: Colors.white,
@@ -114,7 +107,7 @@ class _LoginPageWidgetState extends State<LoginPageWidget> {
                                     borderRadius: BorderRadius.circular(10),
                                   ),
                                   contentPadding:
-                                  EdgeInsets.only(left: 15.0, top: 25.0),
+                                      EdgeInsets.only(left: 15.0, top: 25.0),
                                   filled: true,
                                 ),
                               ),
@@ -152,7 +145,7 @@ class _LoginPageWidgetState extends State<LoginPageWidget> {
                                     borderRadius: BorderRadius.circular(10),
                                   ),
                                   contentPadding:
-                                  EdgeInsets.only(left: 15.0, top: 25.0),
+                                      EdgeInsets.only(left: 15.0, top: 25.0),
                                   filled: true,
                                 ),
                               ),
@@ -164,7 +157,7 @@ class _LoginPageWidgetState extends State<LoginPageWidget> {
                                 mainAxisAlignment: MainAxisAlignment.end,
                                 children: [
                                   GestureDetector(
-                                    onTap: () async{
+                                    onTap: () async {
                                       await Navigator.push(
                                         context,
                                         MaterialPageRoute(
@@ -185,47 +178,61 @@ class _LoginPageWidgetState extends State<LoginPageWidget> {
                               ),
                             ),
                             Padding(
-                                padding: const EdgeInsets.all(10.0),
+                              padding: const EdgeInsets.all(10.0),
                               child: SizedBox(
                                 width: double.infinity,
                                 height: 50,
-                                child:  TextButton(
+                                child: TextButton(
                                   onPressed: () async {
                                     try {
                                       if (formKey.currentState.validate()) {
                                         isLoading = true;
-                                        await appState.login();
-                                        if (appState.isLoggedIn) {
-                                           Navigator.popUntil(context,
-                                          await Navigator.pushReplacement(
-                                            context,
-                                            MaterialPageRoute(
-                                              builder: (context) =>
-                                                  DashboardPageWidget(),
-                                            ),
-                                          )
+                                        bool result =
+                                            await InternetConnectionChecker()
+                                                .hasConnection;
+                                        if (result) {
+                                          await appState.login();
+                                          if (appState.isLoggedIn) {
+                                            Navigator.popUntil(
+                                                context,
+                                                await Navigator.pushReplacement(
+                                                  context,
+                                                  MaterialPageRoute(
+                                                    builder: (context) =>
+                                                        DashboardPageWidget(),
+                                                  ),
+                                                ));
+                                          }
+                                        } else {
+                                          ScaffoldMessenger.of(context)
+                                              .showSnackBar(
+                                            appState.SnackBarCaller(
+                                                "No Internet Connection"),
                                           );
                                         }
+
                                         isLoading = false;
                                       }
-                                    }catch(e){
-                                      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                                    } catch (e) {
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(
+                                        appState.SnackBarCaller(
+                                            "Incorect Login Details"),
+                                      );
                                     }
-
-
                                   },
-                                  child: isLoading ?   CircularProgressIndicator(
-                                    color: Colors.white,
-                                  )
-                                      : Text( 'Sign In',
-                                    style: TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 20.0,
-                                      fontWeight: FontWeight.w500,
-                                      fontFamily: 'Red Hat Display'
-                                    ),
-
-                                  ),
+                                  child: isLoading
+                                      ? CircularProgressIndicator(
+                                          color: Colors.white,
+                                        )
+                                      : Text(
+                                          'Sign In',
+                                          style: TextStyle(
+                                              color: Colors.white,
+                                              fontSize: 20.0,
+                                              fontWeight: FontWeight.w500,
+                                              fontFamily: 'Red Hat Display'),
+                                        ),
                                   //
                                   // style: ButtonStyle(
                                   //     backgroundColor: MaterialStateProperty.all(),
@@ -233,9 +240,8 @@ class _LoginPageWidgetState extends State<LoginPageWidget> {
                                   //     textStyle: MaterialStateProperty.all(TextStyle(fontSize: 14))),
 
                                   style: ElevatedButton.styleFrom(
-                                      primary: FlutterFlowTheme.of(context).primaryColor),
-
-
+                                      primary: FlutterFlowTheme.of(context)
+                                          .primaryColor),
                                 ),
                               ),
                             ),
@@ -254,14 +260,11 @@ class _LoginPageWidgetState extends State<LoginPageWidget> {
                                     );
                                   },
                                   child: Text('Sign up here',
-                                  style: TextStyle(
-                                      fontWeight: FontWeight.w500
-                                  )
-                                  ),
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.w500)),
                                 )
                               ],
                             )
-
                           ],
                         ),
                       ),

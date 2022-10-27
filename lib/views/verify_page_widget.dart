@@ -1,4 +1,5 @@
 import 'package:cabgo_driver/index.dart';
+import 'package:internet_connection_checker/internet_connection_checker.dart';
 import 'package:provider/provider.dart';
 import '../flutter_flow/flutter_flow_icon_button.dart';
 import '../flutter_flow/flutter_flow_theme.dart';
@@ -14,17 +15,8 @@ class VerifyPageWidget extends StatefulWidget {
 }
 
 class _VerifyPageWidgetState extends State<VerifyPageWidget> {
-  TextEditingController field1Controller;
-  TextEditingController textController2;
-  TextEditingController textController3;
-  TextEditingController textController4;
   bool isLoading = false;
   final scaffoldKey = GlobalKey<ScaffoldState>();
-
-  var snackBar = SnackBar(
-    content: Text('Error in verifying account'),
-  );
-
 
   @override
   Widget build(BuildContext context) {
@@ -239,7 +231,7 @@ class _VerifyPageWidgetState extends State<VerifyPageWidget> {
                               onChanged: (_) => EasyDebounce.debounce(
                                 'textController5',
                                 Duration(milliseconds: 2000),
-                                    () => setState(() {}),
+                                () => setState(() {}),
                               ),
                               autofocus: true,
                               obscureText: false,
@@ -269,50 +261,55 @@ class _VerifyPageWidgetState extends State<VerifyPageWidget> {
                         ),
                       ],
                     ),
-
                     Padding(
                       padding: const EdgeInsets.all(10.0),
                       child: SizedBox(
                         width: double.infinity,
                         height: 50,
-                        child:  TextButton(
+                        child: TextButton(
                           onPressed: () async {
                             try {
-                              appState.verifyOtp();
-                              await Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) =>
-                                      LoginPageWidget(),
-                                ),
+                              bool result = await InternetConnectionChecker()
+                                  .hasConnection;
+                              if (result) {
+                                appState.verifyOtp();
+                                await Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => LoginPageWidget(),
+                                  ),
+                                );
+                              } else {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  appState.SnackBarCaller(
+                                      "No Internet Connection"),
+                                );
+                              }
+                            } catch (e) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                appState.SnackBarCaller(
+                                    "There was a problem verifying account"),
                               );
-                            }catch(e){
-                              ScaffoldMessenger.of(context).showSnackBar(snackBar);
                             }
                           },
-
-                          child: isLoading ?   CircularProgressIndicator(
-                            color: Colors.white,
-                          )
-                              : Text( 'Verify',
-                            style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 20.0,
-                                fontWeight: FontWeight.w500,
-                                fontFamily: 'Red Hat Display'
-                            ),
-
-                          ),
-
-
+                          child: isLoading
+                              ? CircularProgressIndicator(
+                                  color: Colors.white,
+                                )
+                              : Text(
+                                  'Verify',
+                                  style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 20.0,
+                                      fontWeight: FontWeight.w500,
+                                      fontFamily: 'Red Hat Display'),
+                                ),
                           style: ElevatedButton.styleFrom(
-                              primary: FlutterFlowTheme.of(context).primaryColor),
-
-
+                              primary:
+                                  FlutterFlowTheme.of(context).primaryColor),
                         ),
                       ),
                     ),
-
                   ],
                 ),
               ),

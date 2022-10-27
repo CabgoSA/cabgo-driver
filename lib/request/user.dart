@@ -9,30 +9,6 @@ import 'package:flutter/foundation.dart';
 class ApiClient {
   final Dio _dio = Dio();
 
-  // ApiClient(){
-  //   getLocalData();
-  // }
-  // void getLocalData()  async{
-  //    GetTokenLocalStorage()
-  //       .readStorage('access_token')
-  //       .then((value) {
-  //     _accessToken = 'Bearer $value';
-  //   });
-  //    GetTokenLocalStorage().readStorage('provider_id').then((value) {
-  //     _providerID = value;
-  //   });
-  //    GetTokenLocalStorage().readStorage('fcm_token').then((value) {
-  //     _fcmToken = value;
-  //   });
-  //    GetTokenLocalStorage().readStorage('device_type').then((value) {
-  //     _deviceType = value;
-  //   });
-  //
-  //    GetTokenLocalStorage().readStorage('device_id').then((value) {
-  //     _deviceID = value;
-  //   });
-  // }
-
   Future<dynamic> registerUser(
       String email,
       String firstName,
@@ -43,8 +19,6 @@ class ApiClient {
       String fcmToken,
       String deviceType,
       String deviceID) async {
-    
-
     try {
       String trimmedPhone = phone.replaceAll(' ', '');
       if (trimmedPhone.startsWith('0')) {
@@ -71,13 +45,12 @@ class ApiClient {
 
       return response.data;
     } on DioError catch (e) {
-      return "error";
+      print(e);
     }
   }
 
   Future<dynamic> verifyOtp(String phone, String otp) async {
     try {
-
       Response response = await _dio.post(
         dotenv.get('BASE_URL') + 'api/provider/verify/otp',
         data: {'mobile': phone, 'otp': otp},
@@ -90,10 +63,9 @@ class ApiClient {
     }
   }
 
-  Future<dynamic> verifyOtpPasswordReset(String phone, String otp) async {
+  Future<void> verifyOtpPasswordReset(String phone, String otp) async {
     try {
-
-      Response response = await _dio.post(
+      await _dio.post(
         dotenv.get('BASE_URL') + 'api/provider/verify/otp/password',
         data: {
           'mobile': phone,
@@ -101,10 +73,8 @@ class ApiClient {
         },
         options: Options(headers: {'Accept': 'application/json'}),
       );
-
-      return;
     } on DioError catch (e) {
-      return e.response.data;
+      print("error");
     }
   }
 

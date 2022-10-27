@@ -2,7 +2,6 @@ import 'package:provider/provider.dart';
 
 import '../flutter_flow/flutter_flow_icon_button.dart';
 import '../flutter_flow/flutter_flow_theme.dart';
-import '../flutter_flow/flutter_flow_util.dart';
 import 'package:flutter/material.dart';
 
 import '../states/app_state.dart';
@@ -83,7 +82,7 @@ class _EarningsPageWidgetState extends State<EarningsPageWidget> {
                                     color: Colors.white
                                 ),
                               ),
-                              Text('R1400',
+                              Text('R'+appState.earnings['daily'].toString(),
                                   style: TextStyle(
                                       fontWeight: FontWeight.w700,
                                       fontSize: 32,

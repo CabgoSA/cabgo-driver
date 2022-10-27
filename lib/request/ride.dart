@@ -134,7 +134,6 @@ class Ride {
       _dio.options.headers["Authorization"] = 'Bearer  $accessToken';
       Response response = await _dio.get(
         dotenv.get('BASE_URL') + 'api/provider/requests/upcoming' ,
-
         options: Options(headers: {'Accept': 'application/json'}),
       );
       return response.data;

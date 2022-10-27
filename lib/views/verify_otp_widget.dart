@@ -1,4 +1,5 @@
 import 'package:cabgo_driver/views/new_password_page_widget.dart';
+import 'package:internet_connection_checker/internet_connection_checker.dart';
 import 'package:provider/provider.dart';
 import '../flutter_flow/flutter_flow_icon_button.dart';
 import '../flutter_flow/flutter_flow_theme.dart';
@@ -20,8 +21,6 @@ class _VerifyOtpPageWidgetState extends State<VerifyOtpPageWidget> {
   TextEditingController textController3;
   TextEditingController textController4;
   final scaffoldKey = GlobalKey<ScaffoldState>();
-
-
 
   @override
   Widget build(BuildContext context) {
@@ -88,7 +87,7 @@ class _VerifyOtpPageWidgetState extends State<VerifyOtpPageWidget> {
                               onChanged: (_) => EasyDebounce.debounce(
                                 'textController1',
                                 Duration(milliseconds: 2000),
-                                    () => setState(() {}),
+                                () => setState(() {}),
                               ),
                               autofocus: true,
                               obscureText: false,
@@ -125,7 +124,7 @@ class _VerifyOtpPageWidgetState extends State<VerifyOtpPageWidget> {
                               onChanged: (_) => EasyDebounce.debounce(
                                 'textController2',
                                 Duration(milliseconds: 2000),
-                                    () => setState(() {}),
+                                () => setState(() {}),
                               ),
                               autofocus: true,
                               obscureText: false,
@@ -148,6 +147,8 @@ class _VerifyOtpPageWidgetState extends State<VerifyOtpPageWidget> {
                                 ),
                               ),
                               style: FlutterFlowTheme.of(context).bodyText1,
+                              maxLines: 1,
+                              keyboardType: TextInputType.number,
                             ),
                           ),
                         ),
@@ -160,7 +161,7 @@ class _VerifyOtpPageWidgetState extends State<VerifyOtpPageWidget> {
                               onChanged: (_) => EasyDebounce.debounce(
                                 'textController3',
                                 Duration(milliseconds: 2000),
-                                    () => setState(() {}),
+                                () => setState(() {}),
                               ),
                               autofocus: true,
                               obscureText: false,
@@ -183,6 +184,8 @@ class _VerifyOtpPageWidgetState extends State<VerifyOtpPageWidget> {
                                 ),
                               ),
                               style: FlutterFlowTheme.of(context).bodyText1,
+                              maxLines: 1,
+                              keyboardType: TextInputType.number,
                             ),
                           ),
                         ),
@@ -195,7 +198,7 @@ class _VerifyOtpPageWidgetState extends State<VerifyOtpPageWidget> {
                               onChanged: (_) => EasyDebounce.debounce(
                                 'textController4',
                                 Duration(milliseconds: 2000),
-                                    () => setState(() {}),
+                                () => setState(() {}),
                               ),
                               autofocus: true,
                               obscureText: false,
@@ -218,6 +221,8 @@ class _VerifyOtpPageWidgetState extends State<VerifyOtpPageWidget> {
                                 ),
                               ),
                               style: FlutterFlowTheme.of(context).bodyText1,
+                              maxLines: 1,
+                              keyboardType: TextInputType.number,
                             ),
                           ),
                         ),
@@ -230,7 +235,7 @@ class _VerifyOtpPageWidgetState extends State<VerifyOtpPageWidget> {
                               onChanged: (_) => EasyDebounce.debounce(
                                 'textController5',
                                 Duration(milliseconds: 2000),
-                                    () => setState(() {}),
+                                () => setState(() {}),
                               ),
                               autofocus: true,
                               obscureText: false,
@@ -253,6 +258,8 @@ class _VerifyOtpPageWidgetState extends State<VerifyOtpPageWidget> {
                                 ),
                               ),
                               style: FlutterFlowTheme.of(context).bodyText1,
+                              maxLines: 1,
+                              keyboardType: TextInputType.number,
                             ),
                           ),
                         ),
@@ -269,20 +276,31 @@ class _VerifyOtpPageWidgetState extends State<VerifyOtpPageWidget> {
                             style: FlutterFlowTheme.of(context).bodyText1,
                           ),
                           FFButtonWidget(
-                            onPressed: () async{
+                            onPressed: () async {
                               try {
-                                await appState.verifyOtpPasswordReset();
-                                await Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) =>
-                                        NewPasswordPageWidget(),
-                                  ),
+                                bool result = await InternetConnectionChecker()
+                                    .hasConnection;
+                                if (result) {
+                                  await appState.verifyOtpPasswordReset();
+                                  await Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) =>
+                                          NewPasswordPageWidget(),
+                                    ),
+                                  );
+                                } else {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    appState.SnackBarCaller(
+                                        "No Internet Connection"),
+                                  );
+                                }
+                              } catch (e) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  appState.SnackBarCaller(
+                                      "There was a problem"),
                                 );
-                              }catch(e){
-                                print(e);
                               }
-
                             },
                             text: 'Verify',
                             options: FFButtonOptions(
@@ -292,9 +310,9 @@ class _VerifyOtpPageWidgetState extends State<VerifyOtpPageWidget> {
                               textStyle: FlutterFlowTheme.of(context)
                                   .subtitle2
                                   .override(
-                                fontFamily: 'Red Hat Display',
-                                color: Colors.white,
-                              ),
+                                    fontFamily: 'Red Hat Display',
+                                    color: Colors.white,
+                                  ),
                               borderSide: BorderSide(
                                 color: Colors.transparent,
                                 width: 1,

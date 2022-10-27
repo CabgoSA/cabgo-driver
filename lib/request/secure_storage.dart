@@ -1,41 +1,37 @@
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
-class GetTokenLocalStorage{
-
+class GetTokenLocalStorage {
   //local storage
   //ANDROID
-  AndroidOptions _getAndroidOptions() =>
-      const AndroidOptions(
+  AndroidOptions _getAndroidOptions() => const AndroidOptions(
         encryptedSharedPreferences: true,
       );
-    final _storage = const FlutterSecureStorage();
+  final _storage = const FlutterSecureStorage();
 
-  Future<String> readStorage(String key)  async{
+  Future<String> readStorage(String key) async {
     try {
-      var readData = await _storage.read(
-          key: key);
+      var readData = await _storage.read(key: key);
       return readData;
-    }catch(e){
+    } catch (e) {
+      return e;
     }
   }
 
-  void addStorage(String key, dynamic value){
+  void addStorage(String key, dynamic value) {
     try {
       _storage.write(
         key: key,
         value: value,
         aOptions: _getAndroidOptions(),
       );
-    }catch(e){
-    }
+    } catch (e) {}
   }
 
-  Future<bool> deleteStorage(String key)  async{
+  Future<bool> deleteStorage(String key) async {
     try {
-        await _storage.delete(
-          key: key, aOptions: _getAndroidOptions());
-       return true;
-    }catch(e){
+      await _storage.delete(key: key, aOptions: _getAndroidOptions());
+      return true;
+    } catch (e) {
       return false;
     }
   }

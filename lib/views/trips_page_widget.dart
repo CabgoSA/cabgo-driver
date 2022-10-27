@@ -4,8 +4,6 @@ import '../states/app_state.dart';
 import 'components/side_nav_widget.dart';
 import '../flutter_flow/flutter_flow_google_map.dart';
 import '../flutter_flow/flutter_flow_theme.dart';
-import '../flutter_flow/flutter_flow_util.dart';
-import '../flutter_flow/flutter_flow_widgets.dart';
 import 'package:flutter/material.dart';
 
 class TripsPageWidget extends StatefulWidget {
@@ -245,7 +243,7 @@ class _TripsPageWidgetState extends State<TripsPageWidget> {
                                 child: Column(
                                   mainAxisSize: MainAxisSize.max,
                                   children: [
-                                    for (var i = 0; i < appState.pastTrips.length; i++)
+                                    for (var i = 0; i < appState.upcomingTrips.length; i++)
                                       Padding(
                                         padding: EdgeInsetsDirectional.fromSTEB(
                                             5, 5, 5, 5),
@@ -270,7 +268,7 @@ class _TripsPageWidgetState extends State<TripsPageWidget> {
                                                     Expanded(
                                                       child: Image.network(
                                                         appState
-                                                            .pastTrips[i]['static_map'],
+                                                            .upcomingTrips[i]['static_map'],
                                                         width: 36,
                                                         height: 36,
                                                         fit: BoxFit.cover,
@@ -287,7 +285,7 @@ class _TripsPageWidgetState extends State<TripsPageWidget> {
                                                     children: [
                                                       Image.network(
                                                         appState
-                                                            .pastTrips[i]['service_type']['image'],
+                                                            .upcomingTrips[i]['service_type']['image'],
                                                         width: 50,
                                                         height: 50,
                                                         fit: BoxFit.contain,
@@ -306,7 +304,7 @@ class _TripsPageWidgetState extends State<TripsPageWidget> {
                                                                 0, 0, 0),
                                                             child: Text(
                                                               appState
-                                                                  .pastTrips[i]['assigned_at'],
+                                                                  .upcomingTrips[i]['assigned_at'],
                                                               style: FlutterFlowTheme
                                                                   .of(context)
                                                                   .bodyText1,
@@ -314,7 +312,7 @@ class _TripsPageWidgetState extends State<TripsPageWidget> {
                                                           ),
                                                           Text(
                                                             appState
-                                                                .pastTrips[i]['booking_id'],
+                                                                .upcomingTrips[i]['booking_id'],
                                                             textAlign:
                                                             TextAlign.start,
                                                             style: FlutterFlowTheme
@@ -352,7 +350,7 @@ class _TripsPageWidgetState extends State<TripsPageWidget> {
                                                             children: [
                                                               Text(
                                                                 appState
-                                                                    .pastTrips[i]['distance']
+                                                                    .upcomingTrips[i]['distance']
                                                                     .toString(),
                                                                 style: FlutterFlowTheme
                                                                     .of(context)
@@ -360,7 +358,7 @@ class _TripsPageWidgetState extends State<TripsPageWidget> {
                                                               ),
                                                               Text(
                                                                 appState
-                                                                    .pastTrips[i]['service_type']['name']
+                                                                    .upcomingTrips[i]['service_type']['name']
                                                                     .toString(),
                                                                 textAlign:
                                                                 TextAlign.end,

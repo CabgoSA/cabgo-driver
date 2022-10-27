@@ -1,9 +1,7 @@
 import '../flutter_flow/flutter_flow_icon_button.dart';
 import '../flutter_flow/flutter_flow_theme.dart';
-import '../flutter_flow/flutter_flow_util.dart';
 import '../flutter_flow/flutter_flow_widgets.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 class PassbookPageWidget extends StatefulWidget {
   const PassbookPageWidget({Key key}) : super(key: key);
@@ -64,7 +62,7 @@ class _PassbookPageWidgetState extends State<PassbookPageWidget> {
                     Padding(
                       padding: EdgeInsetsDirectional.fromSTEB(10, 14, 0, 0),
                       child: Text(
-                        'Wallet istory',
+                        'Wallet History',
                         style: FlutterFlowTheme.of(context).bodyText1.override(
                               fontFamily: 'Red Hat Display',
                               fontSize: 18,

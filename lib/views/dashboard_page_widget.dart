@@ -1,5 +1,6 @@
 import 'package:cabgo_driver/services/local_notification_service.dart';
 import 'package:flutter_ringtone_player/flutter_ringtone_player.dart';
+import 'package:internet_connection_checker/internet_connection_checker.dart';
 import 'package:uuid/uuid.dart';
 import 'components/side_nav_widget.dart';
 import '../flutter_flow/flutter_flow_theme.dart';
@@ -23,15 +24,12 @@ class DashboardPageWidget extends StatefulWidget {
 
 class _DashboardPageWidgetState extends State<DashboardPageWidget> {
   bool isFinished = false;
-  bool isVisible= false;
+  bool isVisible = false;
 
   var placePickerValue = FFPlace();
   final scaffoldKey = GlobalKey<ScaffoldState>();
 
-
-
   Widget build(BuildContext context) {
-
     final appState = Provider.of<AppState>(context);
 
     if (appState.notifications != null) {
@@ -81,7 +79,6 @@ class _DashboardPageWidgetState extends State<DashboardPageWidget> {
                     color: Color(0xFFEEEEEE),
                   ),
                 ),
-
                 Align(
                   alignment: AlignmentDirectional.topStart,
                   child: IconButton(
@@ -176,7 +173,9 @@ class _DashboardPageWidgetState extends State<DashboardPageWidget> {
                                 ),
                                 Row(mainAxisSize: MainAxisSize.max, children: [
                                   for (var i = 0; i < 5; i++)
-                                    Icon(Icons.star,),
+                                    Icon(
+                                      Icons.star,
+                                    ),
                                   Padding(
                                     padding: EdgeInsetsDirectional.fromSTEB(
                                         12, 0, 0, 0),
@@ -233,21 +232,19 @@ class _DashboardPageWidgetState extends State<DashboardPageWidget> {
                           ),
                         ),
                         onPressed: () async {
-
                           try {
                             await appState.acceptRequest(
                                 int.parse(notifications.requestID));
                             if (appState.info != null) {
                               appState.onlineVisibility =
-                              !appState.onlineVisibility;
+                                  !appState.onlineVisibility;
                               appState.pickupVisibility =
-                              !appState.pickupVisibility;
+                                  !appState.pickupVisibility;
                               appState.dragableSize = 0.35;
                               Navigator.pop(context);
                               FlutterRingtonePlayer.stop();
                             }
-                          }catch(e){
-                          }
+                          } catch (e) {}
                         },
                         child: const Text('Accept'),
                       ),
@@ -263,13 +260,9 @@ class _DashboardPageWidgetState extends State<DashboardPageWidget> {
       isScrollControlled: true,
     );
   }
-
-
 }
 
-
 // Drop off page
-
 
 RatingDialog ratingDialog(AppState appState) {
   return RatingDialog(
@@ -288,7 +281,10 @@ RatingDialog ratingDialog(AppState appState) {
     message: Text(
       'Tap a star to set your rating. Add more description here if you want.',
       textAlign: TextAlign.center,
-      style: const TextStyle(fontSize: 15, fontFamily: 'Red Hat Display',),
+      style: const TextStyle(
+        fontSize: 15,
+        fontFamily: 'Red Hat Display',
+      ),
     ),
     // your app's logo?
     starSize: 25.0,
@@ -297,13 +293,12 @@ RatingDialog ratingDialog(AppState appState) {
     onCancelled: () => print('cancelled'),
     onSubmitted: (response) async {
       await appState.rateRide(response.rating.toInt(), response.comment);
-
     },
   );
 }
 
-
-Future<void> _displayTextInputDialog(BuildContext context, AppState appState) async {
+Future<void> _displayTextInputDialog(
+    BuildContext context, AppState appState) async {
   return showDialog(
       context: context,
       builder: (context) {
@@ -311,12 +306,13 @@ Future<void> _displayTextInputDialog(BuildContext context, AppState appState) as
           title: Text('You Are about to cancel Ride'),
           content: TextField(
             controller: appState.reasonController,
-            decoration: InputDecoration(hintText: "Enter your reason why you are canceling here!!!!"),
+            decoration: InputDecoration(
+                hintText: "Enter your reason why you are canceling here!!!!"),
           ),
           actions: <Widget>[
             TextButton(
-             style: TextButton.styleFrom(
-              foregroundColor: Colors.white,
+              style: TextButton.styleFrom(
+                foregroundColor: Colors.white,
               ),
               child: Text('CANCEL'),
               onPressed: () {
@@ -328,17 +324,15 @@ Future<void> _displayTextInputDialog(BuildContext context, AppState appState) as
                 foregroundColor: Colors.green,
               ),
               child: Text('OK'),
-              onPressed: () async{
-                 await appState.cancelRide();
-                 Navigator.pop(context);
+              onPressed: () async {
+                await appState.cancelRide();
+                Navigator.pop(context);
               },
             ),
-
           ],
         );
       });
 }
-
 
 // drop off page
 
@@ -359,19 +353,18 @@ class _MapState extends State<Map> {
   bool isVisible = false;
   @override
   Widget build(BuildContext context) {
-
-
-
-
     ProgressDialog pr = ProgressDialog(context);
-    pr = ProgressDialog(context,type: ProgressDialogType.Normal, isDismissible: false, showLogs: true);
-
+    pr = ProgressDialog(context,
+        type: ProgressDialogType.Normal, isDismissible: false, showLogs: true);
 
     pr.style(
         message: 'Loading....please wait.',
         borderRadius: 10.0,
         backgroundColor: Colors.white,
-        progressWidget: CircularProgressIndicator( valueColor: AlwaysStoppedAnimation<Color>(Colors.black), strokeWidth: 2,),
+        progressWidget: CircularProgressIndicator(
+          valueColor: AlwaysStoppedAnimation<Color>(Colors.black),
+          strokeWidth: 2,
+        ),
         elevation: 10.0,
         insetAnimCurve: Curves.easeInOut,
         progress: 0.0,
@@ -379,10 +372,8 @@ class _MapState extends State<Map> {
         progressTextStyle: TextStyle(
             color: Colors.black, fontSize: 13.0, fontWeight: FontWeight.w400),
         messageTextStyle: TextStyle(
-            color: Colors.black, fontSize: 14.0, fontWeight: FontWeight.w600)
-    );
+            color: Colors.black, fontSize: 14.0, fontWeight: FontWeight.w600));
     final appState = Provider.of<AppState>(context);
-
 
     return appState.initialPosition == null
         ? Container(
@@ -410,7 +401,10 @@ class _MapState extends State<Map> {
                 visible: appState.locationServiceActive == false,
                 child: Text(
                   "Please enable location services!",
-                  style: TextStyle(color: Colors.grey, fontSize: 18, fontFamily: 'Red Hat Display'),
+                  style: TextStyle(
+                      color: Colors.grey,
+                      fontSize: 18,
+                      fontFamily: 'Red Hat Display'),
                 ),
               ),
             ],
@@ -468,8 +462,6 @@ class _MapState extends State<Map> {
                         ),
                 );
               }),
-
-
               DraggableScrollableSheet(
                   initialChildSize: appState.dragableSize,
                   minChildSize: 0.2,
@@ -484,12 +476,14 @@ class _MapState extends State<Map> {
                               topLeft: Radius.circular(15.0),
                               topRight: Radius.circular(15.0)),
                           border: Border(
-                            top: BorderSide(width: 1.0, color: Colors.grey[300]),
-                            left: BorderSide(width: 1.0, color: Colors.grey[300]),
+                            top:
+                                BorderSide(width: 1.0, color: Colors.grey[300]),
+                            left:
+                                BorderSide(width: 1.0, color: Colors.grey[300]),
                             right:
-                            BorderSide(width: 1.0, color: Colors.grey[300]),
+                                BorderSide(width: 1.0, color: Colors.grey[300]),
                             bottom:
-                            BorderSide(width: 1.0, color: Colors.grey[300]),
+                                BorderSide(width: 1.0, color: Colors.grey[300]),
                           ),
                         ),
                         child: ListView.builder(
@@ -498,14 +492,17 @@ class _MapState extends State<Map> {
                           controller: scrollSheetController,
                           itemCount: 1,
                           itemBuilder: (BuildContext context, int index) {
-
-
                             return Padding(
-                                padding: EdgeInsets.only(left: 8.0, top: 1.0,right: 8.0,bottom: 8.0),
+                                padding: EdgeInsets.only(
+                                    left: 8.0,
+                                    top: 1.0,
+                                    right: 8.0,
+                                    bottom: 8.0),
                                 child: Column(
                                   children: [
                                     Padding(
-                                      padding: const EdgeInsets.only(bottom: 10.0),
+                                      padding:
+                                          const EdgeInsets.only(bottom: 10.0),
                                       child: SizedBox(
                                         width: 50,
                                         child: Divider(
@@ -513,7 +510,6 @@ class _MapState extends State<Map> {
                                         ),
                                       ),
                                     ),
-
 
                                     // GO ONLINE BUTTON
                                     Visibility(
@@ -524,7 +520,6 @@ class _MapState extends State<Map> {
                                         height: 68,
                                         openColor: Color(0xff090f13),
                                         sliderColor: Color(0xff090f13),
-
                                         onChanged: (v) async {
                                           pr.show();
                                           if (appState.isOnline) {
@@ -538,16 +533,17 @@ class _MapState extends State<Map> {
                                         closeChild: Text(
                                           "GO ONLINE",
                                           style: TextStyle(
-                                              color: Colors.white, fontSize: 18, fontFamily: 'Red Hat Display',
-                                              fontWeight: FontWeight.w300
-                                          ),
+                                              color: Colors.white,
+                                              fontSize: 18,
+                                              fontFamily: 'Red Hat Display',
+                                              fontWeight: FontWeight.w300),
                                         ),
                                         openChild: Text(
                                           "GO OFFLINE",
                                           style: TextStyle(
-                                              color: Colors.white, fontSize: 18,
+                                            color: Colors.white,
+                                            fontSize: 18,
                                             fontFamily: 'Red Hat Display',
-
                                           ),
                                         ),
                                         sliderChild: appState.slideIcon,
@@ -559,23 +555,29 @@ class _MapState extends State<Map> {
                                     Visibility(
                                         visible: appState.pickupVisibility,
                                         child: Column(
-                                          mainAxisAlignment: MainAxisAlignment.center,
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
                                           mainAxisSize: MainAxisSize.min,
                                           children: <Widget>[
                                             Column(
                                               mainAxisSize: MainAxisSize.max,
                                               children: [
                                                 Padding(
-                                                  padding: EdgeInsetsDirectional.fromSTEB(24, 0, 24, 12),
+                                                  padding: EdgeInsetsDirectional
+                                                      .fromSTEB(24, 0, 24, 12),
                                                   child: Row(
-                                                    mainAxisSize: MainAxisSize.max,
+                                                    mainAxisSize:
+                                                        MainAxisSize.max,
                                                     children: [
                                                       Container(
                                                         width: 50,
                                                         height: 50,
-                                                        clipBehavior: Clip.antiAlias,
-                                                        decoration: BoxDecoration(
-                                                          shape: BoxShape.circle,
+                                                        clipBehavior:
+                                                            Clip.antiAlias,
+                                                        decoration:
+                                                            BoxDecoration(
+                                                          shape:
+                                                              BoxShape.circle,
                                                         ),
                                                         child: Image.asset(
                                                           'assets/images/UI_avatar@2x.png',
@@ -583,62 +585,102 @@ class _MapState extends State<Map> {
                                                       ),
                                                       Padding(
                                                         padding:
-                                                        EdgeInsetsDirectional.fromSTEB(18, 0, 0, 0),
+                                                            EdgeInsetsDirectional
+                                                                .fromSTEB(18, 0,
+                                                                    0, 0),
                                                         child: Column(
-                                                          mainAxisSize: MainAxisSize.max,
-                                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                                          mainAxisSize:
+                                                              MainAxisSize.max,
+                                                          crossAxisAlignment:
+                                                              CrossAxisAlignment
+                                                                  .start,
                                                           children: [
                                                             Row(
-                                                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                              mainAxisAlignment:
+                                                                  MainAxisAlignment
+                                                                      .spaceBetween,
                                                               children: [
                                                                 Padding(
-                                                                  padding: EdgeInsetsDirectional.fromSTEB(
-                                                                      0, 5, 0, 5.0),
-                                                                  child: (appState.riderDetails != null) ? Text(appState.riderDetails.fullName) : Text('test'),
+                                                                  padding: EdgeInsetsDirectional
+                                                                      .fromSTEB(
+                                                                          0,
+                                                                          5,
+                                                                          0,
+                                                                          5.0),
+                                                                  child: (appState
+                                                                              .riderDetails !=
+                                                                          null)
+                                                                      ? Text(appState
+                                                                          .riderDetails
+                                                                          .fullName)
+                                                                      : Text(
+                                                                          'test'),
                                                                 ),
                                                                 IconButton(
-                                                                    onPressed: () async{
-
+                                                                    onPressed:
+                                                                        () async {
                                                                       try {
                                                                         await appState
                                                                             .callDriver();
-                                                                      }catch(e){
-
-                                                                      }
+                                                                      } catch (e) {}
                                                                     },
-                                                                    icon: Icon(Icons.phone)
-                                                                )
+                                                                    icon: Icon(Icons
+                                                                        .phone))
                                                               ],
                                                             ),
-                                                            Row(mainAxisSize: MainAxisSize.max, children: [
-                                                              for (var i = 0; i < 5; i++)
-                                                                Icon(Icons.star_border_outlined),
-                                                              Padding(
-                                                                padding: EdgeInsetsDirectional.fromSTEB(
-                                                                    12, 0, 0, 0),
-                                                                child: TextButton(
-                                                                  style: TextButton.styleFrom(
-                                                                    backgroundColor: Colors.red[600],
-                                                                    primary: Colors.white,
-                                                                    textStyle: const TextStyle(
-                                                                      fontSize: 14.0,
-                                                                      fontFamily: 'Red Hat Display',
-                                                                      color: Colors.white,
-                                                                      fontWeight: FontWeight.w300,
+                                                            Row(
+                                                                mainAxisSize:
+                                                                    MainAxisSize
+                                                                        .max,
+                                                                children: [
+                                                                  for (var i =
+                                                                          0;
+                                                                      i < 5;
+                                                                      i++)
+                                                                    Icon(Icons
+                                                                        .star_border_outlined),
+                                                                  Padding(
+                                                                    padding: EdgeInsetsDirectional
+                                                                        .fromSTEB(
+                                                                            12,
+                                                                            0,
+                                                                            0,
+                                                                            0),
+                                                                    child:
+                                                                        TextButton(
+                                                                      style: TextButton
+                                                                          .styleFrom(
+                                                                        backgroundColor:
+                                                                            Colors.red[600],
+                                                                        primary:
+                                                                            Colors.white,
+                                                                        textStyle:
+                                                                            const TextStyle(
+                                                                          fontSize:
+                                                                              14.0,
+                                                                          fontFamily:
+                                                                              'Red Hat Display',
+                                                                          color:
+                                                                              Colors.white,
+                                                                          fontWeight:
+                                                                              FontWeight.w300,
+                                                                        ),
+                                                                      ),
+                                                                      onPressed:
+                                                                          () async {
+                                                                        //  cancel ride
+                                                                        _displayTextInputDialog(
+                                                                            context,
+                                                                            appState);
+                                                                        //  end cancel
+                                                                      },
+                                                                      child:
+                                                                          const Text(
+                                                                        'Cancel Ride',
+                                                                      ),
                                                                     ),
-                                                                  ),
-                                                                  onPressed: () async{
-                                                                  //  cancel ride
-                                                                  _displayTextInputDialog(context, appState);
-                                                                  //  end cancel
-                                                                  },
-                                                                  child: const Text('Cancel Ride',
-
-
-                                                                  ),
-                                                                ),
-                                                              )
-                                                            ]),
+                                                                  )
+                                                                ]),
                                                           ],
                                                         ),
                                                       ),
@@ -648,52 +690,75 @@ class _MapState extends State<Map> {
                                               ],
                                             ),
                                             Padding(
-                                              padding: const EdgeInsets.symmetric(
-                                                  horizontal: 30, vertical: 25),
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                      horizontal: 30,
+                                                      vertical: 25),
                                               child: SliderButton(
                                                 action: () async {
-                                                  await appState.driveToRiderDestination();
-                                                  appState.pickupVisibility = !appState.pickupVisibility;
-                                                  appState.dropoffVisibility = !appState.dropoffVisibility;
-                                                  appState.dragableSize = 0.2;
-                                                  // dropOff(context, appState);
+                                                  bool result =
+                                                      await InternetConnectionChecker()
+                                                          .hasConnection;
+                                                  if (result) {
+                                                    await appState
+                                                        .driveToRiderDestination();
+                                                    appState.pickupVisibility =
+                                                        !appState
+                                                            .pickupVisibility;
+                                                    appState.dropoffVisibility =
+                                                        !appState
+                                                            .dropoffVisibility;
+                                                    appState.dragableSize = 0.2;
+                                                    // dropOff(context, appState);
+                                                  } else {
+                                                    ScaffoldMessenger.of(
+                                                            context)
+                                                        .showSnackBar(
+                                                      appState.SnackBarCaller(
+                                                          "No Internet Connection"),
+                                                    );
+                                                  }
                                                 },
                                                 label: Text(
                                                   "SLIDE TO PICKUP",
                                                   style: TextStyle(
-                                                      color: Color(0xff090f13), fontWeight: FontWeight.w300, fontSize: 18,fontFamily: 'Red Hat Display',),
+                                                    color: Color(0xff090f13),
+                                                    fontWeight: FontWeight.w300,
+                                                    fontSize: 18,
+                                                    fontFamily:
+                                                        'Red Hat Display',
+                                                  ),
                                                 ),
                                                 icon: Center(
                                                     child: Icon(
-                                                      Icons.arrow_forward_ios_rounded,
-                                                      color: Color(0xff090f13),
-                                                      size: 40.0,
-                                                      semanticLabel: 'Text to announce in accessibility modes',
-                                                    )),
+                                                  Icons
+                                                      .arrow_forward_ios_rounded,
+                                                  color: Color(0xff090f13),
+                                                  size: 40.0,
+                                                  semanticLabel:
+                                                      'Text to announce in accessibility modes',
+                                                )),
                                                 width: double.infinity,
                                                 buttonColor: Colors.white,
-                                                backgroundColor: Color(0xff090f13),
+                                                backgroundColor:
+                                                    Color(0xff090f13),
                                                 highlightedColor: Colors.white,
                                                 baseColor: Colors.white,
-
                                               ),
-
                                             ),
                                           ],
-                                        )
-                                    ),
+                                        )),
 
                                     //  PICKUP PAGE END
 
                                     //  DROPOFF PAGE START
                                     Visibility(
                                       visible: appState.dropoffVisibility,
-
                                       child: Column(
-                                        mainAxisAlignment: MainAxisAlignment.center,
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
                                         mainAxisSize: MainAxisSize.min,
                                         children: <Widget>[
-
                                           Padding(
                                             padding: const EdgeInsets.symmetric(
                                                 horizontal: 30, vertical: 25),
@@ -701,34 +766,40 @@ class _MapState extends State<Map> {
                                               action: () async {
                                                 showDialog(
                                                   context: context,
-                                                  barrierDismissible: true, // set to false if you want to force a rating
-                                                  builder: (context) => ratingDialog(appState),
+                                                  barrierDismissible:
+                                                      true, // set to false if you want to force a rating
+                                                  builder: (context) =>
+                                                      ratingDialog(appState),
                                                 );
-                                                appState.onlineVisibility = !appState.onlineVisibility;
+                                                appState.onlineVisibility =
+                                                    !appState.onlineVisibility;
 
                                                 await appState.dropRider();
-
                                               },
                                               label: Text(
                                                 "SLIDE TO DROP OFF",
                                                 style: TextStyle(
-                                                    color: Color(0xff090f13), fontWeight: FontWeight.w300, fontSize: 18, fontFamily: 'Red Hat Display',),
+                                                  color: Color(0xff090f13),
+                                                  fontWeight: FontWeight.w300,
+                                                  fontSize: 18,
+                                                  fontFamily: 'Red Hat Display',
+                                                ),
                                               ),
                                               icon: Center(
                                                   child: Icon(
-                                                    Icons.arrow_forward_ios_rounded,
-                                                    color: Color(0xff090f13),
-                                                    size: 40.0,
-                                                    semanticLabel: 'Text to announce in accessibility modes',
-                                                  )),
+                                                Icons.arrow_forward_ios_rounded,
+                                                color: Color(0xff090f13),
+                                                size: 40.0,
+                                                semanticLabel:
+                                                    'Text to announce in accessibility modes',
+                                              )),
                                               width: double.infinity,
                                               buttonColor: Colors.white,
-                                              backgroundColor: Color(0xff090f13),
+                                              backgroundColor:
+                                                  Color(0xff090f13),
                                               highlightedColor: Colors.white,
                                               baseColor: Colors.white,
-
                                             ),
-
                                           ),
                                         ],
                                       ),
@@ -736,21 +807,16 @@ class _MapState extends State<Map> {
                                     //  DROPOFF PAGE ENDS
                                   ],
                                 ));
-
-
                           },
                         ));
                   }),
-
               Column(
                 mainAxisSize: MainAxisSize.max,
                 children: [
                   Row(
                     mainAxisSize: MainAxisSize.max,
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-
-                    ],
+                    children: [],
                   ),
                 ],
               ),

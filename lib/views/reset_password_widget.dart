@@ -1,8 +1,7 @@
+import 'package:internet_connection_checker/internet_connection_checker.dart';
 import 'package:provider/provider.dart';
 import '../flutter_flow/flutter_flow_icon_button.dart';
 import '../flutter_flow/flutter_flow_theme.dart';
-import '../flutter_flow/flutter_flow_util.dart';
-import '../flutter_flow/flutter_flow_widgets.dart';
 import 'package:easy_debounce/easy_debounce.dart';
 import 'package:flutter/material.dart';
 import 'verify_otp_widget.dart';
@@ -169,19 +168,31 @@ class _ResetPasswordWidgetState extends State<ResetPasswordWidget> {
                         )),
                       ),
                       onPressed: () async {
-
-                       setState(() => isLoading = true);
-                       try {
-                         await appState.requestResetOtp();
-                          await Navigator.push(
-                           context,
-                           MaterialPageRoute(
-                             builder: (context) => VerifyOtpPageWidget(),
-                           ),
-                         );
-                       }catch(e){
-                         print(e);
-                       }
+                        setState(() => isLoading = true);
+                        try {
+                          bool result =
+                              await InternetConnectionChecker().hasConnection;
+                          if (result) {
+                            await appState.requestResetOtp();
+                            await Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => VerifyOtpPageWidget(),
+                              ),
+                            );
+                          } else {
+                            isLoading = false;
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              appState.SnackBarCaller("No Internet Connection"),
+                            );
+                          }
+                        } catch (e) {
+                          isLoading = false;
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            appState.SnackBarCaller(
+                                "There was a problem reseting password"),
+                          );
+                        }
                       },
                     ),
                   ),

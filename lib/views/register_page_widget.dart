@@ -1,4 +1,5 @@
 import 'package:cabgo_driver/index.dart';
+import 'package:internet_connection_checker/internet_connection_checker.dart';
 
 import '../exceptions/locationErrors.dart';
 import '../flutter_flow/flutter_flow_icon_button.dart';
@@ -16,7 +17,6 @@ class RegisterPageWidget extends StatefulWidget {
 }
 
 class _RegisterPageWidgetState extends State<RegisterPageWidget> {
-
   final formKey = GlobalKey<FormState>();
   final scaffoldKey = GlobalKey<ScaffoldState>();
   bool confirmPasswordVisibility;
@@ -30,10 +30,6 @@ class _RegisterPageWidgetState extends State<RegisterPageWidget> {
     passwordVisibility = false;
     confirmPasswordVisibility = false;
   }
-
-  var snackBar = SnackBar(
-    content: Text('Error Registering User'),
-  );
 
   @override
   Widget build(BuildContext context) {
@@ -62,7 +58,6 @@ class _RegisterPageWidgetState extends State<RegisterPageWidget> {
         elevation: 2,
       ),
       backgroundColor: FlutterFlowTheme.of(context).primaryBackground,
-
       body: SafeArea(
         child: GestureDetector(
           onTap: () => FocusScope.of(context).unfocus(),
@@ -92,7 +87,6 @@ class _RegisterPageWidgetState extends State<RegisterPageWidget> {
                     ),
                     Form(
                       key: formKey,
-
                       child: Column(
                         mainAxisSize: MainAxisSize.max,
                         children: [
@@ -104,14 +98,13 @@ class _RegisterPageWidgetState extends State<RegisterPageWidget> {
                               onChanged: (_) => EasyDebounce.debounce(
                                 'emailController',
                                 Duration(milliseconds: 2000),
-                                    () => setState(() {}),
+                                () => setState(() {}),
                               ),
                               obscureText: false,
                               cursorColor: Colors.black,
                               decoration: InputDecoration(
                                 labelText: 'Email',
                                 hintText: 'name@xample.com',
-
                                 enabledBorder: OutlineInputBorder(
                                     borderSide: BorderSide(
                                         width: 0.2, color: Color(0xff000000)),
@@ -122,21 +115,20 @@ class _RegisterPageWidgetState extends State<RegisterPageWidget> {
                                   borderRadius: BorderRadius.circular(10),
                                 ),
                                 contentPadding:
-                                EdgeInsets.only(left: 15.0, top: 25.0),
+                                    EdgeInsets.only(left: 15.0, top: 25.0),
                                 filled: true,
-
                               ),
-                              validator: (value){
-                                if(value != null && value.length <7 || !RegExp(r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+").hasMatch(value) ){
+                              validator: (value) {
+                                if (value != null && value.length < 7 ||
+                                    !RegExp(r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
+                                        .hasMatch(value)) {
                                   return "Enter valid email";
-                                }else{
+                                } else {
                                   return null;
                                 }
                               },
                             ),
                           ),
-
-
                           Padding(
                             padding: const EdgeInsets.only(
                                 top: 10.0, left: 10.0, right: 10.0),
@@ -145,14 +137,13 @@ class _RegisterPageWidgetState extends State<RegisterPageWidget> {
                               onChanged: (_) => EasyDebounce.debounce(
                                 'firstNameController',
                                 Duration(milliseconds: 2000),
-                                    () => setState(() {}),
+                                () => setState(() {}),
                               ),
                               obscureText: false,
                               cursorColor: Colors.black,
                               decoration: InputDecoration(
                                 labelText: 'Name',
                                 hintText: 'First name',
-
                                 enabledBorder: OutlineInputBorder(
                                     borderSide: BorderSide(
                                         width: 0.2, color: Color(0xff000000)),
@@ -163,22 +154,18 @@ class _RegisterPageWidgetState extends State<RegisterPageWidget> {
                                   borderRadius: BorderRadius.circular(10),
                                 ),
                                 contentPadding:
-                                EdgeInsets.only(left: 15.0, top: 25.0),
+                                    EdgeInsets.only(left: 15.0, top: 25.0),
                                 filled: true,
-
                               ),
-                                validator: (value){
-                                  if(value != null && value.length <3 ){
-                                    return "Name too short";
-                                  }else{
-                                    return null;
-                                  }
-                                },
-
+                              validator: (value) {
+                                if (value != null && value.length < 3) {
+                                  return "Name too short";
+                                } else {
+                                  return null;
+                                }
+                              },
                             ),
-
                           ),
-
                           Padding(
                             padding: const EdgeInsets.only(
                                 top: 10.0, left: 10.0, right: 10.0),
@@ -187,14 +174,13 @@ class _RegisterPageWidgetState extends State<RegisterPageWidget> {
                               onChanged: (_) => EasyDebounce.debounce(
                                 'lastNameController',
                                 Duration(milliseconds: 2000),
-                                    () => setState(() {}),
+                                () => setState(() {}),
                               ),
                               obscureText: false,
                               cursorColor: Colors.black,
                               decoration: InputDecoration(
                                 labelText: 'Last Name',
                                 hintText: 'Last name',
-
                                 enabledBorder: OutlineInputBorder(
                                     borderSide: BorderSide(
                                         width: 0.2, color: Color(0xff000000)),
@@ -205,22 +191,18 @@ class _RegisterPageWidgetState extends State<RegisterPageWidget> {
                                   borderRadius: BorderRadius.circular(10),
                                 ),
                                 contentPadding:
-                                EdgeInsets.only(left: 15.0, top: 25.0),
+                                    EdgeInsets.only(left: 15.0, top: 25.0),
                                 filled: true,
-
                               ),
-                                validator: (value){
-                                  if(value != null && value.length <2 ){
-                                    return "Last Name too short";
-                                  }else{
-                                    return null;
-                                  }
-                                },
-
+                              validator: (value) {
+                                if (value != null && value.length < 2) {
+                                  return "Last Name too short";
+                                } else {
+                                  return null;
+                                }
+                              },
                             ),
-
                           ),
-
                           Padding(
                             padding: const EdgeInsets.only(
                                 top: 10.0, left: 10.0, right: 10.0),
@@ -229,7 +211,7 @@ class _RegisterPageWidgetState extends State<RegisterPageWidget> {
                               onChanged: (_) => EasyDebounce.debounce(
                                 'phoneController',
                                 Duration(milliseconds: 2000),
-                                    () => setState(() {}),
+                                () => setState(() {}),
                               ),
                               obscureText: false,
                               cursorColor: Colors.black,
@@ -237,26 +219,26 @@ class _RegisterPageWidgetState extends State<RegisterPageWidget> {
                                 labelText: 'Phone',
                                 hintText: 'Phone Number',
                                 prefixIcon: Container(
-                                  height: 10,
-                                  width: 10,
-                                  decoration: BoxDecoration(
-                                      color: Colors.black,
-                                      borderRadius: BorderRadius.only(
-                                          topLeft: Radius.circular(10),
-                                          bottomLeft: Radius.circular(10.0))),
-                                  child: Row(
-                                    children: [
-                                      Text("+27", style: TextStyle(
-                                        color: Colors.white
-                                      ),),
-                                      Icon(
-                                        Icons.keyboard_arrow_down,
-                                        color: Colors.white,
-                                        size: 16.0,
-                                      ),
-                                    ],
-                                  )
-                                ),
+                                    height: 10,
+                                    width: 10,
+                                    decoration: BoxDecoration(
+                                        color: Colors.black,
+                                        borderRadius: BorderRadius.only(
+                                            topLeft: Radius.circular(10),
+                                            bottomLeft: Radius.circular(10.0))),
+                                    child: Row(
+                                      children: [
+                                        Text(
+                                          "+27",
+                                          style: TextStyle(color: Colors.white),
+                                        ),
+                                        Icon(
+                                          Icons.keyboard_arrow_down,
+                                          color: Colors.white,
+                                          size: 16.0,
+                                        ),
+                                      ],
+                                    )),
                                 enabledBorder: OutlineInputBorder(
                                     borderSide: BorderSide(
                                         width: 0.2, color: Color(0xff000000)),
@@ -267,29 +249,27 @@ class _RegisterPageWidgetState extends State<RegisterPageWidget> {
                                   borderRadius: BorderRadius.circular(10),
                                 ),
                                 contentPadding:
-                                EdgeInsets.only(left: 15.0, top: 25.0),
+                                    EdgeInsets.only(left: 15.0, top: 25.0),
                                 filled: true,
-
                               ),
-                              validator: (value){
-                                if(value == null || value =="" || value.length <1 ){
+                              validator: (value) {
+                                if (value == null ||
+                                    value == "" ||
+                                    value.length < 1) {
                                   return "This Field can't be empty";
-                                }else if(value.length <9  ){
+                                } else if (value.length < 9) {
                                   return "Too short - phone should be 9 digits e.g (786942318)";
-                                }else if(value.length >9  ){
+                                } else if (value.length > 9) {
                                   return "Too long - phone should be 9 digits e.g (786942318)";
-                                }else if(value.length <9  ){
+                                } else if (value.length < 9) {
                                   return "phone should be 9 digits e.g (786942318)";
-                                }else if(value[0]  =="0" ){
+                                } else if (value[0] == "0") {
                                   return "Number should not start with a 0 e.g (786942318)";
-                                }
-                                else{
+                                } else {
                                   return null;
                                 }
                               },
-
                             ),
-
                           ),
                           Padding(
                             padding: const EdgeInsets.only(
@@ -299,7 +279,7 @@ class _RegisterPageWidgetState extends State<RegisterPageWidget> {
                               onChanged: (_) => EasyDebounce.debounce(
                                 'passwordController',
                                 Duration(milliseconds: 2000),
-                                    () => setState(() {}),
+                                () => setState(() {}),
                               ),
                               autofocus: false,
                               obscureText: !passwordVisibility,
@@ -307,7 +287,6 @@ class _RegisterPageWidgetState extends State<RegisterPageWidget> {
                               decoration: InputDecoration(
                                 labelText: 'Password',
                                 hintText: '*********',
-
                                 enabledBorder: OutlineInputBorder(
                                     borderSide: BorderSide(
                                         width: 0.2, color: Color(0xff090F13)),
@@ -318,54 +297,52 @@ class _RegisterPageWidgetState extends State<RegisterPageWidget> {
                                   borderRadius: BorderRadius.circular(10),
                                 ),
                                 contentPadding:
-                                EdgeInsets.only(left: 15.0, top: 25.0),
+                                    EdgeInsets.only(left: 15.0, top: 25.0),
                                 filled: true,
-
                                 suffixIcon: InkWell(
                                   onTap: () => setState(
-                                        () =>
-                                    passwordVisibility = !passwordVisibility,
+                                    () => passwordVisibility =
+                                        !passwordVisibility,
                                   ),
                                   focusNode: FocusNode(skipTraversal: true),
                                   child: Icon(
                                     passwordVisibility
                                         ? Icons.visibility_outlined
                                         : Icons.visibility_off_outlined,
-                                    color:
-                                    FlutterFlowTheme.of(context).primaryColor,
+                                    color: FlutterFlowTheme.of(context)
+                                        .primaryColor,
                                     size: 22,
                                   ),
                                 ),
                               ),
-
-                              validator: (value){
-                                if(value == null || value =="" || value.length <1 ){
+                              validator: (value) {
+                                if (value == null ||
+                                    value == "" ||
+                                    value.length < 1) {
                                   return "This Field can't be empty";
-                                }
-                                else{
-                                  password =value;
+                                } else {
+                                  password = value;
                                   return null;
                                 }
                               },
                             ),
                           ),
-
                           Padding(
                             padding: const EdgeInsets.only(
                                 top: 20.0, left: 10.0, right: 10.0),
-                            child:  TextFormField(
-                              controller: appState.registerConfirmPasswordController,
+                            child: TextFormField(
+                              controller:
+                                  appState.registerConfirmPasswordController,
                               onChanged: (_) => EasyDebounce.debounce(
                                 'confirmPasswordController',
                                 Duration(milliseconds: 2000),
-                                    () => setState(() {}),
+                                () => setState(() {}),
                               ),
                               autofocus: false,
                               obscureText: !confirmPasswordVisibility,
                               decoration: InputDecoration(
                                 labelText: 'Confirm Password',
                                 hintText: '*********',
-
                                 enabledBorder: OutlineInputBorder(
                                     borderSide: BorderSide(
                                         width: 0.2, color: Color(0xff090F13)),
@@ -376,115 +353,104 @@ class _RegisterPageWidgetState extends State<RegisterPageWidget> {
                                   borderRadius: BorderRadius.circular(10),
                                 ),
                                 contentPadding:
-                                EdgeInsets.only(left: 15.0, top: 25.0),
+                                    EdgeInsets.only(left: 15.0, top: 25.0),
                                 filled: true,
-
                                 suffixIcon: InkWell(
                                   onTap: () => setState(
-                                        () => confirmPasswordVisibility =
-                                    !confirmPasswordVisibility,
+                                    () => confirmPasswordVisibility =
+                                        !confirmPasswordVisibility,
                                   ),
                                   focusNode: FocusNode(skipTraversal: true),
                                   child: Icon(
                                     confirmPasswordVisibility
                                         ? Icons.visibility_outlined
                                         : Icons.visibility_off_outlined,
-                                    color:
-                                    FlutterFlowTheme.of(context).primaryColor,
+                                    color: FlutterFlowTheme.of(context)
+                                        .primaryColor,
                                     size: 22,
                                   ),
                                 ),
                               ),
-
-                                validator: (value){
-                                  if(value != password ){
-                                    return "Password does not match";
-                                  }
-                                  else{
-                                    return null;
-                                  }
-                                },
+                              validator: (value) {
+                                if (value != password) {
+                                  return "Password does not match";
+                                } else {
+                                  return null;
+                                }
+                              },
                             ),
                           ),
-
                           Padding(
                             padding: const EdgeInsets.all(10.0),
                             child: SizedBox(
                               width: double.infinity,
                               height: 50,
-                              child:  TextButton(
+                              child: TextButton(
                                 onPressed: () async {
-                                  if(formKey.currentState.validate()){
+                                  if (formKey.currentState.validate()) {
                                     isLoading = true;
                                     try {
-                                      await appState.register();
-                                      await Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                          builder: (context) =>
-                                              VerifyPageWidget(),
-                                        ),
-                                      );
-
-                                    }on UserNotRegistered {
+                                      bool result =
+                                          await InternetConnectionChecker()
+                                              .hasConnection;
+                                      if (result) {
+                                        await appState.register();
+                                        await Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (context) =>
+                                                VerifyPageWidget(),
+                                          ),
+                                        );
+                                      } else {
+                                        isLoading = false;
+                                        ScaffoldMessenger.of(context)
+                                            .showSnackBar(
+                                          appState.SnackBarCaller(
+                                              "No Internet Connection"),
+                                        );
+                                      }
+                                    } on UserNotRegistered {
                                       isLoading = false;
-                                      ScaffoldMessenger.of(context).showSnackBar(
-                                          SnackBar(
-                                            content: Text('User Not Register'),
-                                          )
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(
+                                        appState.SnackBarCaller(
+                                            "User not registered"),
                                       );
-                                    } on RegisterError {
-                                      isLoading = false;
-                                      ScaffoldMessenger.of(context).showSnackBar(
-                                          SnackBar(
-                                            content: Text('Error Registering'),
-                                          )
-                                      );
-                                    } catch(e){
-                                      isLoading = false;
-                                      ScaffoldMessenger.of(context).showSnackBar(
-                                          SnackBar(
-                                            content: Text('Server Error please check your internet or contact Cabgo'),
-                                          )
-                                      );
+                                    } catch (e) {
+                                      print(e);
                                     }
                                   }
-
                                 },
-                                child: isLoading ?   CircularProgressIndicator(
-                                  color: Colors.white,
-                                )
-                                    : Text( 'Register Now',
-                                  style: TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 20.0,
-                                      fontWeight: FontWeight.w500,
-                                      fontFamily: 'Red Hat Display'
-                                  ),
-
-                                ),
-
-
+                                child: isLoading
+                                    ? CircularProgressIndicator(
+                                        color: Colors.white,
+                                      )
+                                    : Text(
+                                        'Register Now',
+                                        style: TextStyle(
+                                            color: Colors.white,
+                                            fontSize: 20.0,
+                                            fontWeight: FontWeight.w500,
+                                            fontFamily: 'Red Hat Display'),
+                                      ),
                                 style: ElevatedButton.styleFrom(
-                                    primary: FlutterFlowTheme.of(context).primaryColor),
-
-
+                                    primary: FlutterFlowTheme.of(context)
+                                        .primaryColor),
                               ),
                             ),
                           ),
-
                           Row(
                             mainAxisSize: MainAxisSize.max,
                             children: [
                               InkWell(
                                 onTap: () async {
                                   await Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                          builder: (context) =>
-                                              TermsPageWidget(),
-                                        ),
-                                      );
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => TermsPageWidget(),
+                                    ),
+                                  );
                                 },
                                 child: Text(
                                   'READ',
@@ -505,9 +471,12 @@ class _RegisterPageWidgetState extends State<RegisterPageWidget> {
                                     unselectedWidgetColor: Color(0xFF95A1AC),
                                   ),
                                   child: CheckboxListTile(
-                                    value: appState.registerTermsAndConditionsValue ??= true,
+                                    value: appState
+                                            .registerTermsAndConditionsValue ??=
+                                        true,
                                     onChanged: (newValue) => setState(() =>
-                                    appState.registerTermsAndConditionsValue = newValue),
+                                        appState.registerTermsAndConditionsValue =
+                                            newValue),
                                     title: Text(
                                       'I have read and agreed to the terms and conditions',
                                       style: FlutterFlowTheme.of(context)
