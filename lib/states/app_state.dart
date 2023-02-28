@@ -42,7 +42,12 @@ class AppState with ChangeNotifier {
       TextEditingController();
   TextEditingController locationController = TextEditingController();
 
-  
+  //verify
+  TextEditingController textController1 = TextEditingController();
+  TextEditingController textController2 = TextEditingController();
+  TextEditingController textController3 = TextEditingController();
+  TextEditingController textController4 = TextEditingController();
+  TextEditingController textController5 = TextEditingController();
 
   //reset password
   TextEditingController resetPhoneNumber = TextEditingController();
@@ -339,8 +344,6 @@ class AppState with ChangeNotifier {
     }
   }
 
-  
-
   Future<void> verifyOtpPasswordReset() async {
     try {
       String otpCode = textController1.text;
@@ -574,5 +577,32 @@ class AppState with ChangeNotifier {
     return SnackBar(
       content: Text(message),
     );
+  }
+
+  Future<void> verifyOtp() async {
+    try {
+      String otpCode = textController1.text;
+      otpCode += textController2.text;
+      otpCode += textController3.text;
+      otpCode += textController4.text;
+      otpCode += textController5.text;
+      await ApiClient().verifyOtp(
+        userRegisterPhone,
+        otpCode,
+      );
+
+      clearController();
+    } catch (e) {
+      throw OtpVerificationError();
+    }
+  }
+
+  void clearController() {
+    textController1.clear();
+    textController2.clear();
+    textController3.clear();
+    textController4.clear();
+    textController5.clear();
+    notifyListeners();
   }
 }

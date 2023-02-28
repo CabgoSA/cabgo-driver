@@ -312,7 +312,7 @@ Future<void> _displayTextInputDialog(
           actions: <Widget>[
             TextButton(
               style: TextButton.styleFrom(
-                foregroundColor: Colors.white,
+                backgroundColor: Colors.white,
               ),
               child: Text('CANCEL'),
               onPressed: () {
@@ -321,7 +321,7 @@ Future<void> _displayTextInputDialog(
             ),
             TextButton(
               style: TextButton.styleFrom(
-                foregroundColor: Colors.green,
+                backgroundColor: Colors.green,
               ),
               child: Text('OK'),
               onPressed: () async {
